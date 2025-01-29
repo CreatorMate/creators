@@ -8,14 +8,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   pages: true,
   devtools: { enabled: true },
-  modules: ['nuxt-oidc-auth', '@nuxtjs/tailwindcss', '@nuxt/image', '@pinia/nuxt', '@nuxtjs/color-mode', '@vueuse/nuxt', '@nuxtjs/supabase'],
+  modules: ['nuxt-oidc-auth', '@nuxtjs/tailwindcss', '@nuxt/image', '@pinia/nuxt', '@nuxtjs/color-mode', '@vueuse/nuxt'],
   hooks: {
     'pages:extend' (pages) {
       pages.push(...moduleRoutes);
     }
-  },
-  supabase: {
-    redirect: false,
   },
   oidc: {
     defaultProvider: "auth0",
@@ -69,17 +66,7 @@ export default defineNuxtConfig({
   },
   runtimeConfig: {
     pages: [],
-    STRIPE_PUBLISHABLE_KEY: process.env.STRIPE_PUBLISHABLE_KEY,
-    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
-    STRIPE_WEBHOOK_KEY: process.env.STRIPE_WEBHOOK_KEY,
-    NUXT_SUPABASE_SECRET: process.env.NUXT_SUPABASE_SECRET,
-    SUPABASE_AUTH_URL: process.env.SUPABASE_AUTH_URL,
-    SUPABASE_AUTH_KEY: process.env.SUPABASE_AUTH_KEY,
     PHYLLO_KEY: process.env.PHYLLO_KEY,
-    mailerUser: '',
-    mailerPass: '',
-    mailerHost: '',
-    mailerPort: '',
     public: {
       BASE_URL: process.env.BASE_URL,
     },

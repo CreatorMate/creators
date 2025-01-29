@@ -1,4 +1,5 @@
-import type {Hono} from "hono";
+import type {Context, Hono} from "hono";
+import type {HonoUser} from "~/src/api/utils/HonoComposables";
 
 export abstract class Controller {
     protected app: Hono;
@@ -7,4 +8,8 @@ export abstract class Controller {
     }
 
     abstract endpoints(): Promise<any>
+
+    protected getHonoUser(ctx: Context): HonoUser {
+        return ctx.get('user');
+    }
 }

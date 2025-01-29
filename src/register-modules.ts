@@ -8,6 +8,5 @@ export function getModuleRoutes() {
     for(const module of modules) {
         routes.push(...module.getModuleRoutes());
     }
-
     return routes;
 }
