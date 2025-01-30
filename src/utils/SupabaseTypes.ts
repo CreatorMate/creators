@@ -10,15 +10,15 @@ export type Creator = {
     id: string,
     sub: string,
     status: AccountStatus,
-    username: string,
+    handle: string,
     email: string,
     based_in: string,
     project_types: string,
     created_at: string,
-    birthdate: Date,
+    date_of_birth: string,
     additional_info: string,
     tik_tok: string
-    ig: string
+    linked: boolean
 }
 
 export enum AccountStatus {

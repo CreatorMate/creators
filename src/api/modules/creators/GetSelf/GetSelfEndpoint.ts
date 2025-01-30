@@ -1,4 +1,3 @@
-
 import {Endpoint} from "~/src/api/utils/Endpoint";
 import type {Context} from "hono";
 import type {HonoUser} from "~/src/api/utils/HonoComposables";
@@ -11,11 +10,11 @@ export class GetSelfEndpoint extends Endpoint {
     protected async handle(context: Context) {
         const honoUser = this.getHonoUser(context);
         let creator = await this.getCreator(honoUser);
-        if(!creator) {
+        if (!creator) {
             creator = await this.createCreator(honoUser);
         }
 
-        if(!creator) return errorResponse(context, "Something went wrong while creating the new creator");
+        if (!creator) return errorResponse(context, "Something went wrong while creating the new creator");
 
         return successResponse(context, creator);
     }
@@ -23,7 +22,6 @@ export class GetSelfEndpoint extends Endpoint {
     private async createCreator(honoUser: HonoUser) {
         return await this.prismaClient.creators.create({
             data: {
-                sub: honoUser.sub,
                 email: honoUser.email,
             }
         });
@@ -31,25 +29,9 @@ export class GetSelfEndpoint extends Endpoint {
 
     private async getCreator(honoUser: HonoUser) {
         let creator = await this.prismaClient.creators.findFirst({
-            where: {sub: honoUser.sub}
+            where: {email: honoUser.email}
         });
-
-        if(!creator) {
-            let creatorByEmail = await this.prismaClient.creators.findFirst({
-                where: {email: honoUser.email}
-            });
-
-            if(creatorByEmail) {
-                await this.prismaClient.creators.updateMany({
-                    where: {email: honoUser.email},
-                    data: {sub: honoUser.sub}
-                });
-            }
-
-            creator = creatorByEmail;
-        }
 
         return creator;
     }
-
 }

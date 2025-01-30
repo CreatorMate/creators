@@ -5,6 +5,7 @@
     import SubmissionNotStarted from "~/src/modules/Onboarding/components/submission/SubmissionNotStarted.vue";
     import SubmissionSubmitted from "~/src/modules/Onboarding/components/submission/SubmissionSubmitted.vue";
     import SubmissionAccepted from "~/src/modules/Onboarding/components/submission/SubmissionAccepted.vue";
+    import SubmissionInvited from "~/src/modules/Onboarding/components/submission/SubmissionInvited.vue";
 
     const accountState = useAccountStore();
     const {user} = useOidcAuth();
@@ -35,7 +36,8 @@
             <div class="w-[850px] max-w-full mt-20 ">
                 <SubmissionNotStarted v-if="accountState.user?.status == AccountStatus.NEW" />
                 <SubmissionSubmitted v-if="accountState.user?.status == AccountStatus.IN_REVIEW"/>
-                <SubmissionAccepted v-if="accountState.user?.status == AccountStatus.ACCEPTED || accountState.user?.status == AccountStatus.INVITED"/>
+                <SubmissionAccepted v-if="accountState.user?.status == AccountStatus.ACCEPTED"/>
+                <SubmissionInvited v-if="accountState.user?.status == AccountStatus.INVITED"/>
             </div>
         </div>
     </section>

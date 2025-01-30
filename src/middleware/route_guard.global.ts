@@ -22,5 +22,8 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         if((accountStore.user.status == AccountStatus.NEW || accountStore.user.status == AccountStatus.IN_REVIEW)  && (to.path !== '/submission/status' && to.path !== '/apply' )) {
             return navigateTo('/submission/status');
         }
+        if((accountStore.user.status == AccountStatus.ACCEPTED || accountStore.user.status == AccountStatus.INVITED)  && (to.path !== '/submission/status' && to.path !== '/apply' ) && !accountStore.user.linked) {
+            return navigateTo('/submission/status');
+        }
     }
 });
