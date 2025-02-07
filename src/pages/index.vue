@@ -5,8 +5,9 @@
     const invited = ref(true);
     const brands = ref<{ id: number, name: string, accepted: boolean }[]>([]);
     const accountState = useAccountStore();
-
     const isOn = ref(false);
+
+    const {logout} = useOidcAuth();
 
 
     onBeforeMount(async () => {
@@ -32,6 +33,7 @@
     <section class="flex screen-size flex-col">
         <nav class="w-full flex px-12 py-6 items-center border-b border-[#E9E9E9] justify-between">
             <img alt="creatormate-logo" class="h-5" src="/logo-light.svg">
+            <button class="bg-black text-white py-2 px-4 rounded" @click="logout()">logout</button>
         </nav>
         <div class="flex flex-grow justify-center px-6">
             <div class="w-[850px] max-w-full mt-20 flex flex-col">

@@ -1,7 +1,8 @@
 import {PrismaClient} from "@prisma/client";
+import {usePrisma} from "~/src/api/src/lib/prisma";
 
 export function getPrismaClient(): PrismaClient {
-    return new PrismaClient();
+    return usePrisma();
 }
 
 export interface HonoUser {
