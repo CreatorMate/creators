@@ -10,7 +10,6 @@
     const value = ref('');
 
     watch(value, () => {
-        console.log(value.value)
         model.value = value.value;
     });
 

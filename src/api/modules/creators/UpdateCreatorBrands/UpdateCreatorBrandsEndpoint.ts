@@ -17,6 +17,6 @@ export class UpdateCreatorBrandsEndpoint extends Endpoint {
             }
         });
 
-        return successResponse(context, newBrandOffer);
+        return successResponse(context, newBrandOffer, null, 'updated preference');
     }
 }

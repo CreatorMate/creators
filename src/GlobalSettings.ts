@@ -6,5 +6,6 @@ export const appSettings = {
         /^\/invitation\/[^/]+\/[^/]+$/,
     ],
     defaultLimit: 10,
-    baseUrl: ''
+    baseUrl: '',
+    toastDuration: 3000
 }

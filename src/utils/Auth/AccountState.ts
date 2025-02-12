@@ -2,13 +2,14 @@ import {defineStore} from "pinia";
 import type {Brand, Creator, User} from "~/src/utils/SupabaseTypes";
 import type {APIResponse} from "~/src/api/utils/HonoResponses";
 import {appSettings} from "~/src/GlobalSettings";
+import {API} from "~/src/utils/API/API";
 
-export const useAccountStore = defineStore("account", () => {
+export const useAccountState = defineStore("account", () => {
         const user = ref<Creator | null>(null);
 
         async function initialize() {
             try {
-                const result: APIResponse<Creator> = await $fetch(`${appSettings.baseUrl}/API/creators/me`);
+                const result: APIResponse<Creator> = await API.ask(`/creators/me`);
                 if (!result.success) return;
                 if (result.data) {
                     user.value = result.data;

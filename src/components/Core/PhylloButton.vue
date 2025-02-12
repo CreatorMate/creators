@@ -2,13 +2,13 @@
     import type {PhylloConnection} from "~/src/utils/Phyllo/PhylloConnection";
     import type {Ref} from "vue";
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
-    import {useAccountStore} from "~/src/utils/Auth/AccountStore";
+    import {useAccountState} from "~/src/utils/Auth/AccountState";
     import {appSettings} from "~/src/GlobalSettings";
 
     const connection: Ref<PhylloConnection|null> = ref(null);
     let connector: any = null;
     const success = ref(false);
-    const accountState = useAccountStore();
+    const accountState = useAccountState();
 
     const {linked, removed} = defineProps<{
         linked: Function,

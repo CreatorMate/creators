@@ -1,8 +1,8 @@
 <script setup lang='ts'>
     import {useRouter} from "vue-router";
+    import PhylloButton from "~/src/components/Core/PhylloButton.vue";
     const router = useRouter();
     async function linked() {
-        console.log('linked');
         await router.push('/')
     }
 </script>

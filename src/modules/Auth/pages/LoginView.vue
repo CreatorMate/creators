@@ -1,7 +1,7 @@
 <script lang="ts" setup>
     import {onMounted, ref} from "vue";
     import {useRouter} from "vue-router";
-    import HomeCarousel from "~/src/modules/Login/components/HomeCarousel.vue";
+    import HomeCarousel from "~/src/modules/Auth/components/HomeCarousel.vue";
 
     const {login, loggedIn} = useOidcAuth();
     const email = ref("");
@@ -22,7 +22,7 @@
         <section class="w-full flex flex-grow justify-center h-full overflow-hidden">
             <section style="" class="background-mask w-full h-full flex flex-col items-center justify-between z-40">
                 <div class="p-10">
-                                    <img alt="creator mate logo" src="/logo-light.svg">
+                    <img alt="creator mate logo" src="/logo-light.svg">
                 </div>
                 <div class="flex flex-col justify-center items-center gap-6 md:gap-10 w-full md:w-[850px]">
                     <h1 class="text-4xl md:text-6xl xl:text-7xl 2xl:text-8xl flex-wrap font-medium text-center px-5 md:px-0">

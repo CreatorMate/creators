@@ -9,6 +9,11 @@ export class AddAccountEndpoint extends Endpoint {
     protected async handle(context: Context) {
         const id = context.req.param('id');
         const {accountId, platformId } = await context.req.json();
+
+        if(!accountId || !platformId) {
+            return errorResponse(context, 'INVALID_RROPS_ERROR', 'something went wrong while creating your profile');
+        }
+
         const account = await this.prismaClient.connected_accounts.create({
             data: {
                 account_id: accountId,

@@ -1,9 +1,9 @@
 <script setup lang='ts'>
-    import {useAccountStore} from "~/src/utils/Auth/AccountStore";
+    import {useAccountState} from "~/src/utils/Auth/AccountState";
     import {onMounted} from "vue";
     import {AccountStatus} from "~/src/utils/SupabaseTypes";
 
-    const accountState = useAccountStore();
+    const accountState = useAccountState();
     const {user} = useOidcAuth();
 
     const router = useRouter();

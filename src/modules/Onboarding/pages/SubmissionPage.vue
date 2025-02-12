@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-    import {useAccountStore} from "~/src/utils/Auth/AccountStore";
+    import {useAccountState} from "~/src/utils/Auth/AccountState";
     import {onMounted} from "vue";
     import {AccountStatus} from "~/src/utils/SupabaseTypes";
     import SubmissionNotStarted from "~/src/modules/Onboarding/components/submission/SubmissionNotStarted.vue";
@@ -7,7 +7,7 @@
     import SubmissionAccepted from "~/src/modules/Onboarding/components/submission/SubmissionAccepted.vue";
     import SubmissionInvited from "~/src/modules/Onboarding/components/submission/SubmissionInvited.vue";
 
-    const accountState = useAccountStore();
+    const accountState = useAccountState();
     const {user} = useOidcAuth();
 
     const router = useRouter();
@@ -46,6 +46,6 @@
 
 <style scoped>
 .progress-bar {
-    transition: width 0.3s; /* You can adjust the duration as needed */
+    transition: width 0.3s;
 }
 </style>

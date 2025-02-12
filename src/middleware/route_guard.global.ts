@@ -1,6 +1,6 @@
 import type {RouteLocationNormalized} from "#vue-router";
 import {checkUnguarded} from "~/src/utils/GuardChecker";
-import {useAccountStore} from "~/src/utils/Auth/AccountStore";
+import {useAccountState} from "~/src/utils/Auth/AccountState";
 import {AccountStatus} from "~/src/utils/SupabaseTypes";
 import {appSettings} from "~/src/GlobalSettings";
 
@@ -14,7 +14,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         return navigateTo('/login');
     }
 
-    const accountStore = useAccountStore();
+    const accountStore = useAccountState();
     if(!accountStore.user) {
         await accountStore.initialize();
     }

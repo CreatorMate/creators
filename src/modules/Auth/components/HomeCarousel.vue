@@ -1,7 +1,7 @@
 <script setup lang='ts'>
-import CreatorMateSlider from "~/src/modules/Login/components/CreatorMateSlider.vue";
-import {creatorsBottom, creatorsTop} from "@/src/modules/Login/data/creators";
-import CreatorComponent from "@/src/modules/Login/components/Creator.vue";
+import CreatorMateSlider from "~/src/modules/Auth/components/CreatorMateSlider.vue";
+import {creatorsBottom, creatorsTop} from "~/src/modules/Auth/data/creators";
+import CreatorComponent from "~/src/modules/Auth/components/Creator.vue";
 </script>
 
 <template>

@@ -1,10 +1,10 @@
 <script setup lang='ts'>
-    import {useAccountStore} from "~/src/utils/Auth/AccountStore";
+    import {useAccountState} from "~/src/utils/Auth/AccountState";
     import {onMounted, type Ref} from "vue";
     import {AccountStatus} from "~/src/utils/SupabaseTypes";
     import OnboardingQuestion from "~/src/modules/Onboarding/components/OnboardingQuestion.vue";
 
-    const accountState = useAccountStore();
+    const accountState = useAccountState();
     const router = useRouter();
 
     const step = ref(1);
@@ -56,7 +56,6 @@
     }
 
     async function next() {
-        console.log(answers)
         step.value++;
     }
 
@@ -118,6 +117,6 @@
 
 <style scoped>
 .progress-bar {
-    transition: width 0.3s; /* You can adjust the duration as needed */
+    transition: width 0.3s;
 }
 </style>
