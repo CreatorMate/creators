@@ -14,7 +14,9 @@ model brands {
   is_premium    String?         @db.VarChar
   customer_id   String?         @db.VarChar
   creator_brand creator_brand[]
+  projects      projects[]
   users         users[]
+  widgets       widgets[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -44,7 +46,7 @@ model creators {
   handle          String?         @db.VarChar
   email           String          @unique @db.VarChar
   based_in        String?         @db.VarChar
-  project_types   String?
+  project_types   String[]
   date_of_birth   String?         @db.VarChar
   additional_info String?
   tiktok          String?         @db.VarChar
@@ -68,6 +70,48 @@ model users {
   full_name String? @db.VarChar
   picture   String? @db.VarChar
   brands    brands? @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model project_widgets {
+  id         BigInt    @id @default(autoincrement())
+  widget_id  Int
+  project_id Int?
+  component  String?
+  value      String?
+  order      String?
+  projects   projects? @relation(fields: [project_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  widgets    widgets   @relation(fields: [widget_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model projects {
+  id              Int               @id @default(autoincrement())
+  name            String?           @db.VarChar
+  creators        String?
+  days            Int?              @default(90)
+  slug            String?
+  description     String?
+  brand_id        Int?
+  color           String            @default("#F1F1F1")
+  project_widgets project_widgets[]
+  brands          brands?           @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model widgets {
+  id              Int               @id @default(autoincrement())
+  top             Int?
+  grouped         Boolean?
+  name            String?
+  description     String?
+  brand_id        Int?
+  component       String?
+  action          String?
+  endpoint        String?
+  metric_name     String?
+  project_widgets project_widgets[]
+  brands          brands?           @relation(fields: [brand_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 enum account_status {
