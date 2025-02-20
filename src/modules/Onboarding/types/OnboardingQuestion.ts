@@ -4,4 +4,5 @@ export type Question = {
     question: string;
     type: 'text' | 'date' | 'multi' | 'textarea';
     key: keyof Answer;
+    options?: string[];
 }

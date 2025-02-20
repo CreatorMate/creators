@@ -1,8 +1,8 @@
 <script setup lang='ts'>
-    import OnboardingTextQuestion from "~/src/modules/Onboarding/components/OnboardingTextQuestion.vue";
-    import OnboardingTextAreaQuestion from "~/src/modules/Onboarding/components/OnboardingTextAreaQuestion.vue";
-    import OnboardingMultiSelectQuestion from "~/src/modules/Onboarding/components/OnboardingMultiSelectQuestion.vue";
-    import OnboardingDateQuestion from "~/src/modules/Onboarding/components/OnboardingDateQuestion.vue";
+    import OnboardingTextQuestion from "~/src/modules/Onboarding/components/questions/OnboardingTextQuestion.vue";
+    import OnboardingTextAreaQuestion from "~/src/modules/Onboarding/components/questions/OnboardingTextAreaQuestion.vue";
+    import OnboardingMultiSelectQuestion from "~/src/modules/Onboarding/components/questions/OnboardingMultiSelectQuestion.vue";
+    import OnboardingDateQuestion from "~/src/modules/Onboarding/components/questions/OnboardingDateQuestion.vue";
     import type {Question} from "~/src/modules/Onboarding/types/OnboardingQuestion";
     import {useOnboardingStore} from "~/src/modules/Onboarding/stores/onboardingStore";
 
@@ -11,7 +11,7 @@
     const props = defineProps<{
         question: Question,
         total: number,
-        step: number
+        step: number,
     }>();
 
     const {question, step, total} = toRefs(props);
@@ -21,7 +21,7 @@
         switch (question.value.type) {
             case 'text': return OnboardingTextQuestion
             case 'date': return OnboardingDateQuestion
-            case 'multi': return OnboardingMultiSelectQuestion
+            case 'multi': return OnboardingMultiSelectQuestion  // should accept `options` as param
             default: return OnboardingTextAreaQuestion
         }
     });
@@ -39,5 +39,6 @@
       @update:modelValue="onboardingStore.setAnswer($event)"
       :step="step"
       :total="total"
+      v-bind="question.type === 'multi' && { options: question.options }"
   />
 </template>

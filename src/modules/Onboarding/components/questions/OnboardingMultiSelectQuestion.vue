@@ -4,7 +4,8 @@
     const props = defineProps<{
         modelValue: string[] | string,
         total: number,
-        step: number
+        step: number,
+        options: string[] | undefined,
     }>();
 
     const emit = defineEmits(['update:modelValue']);
@@ -15,7 +16,7 @@
       set: (newValue: string[]) => emit('update:modelValue', newValue)
     });
 
-    const options = ["option1", "option2", "option3", "option4", "option5", "option6"];
+    // const options = ?
 
     function addOption(item: string) {
       const newValue = [...value.value, item]
@@ -48,7 +49,7 @@
       >
         <p
             class="px-3 py-1 bg-gray-400 text-white rounded-full"
-           v-if="!value.includes(option)"
+            v-if="!value.includes(option)"
         >
           {{option}}
         </p>
@@ -70,6 +71,12 @@
         class="bg-black text-white px-24 py-3 rounded-lg disabled:bg-gray-400"
     >
       next
+    </button>
+
+    <button
+      @click="onboardingStore.reset"
+    >
+      reset
     </button>
   </div>
 </template>

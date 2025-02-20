@@ -17,7 +17,8 @@
   {
     "question": "what project types do you mostly work on?",
     "type": "multi",
-    "key": "project_types"
+    "key": "project_types",
+    "options": ["option1", "option2", "option3"]
   },
   {
     "question": "have anything else you want to share with us?",

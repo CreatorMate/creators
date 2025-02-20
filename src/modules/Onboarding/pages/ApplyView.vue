@@ -2,7 +2,7 @@
     import {useAccountState} from "~/src/utils/Auth/AccountState";
     import {onMounted} from "vue";
     import {AccountStatus} from "~/src/utils/SupabaseTypes";
-    import OnboardingQuestion from "~/src/modules/Onboarding/components/OnboardingQuestion.vue";
+    import OnboardingQuestion from "~/src/modules/Onboarding/components/questions/OnboardingQuestion.vue";
     import {useOnboardingStore} from "~/src/modules/Onboarding/stores/onboardingStore";
     import ProgressBar from "~/src/components/Core/ProgressBar.vue";
 
