@@ -1,22 +1,20 @@
 <script setup lang='ts'>
-    import {useOnboardingStore} from "~/src/modules/Onboarding/stores/onboardingStore";
+    import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+    import type { MultiChoiceQuestion } from "~/src/modules/Onboarding/types/OnboardingQuestion";
 
     const props = defineProps<{
-        modelValue: string[] | string,
-        total: number,
-        step: number,
-        options: string[] | undefined,
+        question: MultiChoiceQuestion;
+        modelValue?: string | string[];
     }>();
 
     const emit = defineEmits(['update:modelValue']);
+
     const onboardingStore = useOnboardingStore()
 
     const value = computed<string[]>({
       get: () => Array.isArray(props.modelValue) ? props.modelValue : [],
       set: (newValue: string[]) => emit('update:modelValue', newValue)
     });
-
-    // const options = ?
 
     function addOption(item: string) {
       const newValue = [...value.value, item]
@@ -45,7 +43,7 @@
     <div class="flex flex-wrap gap-2">
       <div
           @click="addOption(option)"
-          v-for="option of options"
+          v-for="option of question.options"
       >
         <p
             class="px-3 py-1 bg-gray-400 text-white rounded-full"

@@ -1,9 +1,9 @@
 <script setup lang='ts'>
-    import {useAccountState} from "~/src/utils/Auth/AccountState";
-    import {onMounted} from "vue";
-    import {AccountStatus} from "~/src/utils/SupabaseTypes";
-    import OnboardingQuestion from "~/src/modules/Onboarding/components/questions/OnboardingQuestion.vue";
-    import {useOnboardingStore} from "~/src/modules/Onboarding/stores/onboardingStore";
+    import { useAccountState } from "~/src/utils/Auth/AccountState";
+    import { onMounted } from "vue";
+    import { AccountStatus } from "~/src/utils/SupabaseTypes";
+    import QuestionRenderer from "~/src/modules/Onboarding/components/questions/QuestionRenderer.vue";
+    import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
     import ProgressBar from "~/src/components/Core/ProgressBar.vue";
 
     const accountState = useAccountState()
@@ -29,6 +29,7 @@
           onboardingStore.reset()
           router.push('/')
         }
+
       // retrieve past answers from local storage
       onboardingStore.hydrate()
     })
@@ -40,13 +41,14 @@
             <img alt="creatormate-logo" class="h-5" src="/logo-light.svg">total
         </nav>
         <ProgressBar
+            class="progress-bar"
             :step="onboardingStore.currentStep"
             :total="onboardingStore.totalSteps"
         />
         <div class="flex flex-grow justify-center px-6">
             <div class="w-[850px] max-w-full mt-20 ">
 
-                <OnboardingQuestion
+                <QuestionRenderer
                     :question="onboardingStore.currentQuestion"
                     :step="onboardingStore.currentStep"
                     :total="onboardingStore.totalSteps"

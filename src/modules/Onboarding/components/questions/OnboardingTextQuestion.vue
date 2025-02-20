@@ -1,10 +1,10 @@
 <script setup lang='ts'>
     import {useOnboardingStore} from "~/src/modules/Onboarding/stores/onboardingStore";
+    import type {TextQuestion} from "~/src/modules/Onboarding/types/OnboardingQuestion";
 
     const props = defineProps<{
-        modelValue: string,
-        total: number,
-        step: number
+        question: TextQuestion;
+        modelValue: string;
     }>();
 
     const emit = defineEmits(['update:modelValue']);
