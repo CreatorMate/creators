@@ -39,5 +39,8 @@
   },
   "overrides": {
     "vue": "latest"
+  },
+  "devDependencies": {
+    "prettier": "3.5.2"
   }
 }

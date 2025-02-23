@@ -1,41 +1,42 @@
-<script setup lang='ts'>
-    import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-    import type { DateQuestion } from "~/src/modules/Onboarding/types/OnboardingQuestion";
+<script setup lang="ts">
+import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+import type { DateQuestion } from "~/src/modules/Onboarding/types/OnboardingQuestion";
 
-    const props = defineProps<{
-        question: DateQuestion;
-        modelValue: string;
-    }>();
+const props = defineProps<{
+  question: DateQuestion;
+  modelValue: string;
+}>();
 
-    const emit = defineEmits(['update:modelValue']);
-    const onboardingStore = useOnboardingStore();
+const emit = defineEmits(["update:modelValue"]);
+const onboardingStore = useOnboardingStore();
 
-    const value = computed({
-      get: () => props.modelValue || '',
-      set: (newValue) => emit('update:modelValue', newValue)
-    })
-
+const value = computed({
+  get: () => props.modelValue || "",
+  set: (newValue) => emit("update:modelValue", newValue),
+});
 </script>
 
 <template>
-    <input v-model="value"
-           class="w-full border rounded-lg py-3 px-3 mt-2 outline-gray-300"
-           type="date"
+  <input
+    v-model="value"
+    class="w-full border rounded-lg py-3 px-3 mt-2 outline-gray-300"
+    type="date"
+  />
+  <div class="flex gap-2 mt-6">
+    <button
+      v-if="onboardingStore.canGoBack"
+      @click="onboardingStore.back"
+      class="bg-black text-white px-24 py-3 rounded-lg"
     >
-    <div class="flex gap-2 mt-6">
-      <button
-          v-if="onboardingStore.canGoBack"
-          @click="onboardingStore.back"
-          class="bg-black text-white px-24 py-3 rounded-lg"
-      >
-        back
-      </button>
-      <button
-          v-if="!onboardingStore.isLastStep"
-          :disabled="!onboardingStore.canProceed"
-          @click="onboardingStore.next"
-              class="bg-black text-white px-24 py-3 rounded-lg disabled:bg-gray-400">
-        next
-      </button>
-    </div>
+      back
+    </button>
+    <button
+      v-if="!onboardingStore.isLastStep"
+      :disabled="!onboardingStore.canProceed"
+      @click="onboardingStore.next"
+      class="bg-black text-white px-24 py-3 rounded-lg disabled:bg-gray-400"
+    >
+      next
+    </button>
+  </div>
 </template>
