@@ -16,6 +16,7 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     const currentStep = ref(1)
     const answers = ref<Answers>({})
     const isInitialized = ref(false)
+    const errorMessage = ref('')
 
     const totalSteps = computed(() => questions.value.length)
     const currentQuestion = computed(() => questions.value[currentStep.value - 1])
@@ -57,14 +58,14 @@ export const useOnboardingStore = defineStore('onboarding', () => {
     function next() {
         if (canProceed.value && currentStep.value < totalSteps.value) {
             currentStep.value++
+            resetErrorMessage()
         }
-
-        saveState();
     }
 
     function back() {
         if (canGoBack.value) {
             currentStep.value--
+            resetErrorMessage()
         }
     }
 
@@ -125,6 +126,10 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         isInitialized.value = true;
     }
 
+    function resetErrorMessage() {
+        errorMessage.value = ''
+    }
+
     return {
         questions,
         currentStep,
@@ -134,10 +139,12 @@ export const useOnboardingStore = defineStore('onboarding', () => {
         isLastStep,
         canProceed,
         canGoBack,
+        errorMessage,
         hydrate,
         setAnswer,
         next,
         back,
-        reset
+        reset,
+        resetErrorMessage,
     }
 })
