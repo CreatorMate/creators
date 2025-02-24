@@ -1,10 +1,9 @@
 interface BaseQuestion<T extends String> {
-  id: string;
+  key: string;
   type: T;
   label: string;
   required?: boolean;
   description?: string;
-  validate?: (answer: unknown) => boolean | string;
 }
 
 export interface TextQuestion extends BaseQuestion<"text"> {
@@ -42,5 +41,13 @@ type AnswerType<T extends Question> = T extends TextQuestion
       : T extends MultiChoiceQuestion
         ? string | string[]
         : never;
+
+/**
+ * This construction automatically types answers based on its question definition
+ * based on the question's id.
+ */
+// export type Answers<Q extends readonly Question[]> = {
+//   [P in Q[number] as P["id"]]: AnswerType<P>;
+// };
 
 export type Answers = Record<string, unknown>;

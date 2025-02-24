@@ -1,4 +1,8 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+
+const onboardingStore = useOnboardingStore();
+</script>
 
 <template>
   <h1 class="text-2xl font-medium">Application: Submitted</h1>
@@ -7,9 +11,9 @@
     and accepted your profile
   </p>
   <div class="my-10">
-    <!-- TODO later: make sure local storage answers are reset when user clicks `try again` -->
     <NuxtLink
       to="/apply"
+      @click="onboardingStore.reset()"
       class="bg-black text-white px-14 py-3 rounded-lg mb-6 disabled:bg-gray-400 my-10"
       >try again
     </NuxtLink>

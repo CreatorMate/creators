@@ -6,27 +6,61 @@ import { onboardingQuestions } from "~/src/modules/Onboarding/constants/question
 // Key for local storage of answers
 const STORAGE_KEY = "onboarding-state";
 
+// Type of state that will get saved to local storage, containing the currentStep and the answers object.
 type StoredState = {
   currentStep: number;
   answers: Answers;
 };
-
+/**
+ * Store to manage the onboarding flow state and actions.
+ */
 export const useOnboardingStore = defineStore("onboarding", () => {
+  /**
+   * Array of questions for onboarding process.
+   */
   const questions = ref<Question[]>(onboardingQuestions);
+  /**
+   * Index of the current step.
+   */
   const currentStep = ref(1);
+  /**
+   * Object storing the answers keyed by the questions' key field.
+   */
   const answers = ref<Answers>({});
+  /**
+   * Boolean storing whether the state has been correctly loaded/initialized.
+   */
   const isInitialized = ref(false);
+  /**
+   * String storing an error message.
+   */
   const errorMessage = ref("");
 
+  /**
+   * Computed property that determines the total number of steps (questions).
+   */
   const totalSteps = computed(() => questions.value.length);
+  /**
+   * Computed property that determines the current question based on the current step.
+   */
   const currentQuestion = computed(
     () => questions.value[currentStep.value - 1],
   );
+  /**
+   * Computed property that determines whether the current step is the last one.
+   */
   const isLastStep = computed(() => currentStep.value === totalSteps.value);
 
+  /**
+   * Computed property that determines if the user can proceed to the next question.
+   */
   const canProceed = computed(() => {
-    const answer = answers.value[currentQuestion.value.id];
+    const answer = answers.value[currentQuestion.value.key];
     const question = currentQuestion.value;
+
+    if (question.required === false) {
+      return true;
+    }
 
     switch (question.type) {
       case "text":
@@ -47,31 +81,50 @@ export const useOnboardingStore = defineStore("onboarding", () => {
       default:
         return answer !== "";
     }
-
-    // return question.validate ? question.validate(answer) : true;
   });
 
+  /**
+   * Computer property that determines if the user can go back to the previous question.
+   */
   const canGoBack = computed(() => currentStep.value > 1);
 
-  function setAnswer(value: unknown) {
-    answers.value[currentQuestion.value.id] = value;
+  /**
+   * Sets the answer for the current question in the `answers` object.
+   *
+   * @param {unknown} value - The answer to be set. The type can vary based on the question type.
+   * TO DO: Better type casting for the `value` parameter.
+   */
+  function setAnswer(value: unknown): void {
+    answers.value[currentQuestion.value.key] = value;
   }
 
-  function next() {
+  /**
+   * Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
+   */
+  function next(): void {
     if (canProceed.value && currentStep.value < totalSteps.value) {
       currentStep.value++;
       resetErrorMessage();
     }
   }
 
-  function back() {
+  /**
+   * Decrements the current step in the quiz, if the user can go back. Also resets any error messages.
+   */
+  function back(): void {
     if (canGoBack.value) {
       currentStep.value--;
       resetErrorMessage();
     }
   }
 
-  function reset() {
+  /**
+   * Resets the user's answers by assigning the `answers` object to an empty object. Also resets the current step that
+   * the user goes back to the first question.
+   *
+   * This function also removes the user's answer from local storage.
+   */
+  function reset(): void {
     isInitialized.value = false;
     currentStep.value = 1;
     answers.value = {};
@@ -79,19 +132,25 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     isInitialized.value = true;
   }
 
-  // Loads state from local storage
+  /**
+   * Loads and parses answers state from local storage.
+   */
   function loadState(): StoredState | null {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
-      console.log("Loading saved state:", saved);
       return saved ? JSON.parse(saved) : null;
     } catch {
       return null;
     }
   }
 
-  // Save state to local storage
-  function saveState() {
+  /**
+   * Saves the current answers state to local storage.
+   *
+   * This function takes the current state of the answers (the `answers` object, as well as the `currentStep`) and
+   * saves it to local storage using a `STORAGE_KEY`.
+   */
+  function saveState(): void {
     const state: StoredState = {
       currentStep: currentStep.value,
       answers: answers.value,
@@ -104,10 +163,9 @@ export const useOnboardingStore = defineStore("onboarding", () => {
   }
 
   /**
-   * This watcher saves the current state every time an answer or the current step is
-   * changed. This may lead to performance issues. May fix later with debouncing or similar.
-   * Alternatively, if keeping the current state of the onboarding quiz is not that important,
-   * keeping track of state could be removed altogether.
+   * This watcher saves the current state every time an answer or the current step is changed. This may lead to
+   * performance issues, as every user keystroke is recorded and saved to local storage.
+   * TO DO: Improve performance using debouncing or similar.
    */
   watch(
     [answers, currentStep],
@@ -119,7 +177,13 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     { deep: true },
   );
 
-  function hydrate() {
+  /**
+   * Loads saved state from local storage and sets `answers` and `currentStep` objects to match the most recently
+   * saved state.
+   *
+   * This function is called when `ApplyView` is mounted.
+   */
+  function hydrate(): void {
     const savedState = loadState();
     if (savedState) {
       currentStep.value = savedState.currentStep;
@@ -128,7 +192,12 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     isInitialized.value = true;
   }
 
-  function resetErrorMessage() {
+  /**
+   * Resets the error message to an empty string.
+   *
+   * This function is used to clear any previous errors before performing a new operation/validation.
+   */
+  function resetErrorMessage(): void {
     errorMessage.value = "";
   }
 

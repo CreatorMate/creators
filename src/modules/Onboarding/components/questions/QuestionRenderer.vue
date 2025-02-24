@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const { question, step, total } = toRefs(props);
 
-const answer = computed(() => onboardingStore.answers[props.question.id]);
+const answer = computed(() => onboardingStore.answers[props.question.key]);
 
 // Mapping of type to component
 const componentMap = {

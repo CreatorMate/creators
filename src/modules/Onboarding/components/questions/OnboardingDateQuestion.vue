@@ -24,9 +24,9 @@ const value = computed({
   />
   <div class="flex gap-2 mt-6">
     <button
-      v-if="onboardingStore.canGoBack"
+      :disabled="!onboardingStore.canGoBack"
       @click="onboardingStore.back"
-      class="bg-black text-white px-24 py-3 rounded-lg"
+      class="bg-black text-white px-24 py-3 rounded-lg disabled:bg-gray-400"
     >
       back
     </button>

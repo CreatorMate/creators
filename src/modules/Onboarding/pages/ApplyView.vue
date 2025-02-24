@@ -8,6 +8,7 @@ import ProgressBar from "~/src/components/Core/ProgressBar.vue";
 import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
 
 const accountState = useAccountState();
+``;
 const onboardingStore = useOnboardingStore();
 const router = useRouter();
 
@@ -90,6 +91,14 @@ onMounted(() => {
           >
             finish
           </button>
+          <!--
+          <button
+            @click="onboardingStore.reset()"
+            class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"
+          >
+            reset
+          </button>
+          -->
         </div>
       </div>
     </div>

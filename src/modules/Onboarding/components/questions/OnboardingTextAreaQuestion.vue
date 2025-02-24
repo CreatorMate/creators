@@ -23,9 +23,9 @@ const value = computed({
     type="text"
   ></textarea>
   <button
-    v-if="onboardingStore.canGoBack"
+    :disabled="!onboardingStore.canGoBack"
     @click="onboardingStore.back"
-    class="bg-black text-white px-24 py-3 rounded-lg mt-6 mr-2"
+    class="bg-black text-white px-24 py-3 rounded-lg mt-6 mr-2 :disabled:bg-gray-400"
   >
     back
   </button>
