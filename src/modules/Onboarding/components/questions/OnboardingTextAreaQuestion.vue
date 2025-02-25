@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-import type { TextAreaQuestion } from "~/src/modules/Onboarding/types/OnboardingQuestion";
+import type {
+  AnswerType,
+  TextAreaQuestion,
+} from "~/src/modules/Onboarding/types/OnboardingQuestion";
 
 const props = defineProps<{
   question: TextAreaQuestion;
@@ -12,7 +15,8 @@ const onboardingStore = useOnboardingStore();
 
 const value = computed({
   get: () => props.modelValue || "",
-  set: (newValue) => emit("update:modelValue", newValue),
+  set: (newValue: AnswerType<TextAreaQuestion>) =>
+    emit("update:modelValue", newValue),
 });
 </script>
 

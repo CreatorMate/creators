@@ -8,7 +8,6 @@ import ProgressBar from "~/src/components/Core/ProgressBar.vue";
 import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
 
 const accountState = useAccountState();
-``;
 const onboardingStore = useOnboardingStore();
 const router = useRouter();
 

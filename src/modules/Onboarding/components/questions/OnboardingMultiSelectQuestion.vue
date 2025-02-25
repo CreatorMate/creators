@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-import type { MultiChoiceQuestion } from "~/src/modules/Onboarding/types/OnboardingQuestion";
+import type {
+  AnswerType,
+  MultiChoiceQuestion,
+} from "~/src/modules/Onboarding/types/OnboardingQuestion";
 
 const props = defineProps<{
   question: MultiChoiceQuestion;
@@ -17,12 +20,14 @@ const value = computed<string[]>({
 });
 
 function addOption(item: string) {
-  const newValue = [...value.value, item];
+  const newValue: AnswerType<MultiChoiceQuestion> = [...value.value, item];
   emit("update:modelValue", newValue);
 }
 
 function removeOption(item: string) {
-  const newValue = value.value.filter((option) => option !== item);
+  const newValue: AnswerType<MultiChoiceQuestion> = value.value.filter(
+    (option) => option !== item,
+  );
   emit("update:modelValue", newValue);
 }
 </script>

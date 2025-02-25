@@ -36,7 +36,7 @@ const questionComponent = computed(() => componentMap[props.question.type]);
   <p class="mt-2 font-medium">question: {{ step }} of {{ total }}</p>
 
   <component
-    :is="questionComponent"
+    :is="questionComponent as any"
     :question="question"
     :model-value="answer"
     @update:model-value="onboardingStore.setAnswer($event)"

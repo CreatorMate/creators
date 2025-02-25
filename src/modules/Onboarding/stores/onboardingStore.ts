@@ -1,6 +1,10 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import type { Answers, Question } from "../types/OnboardingQuestion";
+import type {
+  Answers,
+  AnswerType,
+  Question,
+} from "../types/OnboardingQuestion";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
 
 // Key for local storage of answers
@@ -9,7 +13,7 @@ const STORAGE_KEY = "onboarding-state";
 // Type of state that will get saved to local storage, containing the currentStep and the answers object.
 type StoredState = {
   currentStep: number;
-  answers: Answers;
+  answers: Answers<readonly Question[]>;
 };
 /**
  * Store to manage the onboarding flow state and actions.
@@ -26,7 +30,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
   /**
    * Object storing the answers keyed by the questions' key field.
    */
-  const answers = ref<Answers>({});
+  const answers = ref<Answers<readonly Question[]>>({});
   /**
    * Boolean storing whether the state has been correctly loaded/initialized.
    */
@@ -94,7 +98,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
    * @param {unknown} value - The answer to be set. The type can vary based on the question type.
    * TO DO: Better type casting for the `value` parameter.
    */
-  function setAnswer(value: unknown): void {
+  function setAnswer(value: AnswerType<Question>): void {
     answers.value[currentQuestion.value.key] = value;
   }
 

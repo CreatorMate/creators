@@ -32,12 +32,12 @@ export type Question =
   | DateQuestion
   | MultiChoiceQuestion;
 
-type AnswerType<T extends Question> = T extends TextQuestion
+export type AnswerType<T extends Question> = T extends TextQuestion
   ? string
   : T extends TextAreaQuestion
     ? string
     : T extends DateQuestion
-      ? Date
+      ? string
       : T extends MultiChoiceQuestion
         ? string | string[]
         : never;
@@ -46,8 +46,8 @@ type AnswerType<T extends Question> = T extends TextQuestion
  * This construction automatically types answers based on its question definition
  * based on the question's id.
  */
-// export type Answers<Q extends readonly Question[]> = {
-//   [P in Q[number] as P["id"]]: AnswerType<P>;
-// };
+export type Answers<Q extends readonly Question[]> = {
+  [P in Q[number] as P["key"]]: AnswerType<P>;
+};
 
-export type Answers = Record<string, unknown>;
+// export type Answers = Record<string, unknown>;

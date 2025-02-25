@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-import type { DateQuestion } from "~/src/modules/Onboarding/types/OnboardingQuestion";
+import type {
+  AnswerType,
+  DateQuestion,
+} from "~/src/modules/Onboarding/types/OnboardingQuestion";
 
 const props = defineProps<{
   question: DateQuestion;
@@ -12,7 +15,8 @@ const onboardingStore = useOnboardingStore();
 
 const value = computed({
   get: () => props.modelValue || "",
-  set: (newValue) => emit("update:modelValue", newValue),
+  set: (newValue: AnswerType<DateQuestion>) =>
+    emit("update:modelValue", newValue),
 });
 </script>
 
