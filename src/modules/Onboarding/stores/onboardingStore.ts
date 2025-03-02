@@ -1,10 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import type {
-  Answers,
-  AnswerType,
-  Question,
-} from "../types/OnboardingQuestion";
+import type { Answers, FieldType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
 
 // Key for local storage of answers
@@ -13,7 +9,7 @@ const STORAGE_KEY = "onboarding-state";
 // Type of state that will get saved to local storage, containing the currentStep and the answers object.
 type StoredState = {
   currentStep: number;
-  answers: Answers<readonly Question[]>;
+  answers: Answers;
 };
 /**
  * Store to manage the onboarding flow state and actions.
@@ -23,18 +19,22 @@ export const useOnboardingStore = defineStore("onboarding", () => {
    * Array of questions for onboarding process.
    */
   const questions = ref<Question[]>(onboardingQuestions);
+
   /**
    * Index of the current step.
    */
   const currentStep = ref(1);
+
   /**
    * Object storing the answers keyed by the questions' key field.
    */
-  const answers = ref<Answers<readonly Question[]>>({});
+  const answers = ref<Answers>({});
+
   /**
    * Boolean storing whether the state has been correctly loaded/initialized.
    */
   const isInitialized = ref(false);
+
   /**
    * String storing an error message.
    */
@@ -44,47 +44,57 @@ export const useOnboardingStore = defineStore("onboarding", () => {
    * Computed property that determines the total number of steps (questions).
    */
   const totalSteps = computed(() => questions.value.length);
+
   /**
    * Computed property that determines the current question based on the current step.
    */
   const currentQuestion = computed(
     () => questions.value[currentStep.value - 1],
   );
+
   /**
    * Computed property that determines whether the current step is the last one.
    */
   const isLastStep = computed(() => currentStep.value === totalSteps.value);
 
   /**
-   * Computed property that determines if the user can proceed to the next question.
+   * Computed property that determines if thfield of questionFieldse user can proceed to the next question.
+   * TODO: Change logic to handle fields. Maybe always allow user to go forward, but display an error message if some fields are not validated
    */
   const canProceed = computed(() => {
     const answer = answers.value[currentQuestion.value.key];
     const question = currentQuestion.value;
+    const questionFields = question.fields;
 
-    if (question.required === false) {
-      return true;
+    return true;
+
+    for (const field of questionFields) {
+      return field.required === false;
     }
 
-    switch (question.type) {
-      case "text":
-        return !(answer === undefined || answer === "");
-      case "date":
-        // Handle dates
-        try {
-          const dateValue = new Date(answer as string);
-          return !isNaN(dateValue.getTime());
-        } catch {
-          return false;
-        }
-      case "multi-choice":
-        // Handle arrays
-        return Array.isArray(answer) && answer.length > 0;
-      case "textarea":
-        return true;
-      default:
-        return answer !== "";
-    }
+    // if (question.required === false) {
+    //   return true;
+    // }
+    //
+    // switch (question.type) {
+    //   case "text":
+    //     return !(answer === undefined || answer === "");
+    //   case "date":
+    //     // Handle dates
+    //     try {
+    //       const dateValue = new Date(answer as string);
+    //       return !isNaN(dateValue.getTime());
+    //     } catch {
+    //       return false;
+    //     }
+    //   case "multi-choice":
+    //     // Handle arrays
+    //     return Array.isArray(answer) && answer.length > 0;
+    //   case "textarea":
+    //     return true;
+    //   default:
+    //     return answer !== "";
+    // }
   });
 
   /**
@@ -94,12 +104,17 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
   /**
    * Sets the answer for the current question in the `answers` object.
-   *
-   * @param {unknown} value - The answer to be set. The type can vary based on the question type.
-   * TO DO: Better type casting for the `value` parameter.
    */
-  function setAnswer(value: AnswerType<Question>): void {
-    answers.value[currentQuestion.value.key] = value;
+  function setAnswer(fieldKey: string, value: FieldType): void {
+    const questionKey = currentQuestion.value.key;
+
+    // Initialize the answer object for this question if it doesn't exist
+    if (!answers.value[questionKey]) {
+      answers.value[questionKey] = {};
+    }
+
+    // Set the field value
+    answers.value[questionKey][fieldKey] = value;
   }
 
   /**
@@ -169,7 +184,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
   /**
    * This watcher saves the current state every time an answer or the current step is changed. This may lead to
    * performance issues, as every user keystroke is recorded and saved to local storage.
-   * TO DO: Improve performance using debouncing or similar.
+   * TODO: Improve performance using debouncing or similar.
    */
   watch(
     [answers, currentStep],
@@ -192,6 +207,13 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     if (savedState) {
       currentStep.value = savedState.currentStep;
       answers.value = savedState.answers;
+    } else {
+      // Initialize empty answer objects for all questions
+      questions.value.forEach((question) => {
+        if (!answers.value[question.key]) {
+          answers.value[question.key] = {};
+        }
+      });
     }
     isInitialized.value = true;
   }

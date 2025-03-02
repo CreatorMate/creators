@@ -65,23 +65,22 @@ onMounted(() => {
     >
       <LoadingSpinner color="#D9D9D9" :size="40" :large="true" />
     </div>
+
     <div v-else>
       <ProgressBar
         class="progress-bar"
         :step="onboardingStore.currentStep"
         :total="onboardingStore.totalSteps"
       />
+
       <div class="flex flex-grow justify-center px-6">
         <div class="w-[850px] max-w-full mt-20">
           <span v-if="onboardingStore.errorMessage !== ''" class="text-red-600">
             {{ onboardingStore.errorMessage }}
           </span>
 
-          <QuestionRenderer
-            :question="onboardingStore.currentQuestion"
-            :step="onboardingStore.currentStep"
-            :total="onboardingStore.totalSteps"
-          />
+          <QuestionRenderer :question="onboardingStore.currentQuestion" />
+
           <button
             v-if="onboardingStore.isLastStep"
             :disabled="!onboardingStore.canProceed"

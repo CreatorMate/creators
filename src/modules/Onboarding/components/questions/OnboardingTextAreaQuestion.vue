@@ -3,7 +3,7 @@ import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingSt
 import type {
   AnswerType,
   TextAreaQuestion,
-} from "~/src/modules/Onboarding/types/OnboardingQuestion";
+} from "~/src/modules/Onboarding/types/onboardingTypes";
 
 const props = defineProps<{
   question: TextAreaQuestion;
