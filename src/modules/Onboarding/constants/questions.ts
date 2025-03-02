@@ -3,7 +3,7 @@ import type { Question } from "~/src/modules/Onboarding/types/onboardingTypes";
 // TODO: think about whether questions should be here or on the backend
 export const onboardingQuestions: Question[] = [
   {
-    key: "name",
+    key: "name_question",
     label: "what is your name?",
     required: true,
     fields: [
@@ -24,7 +24,7 @@ export const onboardingQuestions: Question[] = [
     ],
   },
   {
-    key: "date_of_birth",
+    key: "date_of_birth_question",
     label: "what is your birth date?",
     required: true,
     fields: [
@@ -36,35 +36,60 @@ export const onboardingQuestions: Question[] = [
       },
     ],
   },
-  // {
-  //   key: "based_in",
-  //   label: "where are you based?",
-  //   type: "text",
-  //   required: true,
-  // },
-  // {
-  //   key: "work_types",
-  //   label: "what do you do?",
-  //   type: "multi-choice",
-  //   options: [
-  //     "director",
-  //     "filmmaker",
-  //     "gaffer",
-  //     "lighting technician",
-  //     "drone operator",
-  //     "editor",
-  //     "colorist",
-  //     "motion graphics artist",
-  //     "vfx artist",
-  //     "production designer",
-  //     "scriptwriter / screenwriter",
-  //     "set designer",
-  //     "behind-the-scenes (bts) photographer",
-  //     "behind-the-scenes (bts) videographer",
-  //   ],
-  //   required: true,
-  //   // TODO: implement limit (3) for how many choices user can make here
-  // },
+  {
+    key: "based_in_question",
+    label: "where are you based?",
+    required: true,
+    fields: [
+      {
+        key: "based_in",
+        type: "text",
+        label: "location",
+        required: true,
+        placeholder: "place",
+      },
+    ],
+  },
+  {
+    key: "work_types_question",
+    label: "what do you do?",
+    description:
+      "(choose up to three roles that best describe your work in video production)",
+    required: true,
+    fields: [
+      {
+        key: "work_types_search",
+        type: "text",
+        label: "search for your role or select from the list",
+        icon: "/icons/search.svg",
+        required: false,
+        placeholder: "search",
+      },
+      {
+        key: "work_types",
+        type: "multi-choice",
+        label: "",
+        options: [
+          "director",
+          "filmmaker",
+          "gaffer",
+          "lighting technician",
+          "drone operator",
+          "editor",
+          "colorist",
+          "motion graphics artist",
+          "vfx artist",
+          "production designer",
+          "scriptwriter / screenwriter",
+          "set designer",
+          "behind-the-scenes (bts) photographer",
+          "behind-the-scenes (bts) videographer",
+        ],
+        minChoices: 1,
+        maxChoices: 3,
+      },
+    ],
+  },
   // {
   //   key: "project_types",
   //   label: "what types of projects do you usually work on?",

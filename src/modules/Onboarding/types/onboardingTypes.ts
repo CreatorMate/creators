@@ -24,6 +24,8 @@ export interface TextField extends BaseField<"text"> {
   maxLength?: number;
   // Placeholder for text field, if applicable
   placeholder?: string;
+  // Text field icon
+  icon?: string;
 }
 
 /**
@@ -43,6 +45,8 @@ export interface DateField extends BaseField<"date"> {
 export interface MultiChoiceField extends BaseField<"multi-choice"> {
   // Options user can choose, either a single option or an array of options
   options: string | string[];
+  // Minimum number of choices user can make
+  minChoices?: number;
   // Maximum number of choices user can make
   maxChoices?: number;
 }
