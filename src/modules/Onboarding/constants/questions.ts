@@ -54,17 +54,18 @@ export const onboardingQuestions: Question[] = [
     key: "work_types_question",
     label: "what do you do?",
     description:
-      "(choose up to three roles that best describe your work in video production)",
+      "(choose up to three roles that best describe your work in video production)\nsearch for your role or select" +
+      " from the list",
     required: true,
     fields: [
-      {
-        key: "work_types_search",
-        type: "text",
-        label: "search for your role or select from the list",
-        icon: "/icons/search.svg",
-        required: false,
-        placeholder: "search",
-      },
+      // {
+      //   key: "work_types_search",
+      //   type: "text",
+      //   label: "search for your role or select from the list",
+      //   icon: "/icons/search.svg",
+      //   required: false,
+      //   placeholder: "search",
+      // },
       {
         key: "work_types",
         type: "multi-choice",
@@ -85,6 +86,7 @@ export const onboardingQuestions: Question[] = [
           "behind-the-scenes (bts) photographer",
           "behind-the-scenes (bts) videographer",
         ],
+        search: true,
         minChoices: 1,
         maxChoices: 3,
       },

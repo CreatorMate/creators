@@ -43,12 +43,14 @@ export interface DateField extends BaseField<"date"> {
  * also have a `maxChoices` attribute representing the maximum number of options user can select.
  */
 export interface MultiChoiceField extends BaseField<"multi-choice"> {
-  // Options user can choose, either a single option or an array of options
-  options: string | string[];
+  // Options user can choose
+  options: string[];
   // Minimum number of choices user can make
   minChoices?: number;
   // Maximum number of choices user can make
   maxChoices?: number;
+  // If set to `true`, the multi choice field will have a search bar
+  search?: boolean;
 }
 
 /**

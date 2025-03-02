@@ -27,7 +27,10 @@ const fieldMap = {
 <template>
   <h1 class="text-2xl font-medium">Application: Started</h1>
   <p class="text-[#8D8D8D] font-medium mt-2">{{ props.question.label }}</p>
-  <p v-if="props.question.description" class="text-[#8D8D8D] font-medium mt-2">
+  <p
+    v-if="props.question.description"
+    class="text-[#8D8D8D] font-medium mt-2 whitespace-pre-line"
+  >
     {{ props.question.description }}
   </p>
 

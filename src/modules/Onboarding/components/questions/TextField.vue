@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import type {
-  Field,
-  Question,
-  TextField,
-} from "~/src/modules/Onboarding/types/onboardingTypes";
+import type { TextField } from "~/src/modules/Onboarding/types/onboardingTypes";
 import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 
 const props = defineProps<{
@@ -18,7 +14,7 @@ const onboardingStore = useOnboardingStore();
 // Get key of current question
 const questionKey = computed(() => onboardingStore.currentQuestion.key);
 
-// Check field has an icon
+// Check if field has an icon
 const hasIcon = computed(() => !!props.field.icon);
 
 const value = computed({
