@@ -4,7 +4,6 @@ import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingSt
 
 const props = defineProps<{
   field: TextField;
-  modelValue: string;
 }>();
 
 const { field } = toRefs(props);

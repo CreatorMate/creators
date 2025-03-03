@@ -38,25 +38,7 @@ const fieldMap = {
   <component
     v-for="field in fields"
     :key="field.key"
-    :is="fieldMap[field.type]"
+    :is="fieldMap[field.type] as any"
     :field="field"
   />
-
-  <!-- Buttons -->
-  <div class="flex">
-    <button
-      :disabled="!onboardingStore.canGoBack"
-      @click="onboardingStore.back"
-      class="bg-black text-white px-24 py-3 rounded-lg mt-6 mr-2 :disabled:bg-gray-400"
-    >
-      back
-    </button>
-    <button
-      v-if="!onboardingStore.isLastStep"
-      @click="onboardingStore.next"
-      class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"
-    >
-      next
-    </button>
-  </div>
 </template>

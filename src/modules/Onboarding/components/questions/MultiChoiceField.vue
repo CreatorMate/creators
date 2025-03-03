@@ -4,7 +4,6 @@ import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingSt
 
 const props = defineProps<{
   field: MultiChoiceField;
-  modelValue?: string[];
 }>();
 
 const onboardingStore = useOnboardingStore();
@@ -30,7 +29,7 @@ const value = computed({
     // If no value exists yet, return empty string or empty array based on field configuration
     if (currentValue === undefined) {
       // Check if field is configured to expect an array
-      return Array.isArray(props.field.options) ? [] : "";
+      return [];
     }
     // Return existing value
     return currentValue;
@@ -107,6 +106,26 @@ function clearSearch() {
     </div>
   </div>
 
+  <!-- selected options -->
+  <p class="font-medium mt-2">Selected options:</p>
+  <div class="flex flex-wrap gap-2">
+    <p
+      v-for="option in value"
+      :key="option"
+      class="px-3 py-1 bg-gray-400 text-white rounded-full cursor-pointer"
+      @click="removeOption(option as unknown as string)"
+    >
+      <!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
+      {{ option }} ×
+    </p>
+    <p
+      v-if="Array.isArray(value) && value.length === 0"
+      class="text-gray-400 italic"
+    >
+      No options selected
+    </p>
+  </div>
+
   <!-- available options-->
   <div v-if="field.options && field.options.length > 0" class="mb-4">
     <p class="font-medium">Available options:</p>
@@ -128,26 +147,6 @@ function clearSearch() {
       class="text-gray-500 mt-2 italic"
     >
       No options match your search
-    </p>
-  </div>
-
-  <!-- selected options -->
-  <p class="font-medium mt-2">Selected options:</p>
-  <div class="flex flex-wrap gap-2">
-    <p
-      v-for="option in value"
-      :key="option"
-      class="px-3 py-1 bg-gray-400 text-white rounded-full cursor-pointer"
-      @click="removeOption(option as unknown as string)"
-    >
-      <!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
-      {{ option }} ×
-    </p>
-    <p
-      v-if="Array.isArray(value) && value.length === 0"
-      class="text-gray-400 italic"
-    >
-      No options selected
     </p>
   </div>
 </template>
