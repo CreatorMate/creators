@@ -23,6 +23,7 @@ async function apply() {
 const statusMap = new Map();
 statusMap.set(AccountStatus.NEW, "Not started");
 statusMap.set(AccountStatus.IN_REVIEW, "Submitted");
+
 </script>
 
 <template>

@@ -5,14 +5,16 @@ import {appSettings} from "~/src/GlobalSettings";
 import {API} from "~/src/utils/API/API";
 
 export const useAccountState = defineStore("account", () => {
-        const user = ref<Creator | null>(null);
+        const creator = ref<Creator | null>(null);
+        const user = ref<User | null>(null);
 
         async function initialize() {
             try {
-                const result: APIResponse<Creator> = await API.ask(`/creators/me`);
+                const result: APIResponse<User> = await API.ask(`/creators/me`);
                 if (!result.success) return;
                 if (result.data) {
                     user.value = result.data;
+                    creator.value = result.data.creators[0]
                 }
             } catch (error) {
             }
@@ -26,6 +28,6 @@ export const useAccountState = defineStore("account", () => {
             });
         }
 
-        return {initialize, user, save}
+        return {initialize, user, save, creator}
     }
 )
