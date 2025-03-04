@@ -40,7 +40,7 @@ const value = computed({
     <div class="relative">
       <textarea
         v-model="value as any"
-        class="w-full border rounded-lg py-3 px-3 outline-gray-300"
+        class="w-full bg-gray-100 text-gray-700 px-5 py-5 h-[150px] rounded-md focus:outline-none"
         type="text"
         :placeholder="field.placeholder || ''"
       ></textarea>

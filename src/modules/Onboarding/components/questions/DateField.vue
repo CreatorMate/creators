@@ -32,11 +32,11 @@ const value = computed({
 </script>
 
 <template>
-  <span>{{ field.label ? field.label : "" }}</span>
+  <span class="block mb-2">{{ field.label ? field.label : "" }}</span>
 
   <input
     v-model="value"
-    class="w-full border rounded-lg py-3 px-3 mt-2 outline-gray-300"
+    class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
     type="date"
   />
 </template>

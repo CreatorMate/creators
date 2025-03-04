@@ -16,35 +16,35 @@ const { logout } = useOidcAuth();
 
 const isLoading = ref(true);
 
-async function finished() {
-  if (!accountState.user) return;
-
-  try {
-    const creator = await $fetch("/API/creators/me", {
-      method: "put",
-      body: JSON.stringify({
-        ...onboardingStore.answers,
-        status: AccountStatus.IN_REVIEW,
-      }),
-    });
-
-    accountState.user.status = AccountStatus.IN_REVIEW;
-    await router.push("/");
-  } catch (error) {
-    if (error instanceof Error) {
-      onboardingStore.errorMessage = error.message;
-    } else {
-      onboardingStore.errorMessage = "An unknown error occurred.";
-    }
-    console.error("Error updating creator:", error);
-  }
-}
+// async function finished() {
+//   if (!accountState.user) return;
+//
+//   try {
+//     const creator = await $fetch("/API/creators/me", {
+//       method: "put",
+//       body: JSON.stringify({
+//         ...onboardingStore.answers,
+//         status: AccountStatus.IN_REVIEW,
+//       }),
+//     });
+//
+//     accountState.user.status = AccountStatus.IN_REVIEW;
+//     await router.push("/");
+//   } catch (error) {
+//     if (error instanceof Error) {
+//       onboardingStore.errorMessage = error.message;
+//     } else {
+//       onboardingStore.errorMessage = "An unknown error occurred.";
+//     }
+//     console.error("Error updating creator:", error);
+//   }
+// }
 
 onMounted(() => {
-  if (accountState.user?.status == AccountStatus.ACCEPTED) {
-    onboardingStore.reset();
-    router.push("/");
-  }
+  // if (accountState.user?.status == AccountStatus.ACCEPTED) {
+  //   onboardingStore.reset();
+  //   router.push("/");
+  // }
 
   // retrieve past answers from local storage
   onboardingStore.hydrate();
@@ -87,7 +87,12 @@ onMounted(() => {
       </div>
 
       <!-- logout button -->
-      <button class="absolute right-[15%]" @click="logout()">logout</button>
+      <button
+        class="absolute right-[15%] px-5 py-2 bg-gray-100 rounded-lg"
+        @click="logout()"
+      >
+        logout
+      </button>
     </nav>
 
     <div
@@ -107,34 +112,26 @@ onMounted(() => {
           <QuestionRenderer :question="onboardingStore.currentQuestion" />
 
           <!-- Buttons -->
-          <div class="flex">
-            <button
-              v-if="!onboardingStore.isLastStep"
-              @click="onboardingStore.next"
-              :disabled="!onboardingStore.canProceed"
-              class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"
-            >
-              next
-            </button>
-          </div>
-
-          <button
-            v-if="onboardingStore.isLastStep"
-            :disabled="!onboardingStore.canProceed"
-            @click="finished"
-            class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"
-          >
-            finish
-          </button>
+          <!--          <button-->
+          <!--            v-if="onboardingStore.isLastStep"-->
+          <!--            :disabled="!onboardingStore.canProceed"-->
+          <!--            @click="finished"-->
+          <!--            class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"-->
+          <!--          >-->
+          <!--            finish-->
+          <!--          </button>-->
         </div>
       </div>
     </div>
 
     <!-- next button -->
     <button
-      class="absolute bottom-4 right-4 bg-black text-white px-4 py-2 rounded"
+      class="absolute bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400"
+      v-if="!onboardingStore.isLastStep"
+      @click="onboardingStore.next"
+      :disabled="!onboardingStore.canProceed"
     >
-      Next
+      next
     </button>
   </section>
 </template>

@@ -43,7 +43,7 @@ const value = computed({
     <div class="relative">
       <input
         v-model="value"
-        class="w-full border rounded-lg py-3 px-3 bg-gray-50 outline-none focus:outline-none"
+        class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
         :class="{ 'pl-10': hasIcon }"
         type="text"
         :placeholder="field.placeholder || ''"

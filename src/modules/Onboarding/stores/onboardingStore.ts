@@ -49,7 +49,9 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     return questionFields.every((field) => {
       // Only validate fields marked as required.
       if (field.required === true) {
-        const answer = answers.value[question.key][field.key];
+        const answerGroup = answers.value[question.key] ?? {};
+        const answer = answerGroup[field.key];
+
         switch (field.type) {
           case "text":
             return answer !== undefined && answer !== "";
