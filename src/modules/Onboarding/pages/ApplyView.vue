@@ -99,7 +99,7 @@ onMounted(() => {
 
     <div v-else>
       <div class="relative flex flex-grow justify-center px-6">
-        <div class="w-[850px] max-w-full mt-20">
+        <div class="w-[636px] max-w-full mt-20 gap-5">
           <span v-if="onboardingStore.errorMessage !== ''" class="text-red-600">
             {{ onboardingStore.errorMessage }}
           </span>

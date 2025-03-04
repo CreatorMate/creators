@@ -12,8 +12,6 @@ interface BaseField<T> {
   label?: string;
   // Dictates whether field requires user input
   required?: boolean;
-  // Field validation function, if applicable
-  validate?: (value: T) => boolean;
 }
 
 /**
