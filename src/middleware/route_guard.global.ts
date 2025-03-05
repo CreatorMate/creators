@@ -19,10 +19,10 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         await accountStore.initialize();
     }
     if(accountStore.user) {
-        if((accountStore.user.status == AccountStatus.NEW || accountStore.user.status == AccountStatus.IN_REVIEW)  && (to.path !== '/submission/status' && to.path !== '/apply' )) {
+        if((accountStore.creator?.status == AccountStatus.NEW || accountStore.creator?.status == AccountStatus.IN_REVIEW)  && (to.path !== '/submission/status' && to.path !== '/apply' && to.path !== '/oauth/link-instagram')) {
             return navigateTo('/submission/status');
         }
-        if((accountStore.user.status == AccountStatus.ACCEPTED || accountStore.user.status == AccountStatus.INVITED)  && (to.path !== '/submission/status' && to.path !== '/apply' ) && !accountStore.user.linked) {
+        if((accountStore.creator?.status== AccountStatus.ACCEPTED || accountStore.creator?.status== AccountStatus.INVITED)  && (to.path !== '/submission/status' && to.path !== '/apply' && to.path !== '/oauth/link-instagram' ) && !accountStore.instagramAccount) {
             return navigateTo('/submission/status');
         }
     }

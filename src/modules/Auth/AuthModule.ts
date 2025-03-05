@@ -12,6 +12,11 @@ export class AuthModule extends BaseModule {
             name: 'logout',
             file: '@/src/modules/Auth/pages/Logout.vue',
             path: '/auth/auth0/logout'
+        },
+        {
+            name: 'link-instagram',
+            file: '@/src/modules/Auth/pages/link-instagram.vue',
+            path: '/oauth/link-instagram'
         }
     ]
 }

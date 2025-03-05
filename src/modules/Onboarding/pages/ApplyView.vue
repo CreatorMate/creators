@@ -25,7 +25,8 @@ async function finished() {
       }),
     });
 
-    accountState.user.status = AccountStatus.IN_REVIEW;
+    //@ts-ignore
+    accountState.creator.status = AccountStatus.IN_REVIEW;
     await router.push("/");
   } catch (error) {
     if (error instanceof Error) {
@@ -38,7 +39,7 @@ async function finished() {
 }
 
 onMounted(() => {
-  if (accountState.user?.status == AccountStatus.ACCEPTED) {
+  if (accountState.creator?.status == AccountStatus.ACCEPTED) {
     onboardingStore.reset();
     router.push("/");
   }
@@ -79,7 +80,7 @@ onMounted(() => {
             {{ onboardingStore.errorMessage }}
           </span>
 
-          <QuestionRenderer :question="onboardingStore.currentQuestion" />
+          <QuestionRenderer v-if="onboardingStore.currentQuestion" :question="onboardingStore.currentQuestion" />
 
           <button
             v-if="onboardingStore.isLastStep"

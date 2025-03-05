@@ -4,7 +4,7 @@ export type User = {
     brand_id: number,
     picture: string,
     full_name: string,
-    creators: Creator[],
+    creators: Creator,
 }
 
 export type Creator = {
@@ -18,8 +18,16 @@ export type Creator = {
     created_at: string,
     date_of_birth: string,
     additional_info: string,
-    tik_tok: string
-    linked: boolean
+    tik_tok: string,
+    linked: boolean,
+    instagram_accounts: InstagramAccount|null
+}
+
+export type InstagramAccount = {
+    id: number,
+    expires_at: string,
+    token: string,
+    instagram_id: string
 }
 
 export enum AccountStatus {

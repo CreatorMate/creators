@@ -69,6 +69,8 @@ export default defineNuxtConfig({
     PHYLLO_KEY: process.env.PHYLLO_KEY,
     public: {
       BASE_URL: process.env.BASE_URL,
+      META_CLIENT_ID: process.env.META_CLIENT_ID,
+      META_REDIRECT_URL: process.env.META_REDIRECT_URL,
     },
   },
   image: {

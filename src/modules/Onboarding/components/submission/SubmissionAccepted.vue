@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRouter } from "vue-router";
 import PhylloButton from "~/src/components/Core/PhylloButton.vue";
+import LinkInstagramButton from "~/src/components/Core/LinkInstagramButton.vue";
 
 const router = useRouter();
 
@@ -23,7 +24,7 @@ async function linked() {
   </div>
 
   <div class="my-10">
-    <PhylloButton :linked>connect instagram</PhylloButton>
+    <LinkInstagramButton :linked>connect instagram</LinkInstagramButton>
   </div>
 
   <p>join and work with our creators & brands</p>

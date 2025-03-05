@@ -16,7 +16,7 @@
 
     onBeforeMount(async () => {
         if (!accountState.user) return;
-        const brandsRequest: APIResponse = await API.ask(`/creator/${accountState.user.id}/brands`);
+        const brandsRequest: APIResponse = await API.ask(`/creator/${accountState.creator?.id}/brands`);
 
         if(!brandsRequest.success) return;
 
@@ -24,10 +24,16 @@
     });
 
     async function check(checked: boolean, brandId: number) {
-        await API.ask(`/creator/${accountState.user?.id}/brand`, 'PUT', {
+        await API.ask(`/creator/${accountState.creator?.id}/brand`, 'PUT', {
             accepted: checked,
             brand_id: brandId
         });
+    }
+
+    async function deleteIg() {
+        await API.ask('/creators/ig', 'DELETE')
+        await accountState.initialize();
+        await router.replace('/submission/status');
     }
 </script>
 
@@ -52,7 +58,12 @@
                         <ToggleButton @toggle="check($event, brand.id)" :is-on="brand.accepted"/>
                     </div>
                 </div>
-                <PhylloButton class="mt-auto mb-14">change instagram</PhylloButton>
+                <button
+                    @click="deleteIg"
+                    class="bg-black text-white px-14 py-3 rounded-lg disabled:bg-gray-400 mt-auto mb-12"
+                >
+                    remove instagram account.
+                </button>
             </div>
         </div>
     </section>

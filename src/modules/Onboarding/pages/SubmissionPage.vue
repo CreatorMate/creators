@@ -36,16 +36,16 @@ statusMap.set(AccountStatus.IN_REVIEW, "Submitted");
     <div class="flex flex-grow justify-center px-6">
       <div class="w-[850px] max-w-full mt-20">
         <SubmissionNotStarted
-          v-if="accountState.user?.status == AccountStatus.NEW"
+          v-if="accountState.creator?.status == AccountStatus.NEW"
         />
         <SubmissionSubmitted
-          v-if="accountState.user?.status == AccountStatus.IN_REVIEW"
+          v-if="accountState.creator?.status == AccountStatus.IN_REVIEW"
         />
         <SubmissionAccepted
-          v-if="accountState.user?.status == AccountStatus.ACCEPTED"
+          v-if="accountState.creator?.status == AccountStatus.ACCEPTED"
         />
         <SubmissionInvited
-          v-if="accountState.user?.status == AccountStatus.INVITED"
+          v-if="accountState.creator?.status == AccountStatus.INVITED"
         />
       </div>
     </div>

@@ -15,7 +15,8 @@ export class GetSelfEndpoint extends Endpoint {
             if (!newUser) return errorResponse(context, "Something went wrong while creating the new creator");
             const newCreator = await this.createCreator(newUser);
             user = await this.getUser(honoUser);
-        } else if(user.creators.length === 0) {
+            //@ts-ignore
+        } else if(user?.creators === null) {
             const newCreator = await this.createCreator(user);
             user = await this.getUser(honoUser);
         }
@@ -48,7 +49,11 @@ export class GetSelfEndpoint extends Endpoint {
         return this.prismaClient.users.findFirst({
             where: {external_id: honoUser.sub, email: honoUser.email},
             include: {
-                creators: true
+                creators: {
+                    include: {
+                        instagram_accounts: true
+                    }
+                }
             }
         });
     }

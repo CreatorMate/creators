@@ -13,6 +13,8 @@ const props = defineProps<{
   question: Question;
 }>();
 
+console.log(props)
+
 const fields = computed(() => props.question.fields);
 
 const fieldMap = {
