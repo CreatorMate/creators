@@ -9,11 +9,9 @@ interface BaseField<T> {
   // Generic answer type
   type: T;
   // Answer field label
-  label: string;
+  label?: string;
   // Dictates whether field requires user input
   required?: boolean;
-  // Field validation function, if applicable
-  validate?: (value: T) => boolean;
 }
 
 /**
@@ -69,7 +67,8 @@ export interface TextAreaField extends BaseField<"textarea"> {
  */
 export interface SocialMediaField extends BaseField<"social"> {
   // Type of social media
-  socialMedia?: string;
+  socialMediaName: string;
+  socialMediaIcon: string;
 }
 
 /**

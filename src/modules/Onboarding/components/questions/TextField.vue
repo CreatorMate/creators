@@ -4,7 +4,6 @@ import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingSt
 
 const props = defineProps<{
   field: TextField;
-  modelValue: string;
 }>();
 
 const { field } = toRefs(props);
@@ -44,7 +43,7 @@ const value = computed({
     <div class="relative">
       <input
         v-model="value"
-        class="w-full border rounded-lg py-3 px-3 outline-gray-300"
+        class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
         :class="{ 'pl-10': hasIcon }"
         type="text"
         :placeholder="field.placeholder || ''"

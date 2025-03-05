@@ -11,100 +11,87 @@ type StoredState = {
   currentStep: number;
   answers: Answers;
 };
-/**
- * Store to manage the onboarding flow state and actions.
- */
+
+// Store to manage the onboarding flow state and actions.
 export const useOnboardingStore = defineStore("onboarding", () => {
-  /**
-   * Array of questions for onboarding process.
-   */
+  // Array of questions for onboarding process.
   const questions = ref<Question[]>(onboardingQuestions);
-
-  /**
-   * Index of the current step.
-   */
+  // Index of the current step.
   const currentStep = ref(1);
-
-  /**
-   * Object storing the answers keyed by the questions' key field.
-   */
+  // Object storing the answers keyed by the questions' key field.
   const answers = ref<Answers>({});
-
-  /**
-   * Boolean storing whether the state has been correctly loaded/initialized.
-   */
+  // Boolean storing whether the state has been correctly loaded/initialized.
   const isInitialized = ref(false);
-
-  /**
-   * String storing an error message.
-   */
+  // String storing an error message.
   const errorMessage = ref("");
+  // Computed property that determines the total number of steps (questions).
 
-  /**
-   * Computed property that determines the total number of steps (questions).
-   */
   const totalSteps = computed(() => questions.value.length);
 
-  /**
-   * Computed property that determines the current question based on the current step.
-   */
+  // Computed property that determines the current question based on the current step.
   const currentQuestion = computed(
     () => questions.value[currentStep.value - 1],
   );
 
-  /**
-   * Computed property that determines whether the current step is the last one.
-   */
+  // Computed property that determines whether the current step is the last one.
   const isLastStep = computed(() => currentStep.value === totalSteps.value);
 
-  /**
-   * Computed property that determines if thfield of questionFieldse user can proceed to the next question.
-   * TODO: Change logic to handle fields. Maybe always allow user to go forward, but display an error message if some fields are not validated
-   */
+  // Computed property that determines if user can proceed to the next question.
+  // TODO: simplify this and add validation logic to external utils funcitons
   const canProceed = computed(() => {
-    const answer = answers.value[currentQuestion.value.key];
     const question = currentQuestion.value;
     const questionFields = question.fields;
-
-    return true;
-
-    for (const field of questionFields) {
-      return field.required === false;
+    // If question is not required
+    if (question.required === false) {
+      return true;
     }
+    // If question is required, loop through its fields and check whether the user input is valid
+    return questionFields.every((field) => {
+      // Only validate fields marked as required.
+      if (field.required === true) {
+        const answerGroup = answers.value[question.key] ?? {};
+        const answer = answerGroup[field.key];
 
-    // if (question.required === false) {
-    //   return true;
-    // }
-    //
-    // switch (question.type) {
-    //   case "text":
-    //     return !(answer === undefined || answer === "");
-    //   case "date":
-    //     // Handle dates
-    //     try {
-    //       const dateValue = new Date(answer as string);
-    //       return !isNaN(dateValue.getTime());
-    //     } catch {
-    //       return false;
-    //     }
-    //   case "multi-choice":
-    //     // Handle arrays
-    //     return Array.isArray(answer) && answer.length > 0;
-    //   case "textarea":
-    //     return true;
-    //   default:
-    //     return answer !== "";
-    // }
+        switch (field.type) {
+          case "text":
+            return answer !== undefined && answer !== "";
+          case "date":
+            try {
+              const dateValue = new Date(answer as string);
+              return !isNaN(dateValue.getTime());
+            } catch {
+              return false;
+            }
+          case "multi-choice":
+            // Check that answer is an array
+            if (!Array.isArray(answer)) return false;
+            // Keep track of number of choices made by user
+            const count = answer.length;
+            // If a minimum number of choices is specified, ensure the count meets it.
+            if (field.minChoices !== undefined && count < field.minChoices) {
+              return false;
+            }
+            // If a maximum number of choices is specified, ensure the count does not exceed it.
+            return !(
+              field.maxChoices !== undefined && count > field.maxChoices
+            );
+
+          case "textarea":
+            return answer !== undefined && answer !== "";
+          default:
+            // For unrecognized types, either decide to fail validation or skip.
+            return true;
+        }
+      }
+      // If the field is not required, consider it valid.
+      return true;
+    });
   });
 
-  /**
-   * Computer property that determines if the user can go back to the previous question.
-   */
+  // Computer property that determines if the user can go back to the previous question.
   const canGoBack = computed(() => currentStep.value > 1);
 
-  /**
-   * Sets the answer for the current question in the `answers` object.
-   */
+  // Sets the answer for the current question in the `answers` object.
   function setAnswer(fieldKey: string, value: FieldType): void {
     const questionKey = currentQuestion.value.key;
 
@@ -117,9 +104,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     answers.value[questionKey][fieldKey] = value;
   }
 
-  /**
-   * Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
-   */
+  // Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
   function next(): void {
     if (canProceed.value && currentStep.value < totalSteps.value) {
       currentStep.value++;
@@ -127,9 +112,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     }
   }
 
-  /**
-   * Decrements the current step in the quiz, if the user can go back. Also resets any error messages.
-   */
+  // Decrements the current step in the quiz, if the user can go back. Also resets any error messages.
   function back(): void {
     if (canGoBack.value) {
       currentStep.value--;
@@ -151,9 +134,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
     isInitialized.value = true;
   }
 
-  /**
-   * Loads and parses answers state from local storage.
-   */
+  // Loads and parses answers state from local storage.
   function loadState(): StoredState | null {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);

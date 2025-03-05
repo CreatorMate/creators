@@ -27,38 +27,23 @@ const fieldMap = {
 </script>
 
 <template>
-  <h1 class="text-2xl font-medium">Application: Started</h1>
-  <p class="text-[#8D8D8D] font-medium mt-2">{{ props.question.label }}</p>
-  <p
-    v-if="props.question.description"
-    class="text-[#8D8D8D] font-medium mt-2 whitespace-pre-line"
-  >
-    {{ props.question.description }}
-  </p>
-
-  <!-- Answer fields -->
-  <component
-    v-for="field in fields"
-    :key="field.key"
-    :is="fieldMap[field.type]"
-    :field="field"
-  />
-
-  <!-- Buttons -->
-  <div class="flex">
-    <button
-      :disabled="!onboardingStore.canGoBack"
-      @click="onboardingStore.back"
-      class="bg-black text-white px-24 py-3 rounded-lg mt-6 mr-2 :disabled:bg-gray-400"
+  <div>
+    <p class="text-2xl mb-[20px] font-semibold">{{ props.question.label }}</p>
+    <!--  <p class="text-[#8D8D8D] font-medium mt-2">{{ props.question.label }}</p>-->
+    <p
+      v-if="props.question.description"
+      class="text-[#8D8D8D] font-medium mt-2 whitespace-pre-line"
     >
-      back
-    </button>
-    <button
-      v-if="!onboardingStore.isLastStep"
-      @click="onboardingStore.next"
-      class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"
-    >
-      next
-    </button>
+      {{ props.question.description }}
+    </p>
+
+    <!-- Answer fields -->
+    <component
+      v-for="field in fields"
+      :key="field.key"
+      :is="fieldMap[field.type] as any"
+      :field="field"
+      class="mb-[24px]"
+    />
   </div>
 </template>

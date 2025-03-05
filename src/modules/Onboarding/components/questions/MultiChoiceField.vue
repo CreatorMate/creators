@@ -4,7 +4,6 @@ import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingSt
 
 const props = defineProps<{
   field: MultiChoiceField;
-  modelValue?: string[];
 }>();
 
 const onboardingStore = useOnboardingStore();
@@ -30,7 +29,7 @@ const value = computed({
     // If no value exists yet, return empty string or empty array based on field configuration
     if (currentValue === undefined) {
       // Check if field is configured to expect an array
-      return Array.isArray(props.field.options) ? [] : "";
+      return [];
     }
     // Return existing value
     return currentValue;
@@ -85,8 +84,8 @@ function clearSearch() {
       <input
         v-model="searchQuery"
         type="text"
-        placeholder="Search options..."
-        class="w-full px-3 py-2 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+        placeholder="search"
+        class="w-full pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
       />
       <div
         class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
@@ -107,15 +106,35 @@ function clearSearch() {
     </div>
   </div>
 
+  <!-- selected options -->
+  <p class="font-medium mt-2">selected options:</p>
+  <div class="flex flex-wrap gap-2">
+    <p
+      v-for="option in value"
+      :key="option"
+      class="px-3 py-1 bg-gray-500 text-white rounded-full cursor-pointer"
+      @click="removeOption(option as unknown as string)"
+    >
+      <!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
+      {{ option }} ×
+    </p>
+    <p
+      v-if="Array.isArray(value) && value.length === 0"
+      class="text-gray-400 italic"
+    >
+      no options selected
+    </p>
+  </div>
+
   <!-- available options-->
   <div v-if="field.options && field.options.length > 0" class="mb-4">
-    <p class="font-medium">Available options:</p>
+    <p class="font-medium">available options:</p>
     <div class="flex flex-wrap gap-2 mt-2">
       <button
         v-for="option in filteredOptions"
         :key="option"
         @click="addOption(option)"
-        class="px-3 py-1 bg-gray-200 hover:bg-gray-300 rounded-full transition"
+        class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
         :class="{
           'opacity-50': Array.isArray(value) && value.includes(option),
         }"
@@ -127,27 +146,7 @@ function clearSearch() {
       v-if="filteredOptions.length === 0 && searchQuery"
       class="text-gray-500 mt-2 italic"
     >
-      No options match your search
-    </p>
-  </div>
-
-  <!-- selected options -->
-  <p class="font-medium mt-2">Selected options:</p>
-  <div class="flex flex-wrap gap-2">
-    <p
-      v-for="option in value"
-      :key="option"
-      class="px-3 py-1 bg-gray-400 text-white rounded-full cursor-pointer"
-      @click="removeOption(option as unknown as string)"
-    >
-      <!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
-      {{ option }} ×
-    </p>
-    <p
-      v-if="Array.isArray(value) && value.length === 0"
-      class="text-gray-400 italic"
-    >
-      No options selected
+      no options match your search
     </p>
   </div>
 </template>
