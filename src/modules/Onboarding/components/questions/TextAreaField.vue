@@ -11,7 +11,7 @@
 	const onboardingStore = useOnboardingStore();
 
 	// Get key of current question
-	const questionKey = computed(() => onboardingStore.currentQuestion.key);
+	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
 
 	const value = computed({
 		get: () => {

@@ -10,7 +10,7 @@
 
 	const onboardingStore = useOnboardingStore();
 
-	const questionKey = computed(() => onboardingStore.currentQuestion.key);
+	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
 </script>
 
 <template>
