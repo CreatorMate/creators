@@ -1,4 +1,3 @@
-// src/modules/Onboarding/utils/validateQuestion.ts
 import type { Question, Answers } from "../types/onboardingTypes";
 
 /**

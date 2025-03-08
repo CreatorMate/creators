@@ -16,29 +16,30 @@
 
 	const isLoading = ref(true);
 
-	// async function finished() {
-	//   if (!accountState.user) return;
-	//
-	//   try {
-	//     const creator = await $fetch("/API/creators/me", {
-	//       method: "put",
-	//       body: JSON.stringify({
-	//         ...onboardingStore.answers,
-	//         status: AccountStatus.IN_REVIEW,
-	//       }),
-	//     });
-	//
-	//     accountState.user.status = AccountStatus.IN_REVIEW;
-	//     await router.push("/");
-	//   } catch (error) {
-	//     if (error instanceof Error) {
-	//       onboardingStore.errorMessage = error.message;
-	//     } else {
-	//       onboardingStore.errorMessage = "An unknown error occurred.";
-	//     }
-	//     console.error("Error updating creator:", error);
-	//   }
-	// }
+	// TODO: Fix this..
+	async function submitApplication() {
+		if (!accountState.creator) return;
+
+		try {
+			const creator = await $fetch("/API/creators/me", {
+				method: "put",
+				body: JSON.stringify({
+					...onboardingStore.answers,
+					status: AccountStatus.IN_REVIEW,
+				}),
+			});
+
+			accountState.creator.status = AccountStatus.IN_REVIEW;
+			await router.push("/");
+		} catch (error) {
+			if (error instanceof Error) {
+				onboardingStore.errorMessage = error.message;
+			} else {
+				onboardingStore.errorMessage = "An unknown error occurred.";
+			}
+			console.error("Error updating creator:", error);
+		}
+	}
 
 	onMounted(() => {
 		// If creator has been accepted, route to home page
@@ -148,13 +149,11 @@
 		</button>
 
 		<!-- submit button -->
-		<!-- TODO: check if fits Figma (no internet when editing this) -->
-		<!-- TODO: only allow submission if TOS are accepted -->
-		<!-- TODO: add @click=submitAnswers() -->
 		<button
 			class="absolute bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400"
 			v-if="onboardingStore.isReviewStep"
 			:disabled="!onboardingStore.isTOSAccepted"
+			@click="submitApplication()"
 		>
 			submit application
 		</button>
