@@ -48,14 +48,20 @@
 	const filteredOptions = computed(() => {
 		if (!props.field.options) return [];
 
+		// Ensure value.value is treated as an array
+		const selectedOptions = Array.isArray(value.value) ? value.value : [];
+
 		if (!searchQuery.value.trim()) {
-			return props.field.options;
+			// Exclude selected options
+			return props.field.options.filter(
+				(option) => !selectedOptions.includes(option),
+			);
 		}
 
 		const query = searchQuery.value.toLowerCase();
-		return props.field.options.filter((option) =>
-			option.toLowerCase().includes(query),
-		);
+		return props.field.options
+			.filter((option) => option.toLowerCase().includes(query))
+			.filter((option) => !selectedOptions.includes(option)); // Exclude selected options
 	});
 
 	function addOption(item: string) {
@@ -113,7 +119,7 @@
 			<p
 				v-for="option in value"
 				:key="option"
-				class="px-3 py-1 bg-gray-700 text-white rounded-full cursor-pointer"
+				class="px-3 py-1 bg-black text-white rounded-full cursor-pointer"
 				@click="removeOption(option as unknown as string)"
 			>
 				<!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
@@ -137,9 +143,6 @@
 				:key="option"
 				@click="addOption(option)"
 				class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
-				:class="{
-					'opacity-50': Array.isArray(value) && value.includes(option),
-				}"
 			>
 				{{ option }}
 			</button>

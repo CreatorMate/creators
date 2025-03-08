@@ -31,7 +31,11 @@
 				</p>
 			</div>
 
-			<button class="px-5 py-2 bg-gray-100 rounded-lg">connect</button>
+			<button
+				class="px-5 py-2 bg-gray-100 rounded-lg hover:bg-[#E9E9E9] active:bg-[#D6D6D6] transition-all duration-150"
+			>
+				connect
+			</button>
 		</div>
 	</div>
 </template>

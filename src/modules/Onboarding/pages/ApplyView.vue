@@ -41,10 +41,11 @@
 	// }
 
 	onMounted(() => {
-		// if (accountState.user?.status == AccountStatus.ACCEPTED) {
-		//   onboardingStore.reset();
-		//   router.push("/");
-		// }
+		// If creator has been accepted, route to home page
+		if (accountState.creator?.status == AccountStatus.ACCEPTED) {
+			onboardingStore.reset();
+			router.push("/");
+		}
 
 		// retrieve past answers from local storage
 		onboardingStore.hydrate();
@@ -89,15 +90,24 @@
 
 			<!-- save state button -->
 			<!-- TODO: add functionality to this button -->
-			<button class="absolute right-[22%]">save & exit</button>
+			<div class="absolute right-[23%]">
+				<button
+					class="flex items-center gap-2 px-5 py-2 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
+				>
+					save & exit
+				</button>
+			</div>
 
 			<!-- logout button -->
-			<button
-				class="absolute right-[15%] px-5 py-2 bg-gray-100 rounded-lg"
-				@click="logout()"
-			>
-				logout
-			</button>
+			<div class="absolute right-[15%]">
+				<button
+					class="flex items-center gap-2 px-8 py-2 bg-gray-100 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
+					@click="logout()"
+				>
+					<span>logout</span>
+					<img src="/icons/logout.svg" alt="" class="w-4 h-4 text-gray-400" />
+				</button>
+			</div>
 		</nav>
 		<!-------------------------------------------------------------------------------->
 
@@ -129,7 +139,7 @@
 		<!-- next button -->
 		<!-- TODO: fix positioning so its always on the bottom right of the screen (even if user scrolls) -->
 		<button
-			class="absolute bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400"
+			class="absolute bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424]"
 			v-if="!onboardingStore.isLastStep"
 			@click="onboardingStore.next"
 			:disabled="!onboardingStore.canProceed"
@@ -146,7 +156,7 @@
 			v-if="onboardingStore.isReviewStep"
 			:disabled="!onboardingStore.isTOSAccepted"
 		>
-			submit
+			submit application
 		</button>
 	</section>
 </template>

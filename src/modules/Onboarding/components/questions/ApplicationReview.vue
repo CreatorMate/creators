@@ -15,7 +15,13 @@
 				const displayKey = formatDisplayKey(originalKey);
 				// Map through each field, get the corresponding answer, filter out empty strings, and join them with a comma.
 				const answerText = question.fields
-					.map((field) => answers[originalKey]?.[field.key] ?? "")
+					.map((field) => {
+						let answer = answers[originalKey]?.[field.key] ?? "";
+						if (Array.isArray(answer)) {
+							answer = answer.join(", ");
+						}
+						return answer;
+					})
 					.filter((text) => text !== "")
 					.join(", ");
 
