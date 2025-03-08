@@ -26,12 +26,8 @@
 					class="text-black text-[16px] font-medium leading-[24px] tracking-[-0.32px]"
 				>
 					{{ field.socialMediaName }}
-					<span
-						v-if="field.required"
-						class="text-black text-[16px] font-medium leading-[24px] tracking-[-0.32px]"
-					>
-						(required)</span
-					>
+					<span v-if="field.required"> (required)</span>
+					<span v-else class="opacity-50"> (optional) </span>
 				</p>
 			</div>
 

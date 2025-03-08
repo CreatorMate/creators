@@ -107,28 +107,30 @@
 	</div>
 
 	<!-- selected options -->
-	<p class="font-medium mt-2">selected options:</p>
-	<div class="flex flex-wrap gap-2">
-		<p
-			v-for="option in value"
-			:key="option"
-			class="px-3 py-1 bg-gray-500 text-white rounded-full cursor-pointer"
-			@click="removeOption(option as unknown as string)"
-		>
-			<!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
-			{{ option }} ×
-		</p>
-		<p
-			v-if="Array.isArray(value) && value.length === 0"
-			class="text-gray-400 italic"
-		>
-			no options selected
-		</p>
+	<div class="mb-2">
+		<p class="mt-2 mb-2 font-medium">selected options:</p>
+		<div class="flex flex-wrap gap-2">
+			<p
+				v-for="option in value"
+				:key="option"
+				class="px-3 py-1 bg-gray-700 text-white rounded-full cursor-pointer"
+				@click="removeOption(option as unknown as string)"
+			>
+				<!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
+				{{ option }} ×
+			</p>
+			<p
+				v-if="Array.isArray(value) && value.length === 0"
+				class="text-gray-400 italic"
+			>
+				no options selected
+			</p>
+		</div>
 	</div>
 
 	<!-- available options-->
 	<div v-if="field.options && field.options.length > 0" class="mb-4">
-		<p class="font-medium">available options:</p>
+		<p class="mb-2 font-medium">available options:</p>
 		<div class="flex flex-wrap gap-2 mt-2">
 			<button
 				v-for="option in filteredOptions"

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import type { Answers, FieldType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
-import { validateQuestion } from "~/src/modules/Onboarding/utils/validators";
+import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingUtils";
 import { STORAGE_KEY } from "@supabase/auth-js/src/lib/constants";
 import type { StoredState } from "~/src/modules/Onboarding/utils/onboardingStorage";
 import {
@@ -27,6 +27,12 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// String storing an error message.
 	const errorMessage = ref("");
 
+	// Boolean storing whether the TOS have been accepted.
+	const isTOSAccepted = ref(false);
+
+	// Flag storing if user came from review page.
+	const cameFromReview = ref(false);
+
 	// Computed property that determines the total number of steps (questions + application review page).
 	const totalSteps = computed(() => questions.value.length + 1);
 
@@ -34,7 +40,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	const currentQuestion = computed(() => {
 		return currentStep.value <= questions.value.length
 			? questions.value[currentStep.value - 1]
-			: null;
+			: null; // return null object after finishing all questions
 	});
 
 	// Computed property that determines whether the current step is the review step.
@@ -56,8 +62,14 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		return validateQuestion(currentQuestion.value, answers.value);
 	});
 
-	// Computer property that determines if the user can go back to the previous question.
-	const canGoBack = computed(() => currentStep.value > 1);
+	/**
+	 * Computed property that determines if the user can go back to the previous question.
+	 * The user can go back to the previous question either if the value of `currentStep` is greater than 1, or if
+	 * the user came from the review page.
+	 */
+	const canGoBack = computed(
+		() => currentStep.value > 1 || cameFromReview.value,
+	);
 
 	// Sets the answer for the current question in the `answers` object.
 	function setAnswer(fieldKey: string, value: FieldType): void {
@@ -88,10 +100,18 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 	// Decrements the current step in the quiz, if the user can go back. Also resets any error messages.
 	function back(): void {
-		if (canGoBack.value) {
-			currentStep.value--;
+		if (!canGoBack.value) return;
+
+		// If user came from review, jump back to review step and reset flag
+		if (cameFromReview.value) {
+			currentStep.value = totalSteps.value;
+			cameFromReview.value = false;
 			resetErrorMessage();
+			return;
 		}
+
+		currentStep.value--;
+		resetErrorMessage();
 	}
 
 	// Jump to specific question.
@@ -100,6 +120,12 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 			currentStep.value = stepIndex;
 			resetErrorMessage();
 		}
+	}
+
+	// Returns the step number for the given question key, or null if not found.
+	function getQuestionStepByKey(key: string): number {
+		const index = questions.value.findIndex((question) => question.key === key);
+		return index + 1;
 	}
 
 	/**
@@ -163,17 +189,20 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		currentStep,
 		answers,
 		totalSteps,
+		cameFromReview,
 		currentQuestion,
 		isLastStep,
 		isReviewStep,
 		canProceed,
 		canGoBack,
 		errorMessage,
+		isTOSAccepted,
 		hydrate,
 		jumpToQuestion,
 		setAnswer,
 		next,
 		back,
 		reset,
+		getQuestionStepByKey,
 	};
 });

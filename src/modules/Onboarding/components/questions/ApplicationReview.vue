@@ -1,9 +1,34 @@
 <script setup lang="ts">
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import { formatDisplayKey } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const onboardingStore = useOnboardingStore();
 
 	const accepted = ref(false);
+	const questions = onboardingStore.questions;
+	const answers = onboardingStore.answers;
+
+	const flattenedAnswers = computed(() => {
+		return questions.reduce(
+			(acc, question) => {
+				const originalKey = question.key;
+				const displayKey = formatDisplayKey(originalKey);
+				// Map through each field, get the corresponding answer, filter out empty strings, and join them with a comma.
+				const answerText = question.fields
+					.map((field) => answers[originalKey]?.[field.key] ?? "")
+					.filter((text) => text !== "")
+					.join(", ");
+
+				// Store both the original key and the answer text.
+				acc[displayKey] = {
+					originalKey,
+					answer: answerText,
+				};
+				return acc;
+			},
+			{} as Record<string, { originalKey: string; answer: string }>,
+		);
+	});
 </script>
 
 <template>
@@ -12,31 +37,36 @@
 		<p class="text-2xl mb-[20px] font-semibold">review of application</p>
 
 		<!-- answer fields -->
-		<div>
-			<div class="mb-3">
-				<span> test label </span>
-				<div
-					class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
+		<div
+			v-for="(value, displayKey) in flattenedAnswers"
+			:key="value.originalKey"
+			class="mb-2"
+		>
+			<span class="font-medium">{{ displayKey }}</span>
+			<div
+				class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
+			>
+				<span>{{ value.answer }}</span>
+				<button
+					@click="
+						() => {
+							onboardingStore.cameFromReview = true;
+							// Use the original key for navigation
+							onboardingStore.jumpToQuestion(
+								onboardingStore.getQuestionStepByKey(value.originalKey),
+							);
+						}
+					"
+					class="underline"
 				>
-					<span>test</span>
-					<a href="#" class="underline">link</a>
-				</div>
-			</div>
-
-			<div class="mb-3">
-				<span> test label </span>
-				<div
-					class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
-				>
-					<span>test</span>
-					<a href="#" class="underline">link</a>
-				</div>
+					edit
+				</button>
 			</div>
 		</div>
 
 		<!-- TOS checkbox -->
 		<div class="mt-3">
-			<input type="checkbox" id="tos" v-model="accepted" />
+			<input type="checkbox" id="tos" v-model="onboardingStore.isTOSAccepted" />
 			<label for="tos" class="mx-2">
 				i accept creatormate's
 				<a href="/#" class="underline">privacy policy</a>

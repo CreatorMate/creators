@@ -46,3 +46,11 @@ export function validateQuestion(
 		}
 	});
 }
+
+/**
+ * Helper function to format a key for display.
+ * E.g., "name_question" -> "name"
+ */
+export function formatDisplayKey(key: string): string {
+	return key.replace("_question", "").replace(/_/g, " ");
+}

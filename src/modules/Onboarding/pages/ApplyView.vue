@@ -4,7 +4,6 @@
 	import { AccountStatus } from "~/src/utils/SupabaseTypes";
 	import QuestionRenderer from "~/src/modules/Onboarding/components/questions/QuestionRenderer.vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import ProgressBar from "~/src/components/Core/ProgressBar.vue";
 	import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
 	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
@@ -57,6 +56,7 @@
 
 <template>
 	<section class="flex screen-size flex-col">
+		<!-------------------------------------------------------------------------------->
 		<!-- navbar -->
 		<nav
 			class="relative w-full flex items-center text-center px-12 py-6 justify-center"
@@ -67,7 +67,7 @@
 				:disabled="!onboardingStore.canGoBack"
 				@click="onboardingStore.back"
 			>
-				back
+				{{ onboardingStore.cameFromReview ? "back to review" : "back" }}
 			</button>
 
 			<!-- wrapper for logo and progress indicator -->
@@ -87,6 +87,10 @@
 				/>
 			</div>
 
+			<!-- save state button -->
+			<!-- TODO: add functionality to this button -->
+			<button class="absolute right-[22%]">save & exit</button>
+
 			<!-- logout button -->
 			<button
 				class="absolute right-[15%] px-5 py-2 bg-gray-100 rounded-lg"
@@ -95,6 +99,7 @@
 				logout
 			</button>
 		</nav>
+		<!-------------------------------------------------------------------------------->
 
 		<div
 			v-if="isLoading"
@@ -112,25 +117,17 @@
 
 					<ApplicationReview v-if="onboardingStore.isReviewStep" />
 
+					<!-- TODO: add transition between questions -->
 					<QuestionRenderer
 						v-else-if="onboardingStore.currentQuestion"
 						:question="onboardingStore.currentQuestion"
 					/>
-
-					<!-- Buttons -->
-					<!--          <button-->
-					<!--            v-if="onboardingStore.isLastStep"-->
-					<!--            :disabled="!onboardingStore.canProceed"-->
-					<!--            @click="finished"-->
-					<!--            class="bg-black text-white px-24 py-3 rounded-lg mt-6 disabled:bg-gray-400"-->
-					<!--          >-->
-					<!--            finish-->
-					<!--          </button>-->
 				</div>
 			</div>
 		</div>
 
 		<!-- next button -->
+		<!-- TODO: fix positioning so its always on the bottom right of the screen (even if user scrolls) -->
 		<button
 			class="absolute bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400"
 			v-if="!onboardingStore.isLastStep"
@@ -138,6 +135,18 @@
 			:disabled="!onboardingStore.canProceed"
 		>
 			next
+		</button>
+
+		<!-- submit button -->
+		<!-- TODO: check if fits Figma (no internet when editing this) -->
+		<!-- TODO: only allow submission if TOS are accepted -->
+		<!-- TODO: add @click=submitAnswers() -->
+		<button
+			class="absolute bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400"
+			v-if="onboardingStore.isReviewStep"
+			:disabled="!onboardingStore.isTOSAccepted"
+		>
+			submit
 		</button>
 	</section>
 </template>

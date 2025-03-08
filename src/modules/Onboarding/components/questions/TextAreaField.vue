@@ -35,7 +35,9 @@
 
 <template>
 	<div class="mb-4">
-		<span class="block mb-2">{{ field.label ? field.label : "" }}</span>
+		<span class="block mb-2 font-medium">{{
+			field.label ? field.label : ""
+		}}</span>
 
 		<div class="relative">
 			<textarea
