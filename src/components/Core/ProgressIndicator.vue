@@ -13,7 +13,7 @@
 </script>
 
 <template>
-	<section class="w-full">
+	<section class="flex justify-center w-full">
 		<div class="flex items-center gap-1">
 			<div
 				v-for="index in total"

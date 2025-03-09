@@ -3,20 +3,23 @@
 </script>
 
 <template>
-	<div class="mt-10 ml-10">
+	<div class="mt-10 ml-0 lg:ml-10 mx-4 lg:mx-0">
 		<div class="space-y-4">
 			<p class="text-2xl font-[400]">application status:</p>
 
 			<p class="text-[28px] font-[500]">under review.</p>
 		</div>
 
-		<ProgressIndicator
-			:step="2"
-			:total="3"
-			:height="5"
-			:width="25"
-			class="mt-7 mb-4 ml-[-1px]"
-		/>
+		<!-- progress indicator -->
+		<div class="w-fit">
+			<ProgressIndicator
+				:step="1"
+				:total="3"
+				:height="5"
+				:width="25"
+				class="mt-7 mb-4 ml-[-1px]"
+			/>
+		</div>
 
 		<p class="text-[#151515] font-[400] mt-2 w-[408px] max-w-full">
 			thank you for applying! we appreciate your interest in joining our curated

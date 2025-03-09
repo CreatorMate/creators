@@ -119,7 +119,7 @@
 			<p
 				v-for="option in value"
 				:key="option"
-				class="px-3 py-1 bg-black text-white rounded-full cursor-pointer"
+				class="px-3 py-1 bg-gray-700 text-white rounded-full cursor-pointer"
 				@click="removeOption(option as unknown as string)"
 			>
 				<!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
