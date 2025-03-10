@@ -1,5 +1,5 @@
 import type {Endpoint} from "~/src/api/utils/Endpoint";
-import type {Controller} from "~/src/api/utils/Controller";
+import type {BaseController} from "~/src/api/utils/BaseController";
 import type {Hono} from "hono";
 import {CreatorsController} from "~/src/api/modules/creators/CreatorsController";
 import {GetSelfEndpoint} from "~/src/api/modules/creators/GetSelf/GetSelfEndpoint";
@@ -9,11 +9,13 @@ import {AddAccountEndpoint} from "~/src/api/modules/accounts/AddAccount/AddAccou
 import {DeleteAccountEndpoint} from "~/src/api/modules/accounts/DeleteAccount/DeleteAccountEndpoint";
 import {GetCreatorBrandsEndpoint} from "~/src/api/modules/creators/GetCreatorBrands/GetCreatorBrandsEndpoint";
 import {UpdateCreatorBrandsEndpoint} from "~/src/api/modules/creators/UpdateCreatorBrands/UpdateCreatorBrandsEndpoint";
+import {CreatorAPIController} from "~/src/api/modules/creator_api/CreatorAPIController";
 
 
 export function initializeHonoRouter(app: Hono) {
-    const controllers: Controller[] = [
-        new CreatorsController(app)
+    const controllers: BaseController[] = [
+        new CreatorsController(app),
+        new CreatorAPIController(app)
     ];
 
     const endpoints: Endpoint[] = [

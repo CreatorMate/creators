@@ -13,7 +13,9 @@ export class GetCreatorBrandsEndpoint extends Endpoint {
             where: {id: id}
         });
 
-        if(!creator) return errorResponse(context, 'no creator with this id', 404);
+        if(!creator) return errorResponse(context, 'no creator with this id', '', 404);
+
+        //@todo fetch all brands, and set the existing brand deals to true, when a user sets one back to false, remove the row.
 
         const creator_brands = await this.prismaClient.creator_brand.findMany({
             where: {creator_id: creator.id}

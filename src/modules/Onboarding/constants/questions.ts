@@ -1,40 +1,167 @@
-import type { Question } from "~/src/modules/Onboarding/types/OnboardingQuestion";
+import type { Question } from "~/src/modules/Onboarding/types/onboardingTypes";
 
+// TODO: think about whether questions should be here or on the backend
 export const onboardingQuestions: Question[] = [
-  {
-    key: "handle",
-    label: "first, what is your instagram handle?",
-    type: "text",
-    required: true,
-  },
-  {
-    key: "based_in",
-    label: "alright, thanks. now, where are you based?",
-    type: "text",
-    required: true,
-  },
-  {
-    key: "date_of_birth",
-    label: "great! when were you born?",
-    type: "date",
-    required: true,
-  },
-  {
-    key: "project_types",
-    label: "what project types do you mostly work on?",
-    type: "multi-choice",
-    options: ["option1", "option2", "option3"],
-    required: true,
-  },
-  {
-    key: "additional_info",
-    label: "have anything else you want to share with us?",
-    type: "textarea",
-  },
-  {
-    key: "tiktok",
-    label: "do you also have a tiktok account?",
-    type: "text",
-    required: false,
-  },
+	{
+		key: "name_question",
+		label: "what is your name?",
+		required: true,
+		fields: [
+			{
+				key: "fist_name",
+				type: "text",
+				label: "first name",
+				required: true,
+				placeholder: "name",
+			},
+			{
+				key: "last_name",
+				type: "text",
+				label: "last name",
+				required: true,
+				placeholder: "name",
+			},
+		],
+	},
+	{
+		key: "date_of_birth_question",
+		label: "what is your birth date?",
+		required: true,
+		fields: [
+			{
+				key: "date_of_birth",
+				type: "date",
+				label: "date of birth",
+				required: true,
+			},
+		],
+	},
+	{
+		key: "based_in_question",
+		label: "where are you based?",
+		required: true,
+		fields: [
+			{
+				key: "based_in",
+				type: "text",
+				label: "location",
+				required: true,
+				placeholder: "place",
+			},
+		],
+	},
+	{
+		key: "work_types_question",
+		label: "what do you do?",
+		description:
+			"(choose up to three roles that best describe your work in video production)\nsearch for your role or select" +
+			" from the list below:",
+		required: true,
+		fields: [
+			{
+				key: "work_types",
+				type: "multi-choice",
+				options: [
+					"director",
+					"filmmaker",
+					"gaffer",
+					"lighting technician",
+					"drone operator",
+					"editor",
+					"colorist",
+					"motion graphics artist",
+					"vfx artist",
+					"production designer",
+					"scriptwriter / screenwriter",
+					"set designer",
+					"behind-the-scenes (bts) photographer",
+					"behind-the-scenes (bts) videographer",
+				],
+				search: true,
+				minChoices: 1,
+				maxChoices: 3,
+				required: true,
+			},
+		],
+	},
+	{
+		key: "project_types_question",
+		label: "what types of projects do you usually work on?",
+		description:
+			"(choose as many as you like)\nsearch for a project type or select from the list below:",
+		required: true,
+		fields: [
+			{
+				key: "project_types",
+				type: "multi-choice",
+				options: [
+					"commercial video campaigns",
+					"branded content",
+					"fashion films",
+					"music videos",
+					"short films",
+					"feature films",
+					"product films / ads",
+					"documentary",
+					"social media video content",
+					"event coverage / video",
+					"green screen / vfx projects",
+					"food & beverage cinematic ads",
+					"behind-the-scenes (bts) documentation",
+					"luxury & lifestyle videos",
+					"studio shoots",
+					"interviews & talking head videos",
+					"cinematic storytelling",
+					"action / sports cinematography",
+					"automotive cinematography",
+					"drone cinematography",
+					"live performance filming",
+					"360° / vr content",
+					"slow-motion / high-speed cinematography",
+				],
+				search: true,
+				minChoices: 1,
+				required: true,
+			},
+		],
+	},
+	{
+		key: "socials_question",
+		label: "where can we see your work?",
+		fields: [
+			{
+				key: "instagram_handle",
+				type: "social",
+				socialMediaName: "instagram",
+				socialMediaIcon: "/icons/instagram.svg",
+				required: true,
+			},
+			{
+				key: "vimeo_handle",
+				type: "social",
+				socialMediaName: "vimeo",
+				socialMediaIcon: "/icons/vimeo.svg",
+				required: false,
+			},
+			{
+				key: "website",
+				type: "text",
+				label: "website",
+				placeholder: "link to website",
+				required: false,
+			},
+		],
+	},
+	{
+		key: "additional_info_question",
+		label: "is there anything else we should know?",
+		required: false,
+		fields: [
+			{
+				key: "additional_info",
+				type: "textarea",
+				placeholder: "recent client you have worked with.",
+			},
+		],
+	},
 ];

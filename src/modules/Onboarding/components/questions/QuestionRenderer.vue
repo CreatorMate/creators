@@ -1,44 +1,47 @@
 <script setup lang="ts">
-import OnboardingTextQuestion from "~/src/modules/Onboarding/components/questions/OnboardingTextQuestion.vue";
-import OnboardingTextAreaQuestion from "~/src/modules/Onboarding/components/questions/OnboardingTextAreaQuestion.vue";
-import OnboardingMultiSelectQuestion from "~/src/modules/Onboarding/components/questions/OnboardingMultiSelectQuestion.vue";
-import OnboardingDateQuestion from "~/src/modules/Onboarding/components/questions/OnboardingDateQuestion.vue";
-import type { Question } from "~/src/modules/Onboarding/types/OnboardingQuestion";
-import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import type { Question } from "~/src/modules/Onboarding/types/onboardingTypes";
+	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import TextField from "~/src/modules/Onboarding/components/questions/TextField.vue";
+	import TextAreaField from "~/src/modules/Onboarding/components/questions/TextAreaField.vue";
+	import DateField from "~/src/modules/Onboarding/components/questions/DateField.vue";
+	import MultiChoiceField from "~/src/modules/Onboarding/components/questions/MultiChoiceField.vue";
+	import SocialField from "~/src/modules/Onboarding/components/questions/SocialField.vue";
 
-const onboardingStore = useOnboardingStore();
+	const onboardingStore = useOnboardingStore();
 
-const props = defineProps<{
-  question: Question;
-  total: number;
-  step: number;
-}>();
+	const props = defineProps<{
+		question: Question;
+	}>();
 
-const { question, step, total } = toRefs(props);
+	const fields = computed(() => props.question.fields);
 
-const answer = computed(() => onboardingStore.answers[props.question.key]);
-
-// Mapping of type to component
-const componentMap = {
-  text: OnboardingTextQuestion,
-  textarea: OnboardingTextAreaQuestion,
-  date: OnboardingDateQuestion,
-  "multi-choice": OnboardingMultiSelectQuestion,
-};
-
-// Compute question component based on type
-const questionComponent = computed(() => componentMap[props.question.type]);
+	const fieldMap = {
+		text: TextField,
+		textarea: TextAreaField,
+		date: DateField,
+		"multi-choice": MultiChoiceField,
+		social: SocialField,
+	};
 </script>
 
 <template>
-  <h1 class="text-2xl font-medium">Application: Started</h1>
-  <p class="text-[#8D8D8D] font-medium mt-2">{{ question.label }}</p>
-  <p class="mt-2 font-medium">question: {{ step }} of {{ total }}</p>
+	<div>
+		<p class="text-2xl mb-[20px] font-semibold">{{ props.question.label }}</p>
+		<!--  <p class="text-[#8D8D8D] font-medium mt-2">{{ props.question.label }}</p>-->
+		<p
+			v-if="props.question.description"
+			class="text-[#8D8D8D] font-medium mt-2 whitespace-pre-line"
+		>
+			{{ props.question.description }}
+		</p>
 
-  <component
-    :is="questionComponent as any"
-    :question="question"
-    :model-value="answer"
-    @update:model-value="onboardingStore.setAnswer($event)"
-  />
+		<!-- Answer fields -->
+		<component
+			v-for="field in fields"
+			:key="field.key"
+			:is="fieldMap[field.type] as any"
+			:field="field"
+			class="mb-[24px]"
+		/>
+	</div>
 </template>

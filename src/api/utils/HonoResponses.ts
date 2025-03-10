@@ -1,4 +1,5 @@
 import type {Context} from "hono";
+import type {StatusCode} from "hono/dist/types/utils/http-status";
 
 export type APIResponse<T = any> = {
     success: true,
@@ -21,7 +22,7 @@ export function successResponse<T>(context: Context, data: any, meta: any = null
 }
 
 export function errorResponse(context: Context, error: string, message: string = '', status: number = 500) {
-    context.status(404);
+    context.status(<StatusCode>status);
     return context.json({
         success: false,
         error: error,
