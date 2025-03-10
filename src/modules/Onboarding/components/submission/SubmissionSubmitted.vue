@@ -13,7 +13,7 @@
 		<!-- progress indicator -->
 		<div class="w-fit">
 			<ProgressIndicator
-				:step="1"
+				:step="2"
 				:total="3"
 				:height="5"
 				:width="25"

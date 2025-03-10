@@ -5,7 +5,7 @@ import {AccountStatus} from "~/src/utils/SupabaseTypes";
 import {appSettings} from "~/src/GlobalSettings";
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-    if (checkUnguarded(to)) return;
+    if (checkUnguarded(to.path)) return;
     const runtimeConfig = useRuntimeConfig();
     appSettings.baseUrl = runtimeConfig.public.BASE_URL;
 

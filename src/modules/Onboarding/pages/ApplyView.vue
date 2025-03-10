@@ -15,19 +15,25 @@
 	const { logout } = useOidcAuth();
 
 	const isLoading = ref(true);
-
-	// TODO: Fix this..
 	async function submitApplication() {
 		if (!accountState.creator) return;
 
-        console.log(onboardingStore.answers)
+        const answers: any = {};
 
-        return;
+        answers.handle = 'blank_for_now';
+        answers.based_in = onboardingStore.answers.based_in_question.based_in;
+        answers.project_types = onboardingStore.answers.project_types_question.project_types;
+        answers.work_types = onboardingStore.answers.work_types_question.work_types;
+        answers.date_of_birth = onboardingStore.answers.date_of_birth_question.date_of_birth;
+        answers.first_name = onboardingStore.answers.name_question.first_name;
+        answers.last_name = onboardingStore.answers.name_question.last_name;
+        answers.additional_info = onboardingStore.answers.additional_info_question.additional_info;
+
 		try {
 			const creator = await $fetch("/API/creators/me", {
 				method: "put",
 				body: JSON.stringify({
-					...onboardingStore.answers,
+					...answers,
 					status: AccountStatus.IN_REVIEW,
 				}),
 			});
@@ -60,7 +66,7 @@
 </script>
 
 <template>
-	<section class="flex screen-size flex-col pb-10">
+	<section class="flex screen-size flex-col pb-10 overflow-x-hidden">
 		<!-- Navigation Bar -->
 		<nav
 			class="relative w-full flex items-center text-center px-12 py-6 justify-center"

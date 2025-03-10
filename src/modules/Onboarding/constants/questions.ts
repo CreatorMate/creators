@@ -8,7 +8,7 @@ export const onboardingQuestions: Question[] = [
 		required: true,
 		fields: [
 			{
-				key: "fist_name",
+				key: "first_name",
 				type: "text",
 				label: "first name",
 				required: true,
