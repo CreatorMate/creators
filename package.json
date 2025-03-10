@@ -11,6 +11,7 @@
     "start": "node .output/server/index.mjs"
   },
   "dependencies": {
+    "@ai-sdk/azure": "^1.2.1",
     "@iconify/vue": "^4.1.2",
     "@nuxt/image": "^1.8.1",
     "@nuxtjs/color-mode": "^3.5.2",
@@ -20,6 +21,7 @@
     "@prisma/client": "^5.22.0",
     "@vueuse/core": "^12.0.0",
     "@vueuse/nuxt": "^12.0.0",
+    "ai": "^4.1.54",
     "crypto": "^1.0.1",
     "dotenv": "^16.4.7",
     "esbuild": "^0.24.0",

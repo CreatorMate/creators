@@ -107,37 +107,18 @@
 
 			<!-- Action Buttons - Desktop -->
 			<div class="absolute right-[15%] hidden lg:flex space-x-2">
-				<button
+				<NuxtLink to="/submission/status"
 					class="flex items-center gap-2 px-5 py-2 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
 				>
 					save & exit
-				</button>
-
-				<button
-					class="flex items-center gap-2 px-8 py-2 bg-gray-100 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
-					@click="logout()"
-				>
-					<span>logout</span>
-					<img
-						src="/icons/logout.svg"
-						alt="logout"
-						class="w-4 h-4 text-gray-400"
-					/>
-				</button>
+				</NuxtLink>
 			</div>
 
 			<!-- Action Buttons - Mobile -->
 			<div class="absolute right-4 flex items-center space-x-2 lg:hidden">
-				<button class="flex items-center text-sm gap-2 px-3 py-2 rounded-lg">
+                <NuxtLink to="/submission/status" class="flex items-center text-sm gap-2 px-3 py-2 rounded-lg">
 					save & exit
-				</button>
-
-				<button
-					class="flex items-center bg-gray-100 p-2 rounded-lg transition-all duration-150"
-					@click="logout()"
-				>
-					<img src="/icons/logout.svg" alt="logout" class="w-4 h-4" />
-				</button>
+                </NuxtLink>
 			</div>
 		</nav>
 

@@ -4,6 +4,7 @@
     import {AccountStatus} from "~/src/utils/SupabaseTypes";
     import SubmissionNotStarted from "~/src/modules/Onboarding/components/submission/SubmissionNotStarted.vue";
     import SubmissionSubmitted from "~/src/modules/Onboarding/components/submission/SubmissionSubmitted.vue";
+    import {API} from "~/src/utils/API/API";
 
     const accountState = useAccountState();
     const {logout} = useOidcAuth();
@@ -14,11 +15,14 @@
         await router.push("/apply");
     }
 
-    onMounted(() => {
+
+    onMounted(async () => {
         // If user's application is accepted, route to home page
         if (accountState.creator?.status == AccountStatus.ACCEPTED) {
             router.push("/");
         }
+
+        const result = await API.ask('/onboarding/countries?search=amster')
     });
 </script>
 
@@ -46,15 +50,10 @@
 
                 <div class="absolute right-[15%] hidden lg:block">
                     <button
-                        class="flex items-center gap-2 px-8 py-2 bg-gray-100 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
+                        class="flex items-center p-2 transition-all duration-150"
                         @click="logout()"
                     >
-                        <span>logout</span>
-                        <img
-                            src="/icons/logout.svg"
-                            alt=""
-                            class="w-4 h-4 text-gray-400"
-                        />
+                        <img src="/icons/logout.svg" alt="Logout" class="w-4 h-4"/>
                     </button>
                 </div>
 

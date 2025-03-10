@@ -75,9 +75,9 @@
 			<input type="checkbox" id="tos" v-model="onboardingStore.isTOSAccepted" />
 			<label for="tos" class="mx-2">
 				i accept creatormate's
-				<a href="/#" class="underline">privacy policy</a>
+				<a href="https://creatormate.com/privacy-policy" target="_blank" class="underline">privacy policy</a>
 				and
-				<a href="/#" class="underline">terms of service</a>
+				<a href="https://creatormate.com/terms-of-service" target="_blank" class="underline">terms of service</a>
 			</label>
 		</div>
 	</div>

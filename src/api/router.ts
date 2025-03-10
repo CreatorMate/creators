@@ -10,6 +10,7 @@ import {DeleteAccountEndpoint} from "~/src/api/modules/accounts/DeleteAccount/De
 import {GetCreatorBrandsEndpoint} from "~/src/api/modules/creators/GetCreatorBrands/GetCreatorBrandsEndpoint";
 import {UpdateCreatorBrandsEndpoint} from "~/src/api/modules/creators/UpdateCreatorBrands/UpdateCreatorBrandsEndpoint";
 import {CreatorAPIController} from "~/src/api/modules/creator_api/CreatorAPIController";
+import {GetCitryCountryCodes} from "~/src/api/modules/onboarding/GetCitryCountryCodes";
 
 
 export function initializeHonoRouter(app: Hono) {
@@ -26,6 +27,7 @@ export function initializeHonoRouter(app: Hono) {
         new DeleteAccountEndpoint(),
         new GetCreatorBrandsEndpoint(),
         new UpdateCreatorBrandsEndpoint(),
+        new GetCitryCountryCodes(),
     ];
 
     for(const controller of controllers) {
