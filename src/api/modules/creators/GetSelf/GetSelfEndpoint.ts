@@ -10,6 +10,7 @@ export class GetSelfEndpoint extends Endpoint {
     protected async handle(context: Context) {
         const honoUser = this.getHonoUser(context);
         let user = await this.getUser(honoUser);
+        console.log(user)
         if (!user) {
             const newUser = await this.createUser(honoUser);
             if (!newUser) return errorResponse(context, "Something went wrong while creating the new creator");
@@ -40,7 +41,6 @@ export class GetSelfEndpoint extends Endpoint {
         return this.prismaClient.creators.create({
             data: {
                 user_id: user.id,
-                email: user.email
             }
         });
     }

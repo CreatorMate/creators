@@ -20,6 +20,9 @@
 	async function submitApplication() {
 		if (!accountState.creator) return;
 
+        console.log(onboardingStore.answers)
+
+        return;
 		try {
 			const creator = await $fetch("/API/creators/me", {
 				method: "put",
