@@ -35,13 +35,15 @@
 
 <template>
 	<div class="mb-4">
-		<span class="block mb-2 font-medium">{{
-			field.label ? field.label : ""
-		}}</span>
+		<span class="block mb-2 font-medium"
+			>{{ field.label ? field.label : "" }}
+			<span v-if="field.required"> (required)</span>
+			<span v-else class="opacity-50"> (optional) </span>
+		</span>
 
 		<div class="relative">
 			<textarea
-				v-model="value"
+				v-model="value as any"
 				class="w-full bg-gray-100 text-gray-700 px-5 py-5 h-[150px] rounded-md focus:outline-none"
 				type="text"
 				:placeholder="field.placeholder || ''"

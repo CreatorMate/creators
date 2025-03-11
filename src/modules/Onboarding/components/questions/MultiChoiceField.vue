@@ -16,52 +16,33 @@
 	// Check if field has a search bar
 	const hasSearchbar = computed(() => props.field.search === true);
 
-	const value = computed({
+	const value = computed<string[]>({
 		get: () => {
-			// Initialize the question's answer object if it doesn't exist
+			// Initialize answer object if it doesn't exist
 			if (!onboardingStore.answers[questionKey.value]) {
 				onboardingStore.answers[questionKey.value] = {};
 			}
-			// Return the current value or empty string/empty array depending on type
 			const currentValue =
 				onboardingStore.answers[questionKey.value][props.field.key];
-
-			// If no value exists yet, return empty string or empty array based on field configuration
-			if (currentValue === undefined) {
-				// Check if field is configured to expect an array
-				return [];
-			}
-			// Return existing value
-			return currentValue;
+			// If the current value is not an array, return an empty array
+			return Array.isArray(currentValue) ? currentValue : [];
 		},
-		set: (newValue) => {
-			// Initialize the question's answer object if it doesn't exist
+		set: (newValue: string[]) => {
 			if (!onboardingStore.answers[questionKey.value]) {
 				onboardingStore.answers[questionKey.value] = {};
 			}
-			// Update answer
 			onboardingStore.setAnswer(props.field.key, newValue);
 		},
 	});
 
 	// Filter options based on search query
-	const filteredOptions = computed(() => {
+	const displayedOptions = computed(() => {
 		if (!props.field.options) return [];
-
-		// Ensure value.value is treated as an array
-		const selectedOptions = Array.isArray(value.value) ? value.value : [];
-
-		if (!searchQuery.value.trim()) {
-			// Exclude selected options
-			return props.field.options.filter(
-				(option) => !selectedOptions.includes(option),
-			);
-		}
-
+		if (!searchQuery.value.trim()) return props.field.options;
 		const query = searchQuery.value.toLowerCase();
-		return props.field.options
-			.filter((option) => option.toLowerCase().includes(query))
-			.filter((option) => !selectedOptions.includes(option)); // Exclude selected options
+		return props.field.options.filter((option) =>
+			option.toLowerCase().includes(query),
+		);
 	});
 
 	function addOption(item: string) {
@@ -78,14 +59,25 @@
 		}
 	}
 
+	// Toggle option selection: add if not selected, remove if selected
+	function toggleOption(item: string) {
+		if (Array.isArray(value.value)) {
+			if (value.value.includes(item)) {
+				removeOption(item);
+			} else {
+				addOption(item);
+			}
+		}
+	}
+
 	function clearSearch() {
 		searchQuery.value = "";
 	}
 </script>
 
 <template>
-	<!-- search bar (if applicable) -->
-	<div v-if="hasSearchbar" class="mb-4">
+	<!-- Search bar (if applicable) -->
+	<div v-if="hasSearchbar" class="mb-4 mt-3">
 		<div class="relative">
 			<input
 				v-model="searchQuery"
@@ -112,43 +104,28 @@
 		</div>
 	</div>
 
-	<!-- selected options -->
-	<div class="mb-2">
-		<p class="mt-2 mb-2 font-medium">selected options:</p>
-		<div class="flex flex-wrap gap-2">
-			<p
-				v-for="option in value"
-				:key="option"
-				class="px-3 py-1 bg-gray-700 text-white rounded-full cursor-pointer"
-				@click="removeOption(option as unknown as string)"
-			>
-				<!-- TODO: fix the type casting of `option` in `removeOption(option)` -->
-				{{ option }} ×
-			</p>
-			<p
-				v-if="Array.isArray(value) && value.length === 0"
-				class="text-gray-400 italic"
-			>
-				no options selected
-			</p>
-		</div>
-	</div>
-
-	<!-- available options-->
-	<div v-if="field.options && field.options.length > 0" class="mb-4">
-		<p class="mb-2 font-medium">available options:</p>
-		<div class="flex flex-wrap gap-2 mt-2">
+	<!-- Options section -->
+	<div
+		v-if="props.field.options && props.field.options.length > 0"
+		class="mb-4"
+	>
+		<p class="mb-2 font-medium">selected roles:</p>
+		<div class="flex flex-wrap gap-1 mt-2">
 			<button
-				v-for="option in filteredOptions"
+				v-for="option in displayedOptions"
 				:key="option"
-				@click="addOption(option)"
-				class="px-3 py-1 bg-gray-100 hover:bg-gray-200 rounded-lg transition"
+				@click="toggleOption(option)"
+				:class="
+					value.includes(option)
+						? 'px-3 py-1 bg-black text-white rounded-lg transition'
+						: 'px-3 py-1 bg-gray-100 hover:bg-gray-200 text-black rounded-lg transition'
+				"
 			>
 				{{ option }}
 			</button>
 		</div>
 		<p
-			v-if="filteredOptions.length === 0 && searchQuery"
+			v-if="displayedOptions.length === 0 && searchQuery"
 			class="text-gray-500 mt-2 italic"
 		>
 			no options match your search

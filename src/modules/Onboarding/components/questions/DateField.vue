@@ -32,9 +32,11 @@
 </script>
 
 <template>
-	<span class="block mb-2 font-medium">{{
-		field.label ? field.label : ""
-	}}</span>
+	<span class="block mb-2 font-medium"
+		>{{ field.label ? field.label : "" }}
+		<span v-if="field.required"> (required)</span>
+		<span v-else class="opacity-50"> (optional) </span>
+	</span>
 
 	<input
 		v-model="value"

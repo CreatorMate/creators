@@ -88,7 +88,7 @@ export const onboardingQuestions: Question[] = [
 		key: "project_types_question",
 		label: "what types of projects do you usually work on?",
 		description:
-			"(choose as many as you like)\nsearch for a project type or select from the list below:",
+			"(choose at least one option)\nsearch for a project type or select from the list below:",
 		required: true,
 		fields: [
 			{
@@ -159,8 +159,10 @@ export const onboardingQuestions: Question[] = [
 		fields: [
 			{
 				key: "additional_info",
+				label: "additional information",
 				type: "textarea",
 				placeholder: "recent client you have worked with.",
+				required: false,
 			},
 		],
 	},

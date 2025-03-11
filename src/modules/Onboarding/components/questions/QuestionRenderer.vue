@@ -30,7 +30,7 @@
 		<!--  <p class="text-[#8D8D8D] font-medium mt-2">{{ props.question.label }}</p>-->
 		<p
 			v-if="props.question.description"
-			class="text-[#8D8D8D] font-medium mt-2 whitespace-pre-line"
+			class="text-black font-medium mt-2 mb-2 whitespace-pre-line"
 		>
 			{{ props.question.description }}
 		</p>

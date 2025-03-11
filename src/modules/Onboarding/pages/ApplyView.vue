@@ -18,16 +18,20 @@
 	async function submitApplication() {
 		if (!accountState.creator) return;
 
-        const answers: any = {};
+		const answers: any = {};
 
-        answers.handle = 'blank_for_now';
-        answers.based_in = onboardingStore.answers.based_in_question.based_in;
-        answers.project_types = onboardingStore.answers.project_types_question.project_types;
-        answers.work_types = onboardingStore.answers.work_types_question.work_types;
-        answers.date_of_birth = onboardingStore.answers.date_of_birth_question.date_of_birth;
-        answers.first_name = onboardingStore.answers.name_question.first_name;
-        answers.last_name = onboardingStore.answers.name_question.last_name;
-        answers.additional_info = onboardingStore.answers.additional_info_question.additional_info;
+		// TODO: simplify this
+		answers.handle = "blank_for_now";
+		answers.based_in = onboardingStore.answers.based_in_question.based_in;
+		answers.project_types =
+			onboardingStore.answers.project_types_question.project_types;
+		answers.work_types = onboardingStore.answers.work_types_question.work_types;
+		answers.date_of_birth =
+			onboardingStore.answers.date_of_birth_question.date_of_birth;
+		answers.first_name = onboardingStore.answers.name_question.first_name;
+		answers.last_name = onboardingStore.answers.name_question.last_name;
+		answers.additional_info =
+			onboardingStore.answers.additional_info_question.additional_info;
 
 		try {
 			const creator = await $fetch("/API/creators/me", {
@@ -107,7 +111,8 @@
 
 			<!-- Action Buttons - Desktop -->
 			<div class="absolute right-[15%] hidden lg:flex space-x-2">
-				<NuxtLink to="/submission/status"
+				<NuxtLink
+					to="/submission/status"
 					class="flex items-center gap-2 px-5 py-2 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
 				>
 					save & exit
@@ -116,9 +121,12 @@
 
 			<!-- Action Buttons - Mobile -->
 			<div class="absolute right-4 flex items-center space-x-2 lg:hidden">
-                <NuxtLink to="/submission/status" class="flex items-center text-sm gap-2 px-3 py-2 rounded-lg">
+				<NuxtLink
+					to="/submission/status"
+					class="flex items-center text-sm gap-2 px-3 py-2 rounded-lg"
+				>
 					save & exit
-                </NuxtLink>
+				</NuxtLink>
 			</div>
 		</nav>
 
