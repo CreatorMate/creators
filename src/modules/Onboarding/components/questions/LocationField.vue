@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import type { LocationField } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import { popularCities } from "~/src/modules/Onboarding/constants/popularCities";
 
 	const props = defineProps<{
 		field: LocationField;
@@ -9,16 +10,6 @@
 	const onboardingStore = useOnboardingStore();
 
 	const searchQuery = ref("");
-
-	// Hard-coded list of popular cities.
-	const popularCities: string[] = [
-		"New York, USA",
-		"London, UK",
-		"Tokyo, Japan",
-		"Paris, France",
-		"Amsterdam, Netherlands",
-		"Berlin, Germany",
-	];
 
 	// The list of cities displayed in the results tab.
 	// Initially shows popular cities.
@@ -36,7 +27,7 @@
 			}
 			const currentValue =
 				onboardingStore.answers[questionKey.value][props.field.key];
-			return typeof currentValue === "string" ? currentValue : "";
+			return typeof currentValue === "string" ? currentValue : ""; // typescript compiler wants to simplify this, but it breaks if you try to do it
 		},
 		set: (newValue: string) => {
 			if (!onboardingStore.answers[questionKey.value]) {

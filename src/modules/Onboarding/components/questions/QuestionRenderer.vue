@@ -37,6 +37,10 @@
 			{{ props.question.description }}
 		</p>
 
+		<p class="text-red-500" v-if="onboardingStore.error">
+			{{ onboardingStore.error }}
+		</p>
+
 		<!-- Answer fields -->
 		<component
 			v-for="field in fields"

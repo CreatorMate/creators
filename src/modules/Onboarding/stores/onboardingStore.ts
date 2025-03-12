@@ -25,7 +25,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	const isInitialized = ref(false);
 
 	// String storing an error message.
-	const errorMessage = ref("");
+	const error = ref("");
 
 	// Boolean storing whether the TOS have been accepted.
 	const isTOSAccepted = ref(false);
@@ -59,7 +59,20 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		if (!currentQuestion.value) return false;
 
 		// Validate current question.
-		return validateQuestion(currentQuestion.value, answers.value);
+		const { valid, errorMessage } = validateQuestion(
+			currentQuestion.value,
+			answers.value,
+		);
+
+		if (!valid && errorMessage) {
+			error.value = errorMessage;
+		}
+
+		if (valid) {
+			resetErrorMessage();
+		}
+
+		return valid;
 	});
 
 	/**
@@ -166,7 +179,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 	// Resets error messages.
 	function resetErrorMessage(): void {
-		errorMessage.value = "";
+		error.value = "";
 	}
 
 	// Persist state on every change using a watcher.
@@ -195,7 +208,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isReviewStep,
 		canProceed,
 		canGoBack,
-		errorMessage,
+		error,
 		isTOSAccepted,
 		hydrate,
 		jumpToQuestion,
