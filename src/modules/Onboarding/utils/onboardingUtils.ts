@@ -40,6 +40,8 @@ export function validateQuestion(
 				return true;
 			case "textarea":
 				return answer !== undefined && answer !== "";
+			case "location":
+				return answer !== undefined && answer !== "";
 			default:
 				return true;
 		}

@@ -6,6 +6,7 @@
 	import DateField from "~/src/modules/Onboarding/components/questions/DateField.vue";
 	import MultiChoiceField from "~/src/modules/Onboarding/components/questions/MultiChoiceField.vue";
 	import SocialField from "~/src/modules/Onboarding/components/questions/SocialField.vue";
+	import LocationField from "~/src/modules/Onboarding/components/questions/LocationField.vue";
 
 	const onboardingStore = useOnboardingStore();
 
@@ -21,6 +22,7 @@
 		date: DateField,
 		"multi-choice": MultiChoiceField,
 		social: SocialField,
+		location: LocationField,
 	};
 </script>
 

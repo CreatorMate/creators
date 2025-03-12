@@ -1,6 +1,5 @@
 import type { Question } from "~/src/modules/Onboarding/types/onboardingTypes";
 
-// TODO: think about whether questions should be here or on the backend
 export const onboardingQuestions: Question[] = [
 	{
 		key: "name_question",
@@ -43,10 +42,9 @@ export const onboardingQuestions: Question[] = [
 		fields: [
 			{
 				key: "based_in",
-				type: "text",
+				type: "location",
 				label: "location",
 				required: true,
-				placeholder: "place",
 			},
 		],
 	},
