@@ -37,7 +37,7 @@
 		},
 	});
 
-	// Function to validate the text field and update the error message
+	// Function to validate the date field and update the error message
 	function validateField() {
 		const { valid, errorMessage } = validateDateField(
 			props.field,

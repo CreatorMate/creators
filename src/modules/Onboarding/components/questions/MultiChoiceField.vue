@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import type { MultiChoiceField } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import { validateMultiChoiceField } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const props = defineProps<{
 		field: MultiChoiceField;
@@ -16,6 +17,13 @@
 	// Check if field has a search bar
 	const hasSearchbar = computed(() => props.field.search === true);
 
+	// Local state for tracking if field has been touched
+	const isTouched = ref(false);
+
+	// Local state for field-specific error message
+	const fieldError = ref("");
+
+	// Computed property for the field value
 	const value = computed<string[]>({
 		get: () => {
 			// Initialize answer object if it doesn't exist
@@ -24,7 +32,7 @@
 			}
 			const currentValue =
 				onboardingStore.answers[questionKey.value][props.field.key];
-			// If the current value is not an array, return an empty array
+			// Return an array if the current value is valid, otherwise an empty array
 			return Array.isArray(currentValue) ? currentValue : [];
 		},
 		set: (newValue: string[]) => {
@@ -45,34 +53,76 @@
 		);
 	});
 
+	// Function to add an option if not already selected and within maxChoices
 	function addOption(item: string) {
 		if (Array.isArray(value.value) && !value.value.includes(item)) {
-			// Create a new array with the item added and update the value
+			// If maxChoices exists and adding another option would exceed it, do nothing.
+			if (
+				props.field.maxChoices &&
+				value.value.length >= props.field.maxChoices
+			) {
+				return;
+			}
+			// Update value with the new option added
 			value.value = [...value.value, item];
 		}
 	}
 
+	// Function to remove an option
 	function removeOption(item: string) {
 		if (Array.isArray(value.value)) {
-			// Update value
 			value.value = value.value.filter((option) => option !== item);
 		}
 	}
 
-	// Toggle option selection: add if not selected, remove if selected
+	// Toggle option selection: remove if selected, add if not (only if within maxChoices)
 	function toggleOption(item: string) {
 		if (Array.isArray(value.value)) {
 			if (value.value.includes(item)) {
 				removeOption(item);
 			} else {
+				// Only add if it doesn't exceed maxChoices
+				if (
+					props.field.maxChoices &&
+					value.value.length >= props.field.maxChoices
+				) {
+					return;
+				}
 				addOption(item);
 			}
+
+			// Mark the field as touched and revalidate on every toggle
+			markAsTouched();
 		}
 	}
 
+	// Function to clear the search query
 	function clearSearch() {
 		searchQuery.value = "";
 	}
+
+	// Function to validate the multi-choice field and update the error message
+	function validateField() {
+		const { valid, errorMessage } = validateMultiChoiceField(
+			props.field,
+			value.value,
+		);
+		fieldError.value = !valid && errorMessage ? errorMessage : "";
+	}
+
+	// Mark the field as touched and run validation
+	function markAsTouched() {
+		isTouched.value = true;
+		onboardingStore.setFieldTouched(questionKey.value, props.field.key);
+		validateField();
+	}
+
+	// Watch for changes in the field value and revalidate if touched
+	watch(value, () => {
+		if (isTouched.value) {
+			validateField();
+		}
+	});
 </script>
 
 <template>
@@ -120,6 +170,12 @@
 						? 'px-3 py-1 bg-black text-white rounded-lg transition'
 						: 'px-3 py-1 bg-gray-100 hover:bg-gray-200 text-black rounded-lg transition'
 				"
+				:disabled="
+					!value.includes(option) &&
+					(props.field.maxChoices
+						? value.length >= props.field.maxChoices
+						: false)
+				"
 			>
 				{{ option }}
 			</button>
@@ -129,6 +185,10 @@
 			class="text-gray-500 mt-2 italic"
 		>
 			no options match your search
+		</p>
+		<!-- Field-specific error message -->
+		<p v-if="isTouched && fieldError" class="text-red-500 text-sm mt-1">
+			{{ fieldError }}
 		</p>
 	</div>
 </template>
