@@ -24,6 +24,15 @@
 		social: SocialField,
 		location: LocationField,
 	};
+
+	// Check if any field in the current question has been touched
+	const hasAnyFieldBeenTouched = computed(() => {
+		if (!props.question || !props.question.key) return false;
+
+		return fields.value.some((field) =>
+			onboardingStore.isFieldTouched(props.question.key, field.key),
+		);
+	});
 </script>
 
 <template>
@@ -35,10 +44,6 @@
 			class="text-black font-medium mt-2 mb-2 whitespace-pre-line"
 		>
 			{{ props.question.description }}
-		</p>
-
-		<p class="text-red-500" v-if="onboardingStore.error">
-			{{ onboardingStore.error }}
 		</p>
 
 		<!-- Answer fields -->

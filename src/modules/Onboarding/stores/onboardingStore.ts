@@ -21,6 +21,9 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// Object storing the answers keyed by the questions' key field.
 	const answers = ref<Answers>({});
 
+	// Object to track which fields have been touched by the user
+	const touchedFields = ref<Record<string, Record<string, boolean>>>({});
+
 	// Boolean storing whether the state has been correctly loaded/initialized.
 	const isInitialized = ref(false);
 
@@ -84,6 +87,19 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		() => currentStep.value > 1 || cameFromReview.value,
 	);
 
+	// Check if a field has been touched
+	function isFieldTouched(questionKey: string, fieldKey: string): boolean {
+		return touchedFields.value[questionKey]?.[fieldKey] || false;
+	}
+
+	// Mark a field as touched
+	function setFieldTouched(questionKey: string, fieldKey: string): void {
+		if (!touchedFields.value[questionKey]) {
+			touchedFields.value[questionKey] = {};
+		}
+		touchedFields.value[questionKey][fieldKey] = true;
+	}
+
 	// Sets the answer for the current question in the `answers` object.
 	function setAnswer(fieldKey: string, value: FieldType): void {
 		// Throw error if no currentQuestion exists
@@ -101,6 +117,9 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 		// Set field value
 		answers.value[questionKey][fieldKey] = value;
+
+		// Mark this field as touched
+		setFieldTouched(questionKey, fieldKey);
 	}
 
 	// Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
@@ -217,5 +236,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		back,
 		reset,
 		getQuestionStepByKey,
+		isFieldTouched,
+		setFieldTouched,
 	};
 });

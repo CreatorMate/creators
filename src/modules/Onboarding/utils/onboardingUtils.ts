@@ -1,4 +1,12 @@
-import type { Question, Answers } from "../types/onboardingTypes";
+import type {
+	Question,
+	Answers,
+	TextField,
+	DateField,
+	MultiChoiceField,
+	TextAreaField,
+	LocationField,
+} from "../types/onboardingTypes";
 
 type ValidationAnswer = {
 	valid: boolean;
@@ -15,126 +23,136 @@ export function validateQuestion(
 	question: Question,
 	answers: Answers,
 ): ValidationAnswer {
-	// If the question isn’t required, there's no need to validate any fields.
 	if (question.required === false) return { valid: true };
-
-	// Get the answer group for this question, defaulting to empty object if not found
 	const answerGroup = answers[question.key] ?? {};
 
 	for (const field of question.fields) {
-		// If the field is not required, skip extra checks.
 		if (!field.required) continue;
-
 		const answer = answerGroup[field.key];
+		let validation;
 
 		switch (field.type) {
-			// Validate text fields
 			case "text":
-				if (!answer || answer === "") {
-					return {
-						valid: false,
-						errorMessage: `${field.label} field cannot be empty`,
-					};
-				}
-
-				if (field.maxLength && (answer as string).length > field.maxLength) {
-					return {
-						valid: false,
-						errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
-					};
-				}
+				validation = validateTextField(field, answer as string);
 				break;
-
-			// Validate date fields
 			case "date":
-				const dateValue = new Date(answer as string);
-				if (isNaN(dateValue.getTime())) {
-					return {
-						valid: false,
-						errorMessage: `${field.label} field cannot be empty`,
-					};
-				}
-
-				if (field.minDate && dateValue.getTime() < field.minDate.getTime()) {
-					return {
-						valid: false,
-						errorMessage: `date must be after ${field.minDate.toISOString().split("T")[0]}`,
-					};
-				}
-
-				if (field.maxDate && dateValue.getTime() > field.maxDate.getTime()) {
-					return {
-						valid: false,
-						errorMessage: `date must be before ${field.maxDate.toISOString().split("T")[0]}`,
-					};
-				}
+				validation = validateDateField(field, answer as Date);
 				break;
-
-			// Validate multi-choice fields
 			case "multi-choice":
-				if (!Array.isArray(answer)) {
-					return { valid: false, errorMessage: "answer must be an array" };
-				}
-
-				const count = answer.length;
-
-				if (field.required && count === 0) {
-					return {
-						valid: false,
-						errorMessage: "at least one choice must be selected",
-					};
-				}
-
-				if (field.minChoices && count < field.minChoices) {
-					return {
-						valid: false,
-						errorMessage: `answer must have at least ${field.minChoices} choices`,
-					};
-				}
-
-				if (field.maxChoices && count > field.maxChoices) {
-					return {
-						valid: false,
-						errorMessage: `answer must have at most ${field.maxChoices} choices`,
-					};
-				}
+				validation = validateMultiChoiceField(field, answer as string[]);
 				break;
-
-			// Validate textarea fields
 			case "textarea":
-				if (!answer || answer === "") {
-					return {
-						valid: false,
-						errorMessage: `${field.label} field cannot be empty`,
-					};
-				}
-
-				if (field.maxLength && (answer as string).length > field.maxLength) {
-					return {
-						valid: false,
-						errorMessage: `field cannot exceed ${field.maxLength} characters`,
-					};
-				}
+				validation = validateTextareaField(field, answer as string);
 				break;
-
-			// Validate location fields
 			case "location":
-				if (!answer || answer === "") {
-					return {
-						valid: false,
-						errorMessage: `${field.label} field cannot be empty`,
-					};
-				}
+				validation = validateLocationField(field, answer as string);
 				break;
-
-			// Handle unexpected field types
 			default:
 				console.warn(`Unknown field type: ${field.type}`);
-				break;
+				continue;
+		}
+
+		if (!validation.valid) {
+			return validation;
 		}
 	}
+	return { valid: true };
+}
 
-	// If all fields passed validation
+export function validateTextField(
+	field: TextField,
+	answer: string,
+): ValidationAnswer {
+	if (!answer || answer === "") {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot be empty`,
+		};
+	}
+	if (field.maxLength && answer.length > field.maxLength) {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
+		};
+	}
+	return { valid: true };
+}
+
+export function validateDateField(field: DateField, answer: Date) {
+	const dateValue = new Date(answer);
+	if (isNaN(dateValue.getTime())) {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot be empty`,
+		};
+	}
+	if (field.minDate && dateValue.getTime() < field.minDate.getTime()) {
+		return {
+			valid: false,
+			errorMessage: `date must be after ${field.minDate.toISOString().split("T")[0]}`,
+		};
+	}
+	if (field.maxDate && dateValue.getTime() > field.maxDate.getTime()) {
+		return {
+			valid: false,
+			errorMessage: `date must be before ${field.maxDate.toISOString().split("T")[0]}`,
+		};
+	}
+	return { valid: true };
+}
+
+export function validateMultiChoiceField(
+	field: MultiChoiceField,
+	answer: string[],
+) {
+	if (!Array.isArray(answer)) {
+		return { valid: false, errorMessage: "answer must be an array" };
+	}
+	const count = answer.length;
+	if (field.required && count === 0) {
+		return {
+			valid: false,
+			errorMessage: "at least one choice must be selected",
+		};
+	}
+	if (field.minChoices && count < field.minChoices) {
+		return {
+			valid: false,
+			errorMessage: `answer must have at least ${field.minChoices} choices`,
+		};
+	}
+	if (field.maxChoices && count > field.maxChoices) {
+		return {
+			valid: false,
+			errorMessage: `answer must have at most ${field.maxChoices} choices`,
+		};
+	}
+	return { valid: true };
+}
+
+export function validateTextareaField(field: TextAreaField, answer: string) {
+	if (!answer || answer === "") {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot be empty`,
+		};
+	}
+	if (field.maxLength && answer.length > field.maxLength) {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
+		};
+	}
+	return { valid: true };
+}
+
+export function validateLocationField(field: LocationField, answer: string) {
+	if (!answer || answer === "") {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot be empty`,
+		};
+	}
 	return { valid: true };
 }
 

@@ -46,9 +46,9 @@
 			await router.push("/");
 		} catch (error) {
 			if (error instanceof Error) {
-				onboardingStore.errorMessage = error.message;
+				onboardingStore.error = error.message;
 			} else {
-				onboardingStore.errorMessage = "An unknown error occurred.";
+				onboardingStore.error = "An unknown error occurred.";
 			}
 			console.error("Error updating creator:", error);
 		}
@@ -66,6 +66,8 @@
 
 		// Set loading state to false
 		isLoading.value = false;
+
+		// onboardingStore.reset();
 	});
 </script>
 
@@ -78,7 +80,7 @@
 			<!-- Back Button - Desktop -->
 			<button
 				class="absolute left-[15%] hidden lg:block"
-				:disabled="!onboardingStore.canGoBack"
+				v-if="onboardingStore.canGoBack"
 				@click="onboardingStore.back"
 			>
 				{{ onboardingStore.cameFromReview ? "back to review" : "back" }}
@@ -87,7 +89,7 @@
 			<!-- Back Button - Mobile -->
 			<button
 				class="absolute left-4 block lg:hidden"
-				:disabled="!onboardingStore.canGoBack"
+				v-if="onboardingStore.canGoBack"
 				@click="onboardingStore.back"
 			>
 				<img src="/icons/arrow-back.svg" alt="back" class="w-4 h-4" />
@@ -150,11 +152,6 @@
 		<div v-else>
 			<div class="relative flex flex-grow justify-center px-6">
 				<div class="w-[636px] max-w-full mt-20 gap-5">
-					<!-- Error Message -->
-					<span v-if="onboardingStore.errorMessage !== ''" class="text-red-600">
-						{{ onboardingStore.errorMessage }}
-					</span>
-
 					<!-- Content Components -->
 					<ApplicationReview
 						v-if="onboardingStore.isReviewStep"
