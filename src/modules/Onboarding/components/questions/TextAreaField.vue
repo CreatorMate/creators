@@ -1,6 +1,7 @@
 <script setup lang="ts">
 	import type { TextAreaField } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import { validateTextareaField } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const props = defineProps<{
 		field: TextAreaField;
@@ -36,9 +37,9 @@
 		},
 	});
 
-	// Function to validate the text field and update the error message
+	// Function to validate the textarea field and update the error message
 	function validateField() {
-		const { valid, errorMessage } = validateTextField(
+		const { valid, errorMessage } = validateTextareaField(
 			props.field,
 			value.value as string,
 		);
