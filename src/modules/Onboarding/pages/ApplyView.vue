@@ -15,6 +15,7 @@
 	const { logout } = useOidcAuth();
 
 	const isLoading = ref(true);
+
 	async function submitApplication() {
 		if (!accountState.creator) return;
 
@@ -54,6 +55,43 @@
 		}
 	}
 
+	/**
+	 * Handles the back button click action.
+	 * Navigates to the previous step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions.
+	 */
+	function handleBack() {
+		onboardingStore.back();
+		// Use nextTick to ensure the DOM has updated
+		nextTick(() => {
+			document.activeElement instanceof HTMLElement &&
+				document.activeElement.blur();
+		});
+	}
+
+	/**
+	 * Handles the next button click action
+	 * Advances to the next step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions
+	 */
+	function handleNext() {
+		onboardingStore.next();
+		nextTick(() => {
+			document.activeElement instanceof HTMLElement &&
+				document.activeElement.blur();
+		});
+	}
+
+	/**
+	 * Handles the submit application button click action
+	 * Submits the completed application and removes focus from the active element to prevent unintended Enter key interactions
+	 */
+	function handleSubmit() {
+		submitApplication();
+		nextTick(() => {
+			document.activeElement instanceof HTMLElement &&
+				document.activeElement.blur();
+		});
+	}
+
 	onMounted(() => {
 		// If creator has been accepted, route to home page
 		if (accountState.creator?.status == AccountStatus.ACCEPTED) {
@@ -81,7 +119,7 @@
 			<button
 				class="absolute left-[15%] hidden lg:block"
 				v-if="onboardingStore.canGoBack"
-				@click="onboardingStore.back"
+				@click="handleBack"
 			>
 				{{ onboardingStore.cameFromReview ? "back to review" : "back" }}
 			</button>
@@ -90,7 +128,7 @@
 			<button
 				class="absolute left-4 block lg:hidden"
 				v-if="onboardingStore.canGoBack"
-				@click="onboardingStore.back"
+				@click="handleBack"
 			>
 				<img src="/icons/arrow-back.svg" alt="back" class="w-4 h-4" />
 			</button>
@@ -162,6 +200,7 @@
 						v-else-if="onboardingStore.currentQuestion"
 						:question="onboardingStore.currentQuestion"
 						class="mb-16"
+						@last-enter="onboardingStore.next"
 					/>
 				</div>
 			</div>
@@ -173,7 +212,7 @@
 			<button
 				v-if="!onboardingStore.isLastStep"
 				class="fixed bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="onboardingStore.next"
+				@click="handleNext"
 				:disabled="!onboardingStore.canProceed"
 			>
 				next
@@ -185,7 +224,7 @@
 			<button
 				v-if="!onboardingStore.isLastStep"
 				class="fixed bottom-4 mx-auto left-0 right-0 w-[95%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="onboardingStore.next"
+				@click="handleNext"
 				:disabled="!onboardingStore.canProceed"
 			>
 				next
@@ -197,7 +236,7 @@
 			<button
 				v-if="onboardingStore.isReviewStep"
 				class="fixed bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="submitApplication()"
+				@click="handleSubmit"
 				:disabled="!onboardingStore.isTOSAccepted"
 			>
 				submit application
@@ -209,7 +248,7 @@
 			<button
 				v-if="onboardingStore.isReviewStep"
 				class="fixed bottom-4 mx-auto left-0 right-0 w-[95%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="submitApplication()"
+				@click="handleSubmit"
 				:disabled="!onboardingStore.isTOSAccepted"
 			>
 				submit application

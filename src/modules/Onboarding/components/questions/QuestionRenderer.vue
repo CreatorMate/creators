@@ -1,6 +1,5 @@
 <script setup lang="ts">
 	import type { Question } from "~/src/modules/Onboarding/types/onboardingTypes";
-	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 	import TextField from "~/src/modules/Onboarding/components/questions/TextField.vue";
 	import TextAreaField from "~/src/modules/Onboarding/components/questions/TextAreaField.vue";
 	import DateField from "~/src/modules/Onboarding/components/questions/DateField.vue";
@@ -8,11 +7,17 @@
 	import SocialField from "~/src/modules/Onboarding/components/questions/SocialField.vue";
 	import LocationField from "~/src/modules/Onboarding/components/questions/LocationField.vue";
 
-	const onboardingStore = useOnboardingStore();
+	// const onboardingStore = useOnboardingStore();
 
 	const props = defineProps<{
 		question: Question;
 	}>();
+
+	const emit = defineEmits<{
+		(e: "last-enter"): void;
+	}>();
+
+	const fieldRefs = ref<any[]>([]);
 
 	const fields = computed(() => props.question.fields);
 
@@ -25,13 +30,41 @@
 		location: LocationField,
 	};
 
-	// Check if any field in the current question has been touched
-	const hasAnyFieldBeenTouched = computed(() => {
-		if (!props.question || !props.question.key) return false;
+	const handleFieldEnter = (
+		index: number,
+		inputEl: HTMLInputElement | null,
+	) => {
+		if (index < props.question.fields.length - 1) {
+			// If not the last field, focus the next one.
+			nextTick(() => {
+				const nextField = fieldRefs.value[index + 1];
+				// Call the exposed focus method if available.
+				nextField?.focus?.();
+			});
+		} else {
+			// Last field: notify the parent to trigger the "next" action.
+			emit("last-enter");
+		}
+	};
 
-		return fields.value.some((field) =>
-			onboardingStore.isFieldTouched(props.question.key, field.key),
-		);
+	// Watch for changes to the question prop
+	watch(
+		() => props.question,
+		() => {
+			// Reset field refs when the question changes
+			nextTick(() => {
+				// Ensures refs are updated after the DOM has rendered
+				fieldRefs.value = fieldRefs.value.filter((ref) => ref !== null);
+			});
+		},
+		{ immediate: true },
+	);
+
+	// Add an onMounted hook to ensure refs are initialized
+	onMounted(() => {
+		nextTick(() => {
+			fieldRefs.value = fieldRefs.value.filter((ref) => ref !== null);
+		});
 	});
 </script>
 
@@ -48,11 +81,17 @@
 
 		<!-- Answer fields -->
 		<component
-			v-for="field in fields"
+			v-for="(field, index) in fields"
 			:key="field.key"
 			:is="fieldMap[field.type] as any"
 			:field="field"
 			class="mb-[24px]"
+			:ref="
+				(el: any) => {
+					if (el) fieldRefs[index] = el;
+				}
+			"
+			@enter="handleFieldEnter(index, $event)"
 		/>
 	</div>
 </template>

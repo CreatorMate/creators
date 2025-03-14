@@ -7,6 +7,10 @@
 		field: TextField;
 	}>();
 
+	const emit = defineEmits<{
+		(e: "enter", inputEl: HTMLInputElement | null): void;
+	}>();
+
 	const onboardingStore = useOnboardingStore();
 
 	// Get key of current question
@@ -20,6 +24,8 @@
 
 	// Local state for field-specific error message
 	const fieldError = ref("");
+
+	const inputEl = ref<HTMLInputElement | null>(null);
 
 	const value = computed({
 		get: () => {
@@ -56,6 +62,17 @@
 		validateField();
 	}
 
+	function handleEnter() {
+		emit("enter", inputEl.value);
+	}
+
+	// Expose a focus method so the parent can programmatically focus this field.
+	defineExpose({
+		focus: () => {
+			inputEl.value?.focus();
+		},
+	});
+
 	// Watch for changes in the field value and revalidate if the field has been touched
 	watch(value, () => {
 		if (isTouched.value) {
@@ -75,6 +92,7 @@
 		<div class="relative">
 			<input
 				v-model="value"
+				ref="inputEl"
 				class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 				:class="{
 					'pl-10': hasIcon,
@@ -82,6 +100,7 @@
 				type="text"
 				:placeholder="field.placeholder || ''"
 				@blur="markAsTouched"
+				@keydown.enter.prevent="handleEnter"
 			/>
 			<div
 				v-if="hasIcon"

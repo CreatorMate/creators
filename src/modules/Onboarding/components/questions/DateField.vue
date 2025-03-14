@@ -7,6 +7,10 @@
 		field: DateField;
 	}>();
 
+	const emit = defineEmits<{
+		(e: "enter", inputEl: HTMLInputElement | null): void;
+	}>();
+
 	const onboardingStore = useOnboardingStore();
 
 	// Get key of current question
@@ -17,6 +21,8 @@
 
 	// Local state for field-specific error message
 	const fieldError = ref("");
+
+	const inputEl = ref<HTMLInputElement | null>(null);
 
 	const value = computed({
 		get: () => {
@@ -53,6 +59,17 @@
 		validateField();
 	}
 
+	function handleEnter() {
+		emit("enter", inputEl.value);
+	}
+
+	// Expose a focus method so the parent can programmatically focus this field.
+	defineExpose({
+		focus: () => {
+			inputEl.value?.focus();
+		},
+	});
+
 	// Watch for changes in the field value and revalidate if the field has been touched
 	watch(value, () => {
 		if (isTouched.value) {
@@ -71,9 +88,11 @@
 
 		<input
 			v-model="value"
+			ref="inputEl"
 			class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 			type="date"
 			@blur="markAsTouched"
+			@keydown.enter.prevent="handleEnter"
 		/>
 		<!-- Field-specific error message -->
 		<p v-if="isTouched && fieldError" class="text-red-500 text-sm mt-1">

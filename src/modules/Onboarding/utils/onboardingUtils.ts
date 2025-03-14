@@ -63,6 +63,8 @@ export function validateTextField(
 	field: TextField,
 	answer: string,
 ): ValidationAnswer {
+	if (!field.required) return { valid: true };
+
 	if (!answer || answer === "") {
 		return {
 			valid: false,
@@ -79,6 +81,8 @@ export function validateTextField(
 }
 
 export function validateDateField(field: DateField, answer: Date) {
+	if (!field.required) return { valid: true };
+
 	const dateValue = new Date(answer);
 	if (isNaN(dateValue.getTime())) {
 		return {
@@ -105,6 +109,8 @@ export function validateMultiChoiceField(
 	field: MultiChoiceField,
 	answer: string[],
 ) {
+	if (!field.required) return { valid: true };
+
 	if (!Array.isArray(answer)) {
 		return { valid: false, errorMessage: "answer must be an array" };
 	}
@@ -131,6 +137,8 @@ export function validateMultiChoiceField(
 }
 
 export function validateTextareaField(field: TextAreaField, answer: string) {
+	if (!field.required) return { valid: true };
+
 	if (!answer || answer === "") {
 		return {
 			valid: false,
@@ -147,6 +155,8 @@ export function validateTextareaField(field: TextAreaField, answer: string) {
 }
 
 export function validateLocationField(field: LocationField, answer: string) {
+	if (!field.required) return { valid: true };
+
 	if (!answer || answer === "") {
 		return {
 			valid: false,
