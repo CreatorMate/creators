@@ -4,31 +4,28 @@
 	import { AccountStatus } from "~/src/utils/SupabaseTypes";
 	import SubmissionNotStarted from "~/src/modules/Onboarding/components/submission/SubmissionNotStarted.vue";
 	import SubmissionSubmitted from "~/src/modules/Onboarding/components/submission/SubmissionSubmitted.vue";
-	import { API } from "~/src/utils/API/API";
 
-  const accountState = useAccountState();
+	const accountState = useAccountState();
 
 	const router = useRouter();
 
 	async function apply() {
 		await router.push("/apply");
 	}
-  
-    useHead({
-        title: 'status - creatormate'
-    })
-    definePageMeta({
-        layout: 'empty'
-    })
 
+	useHead({
+		title: "status - creatormate",
+	});
+	definePageMeta({
+		layout: "empty",
+	});
 
-    onMounted(async () => {
-        // If user's application is accepted, route to home page
-        if (accountState.user?.status == AccountStatus.ACCEPTED) {
-            await router.push("/");
-        }
-    });
-
+	onMounted(async () => {
+		// If user's application is accepted, route to home page
+		if (accountState.user?.status == AccountStatus.ACCEPTED) {
+			await router.push("/");
+		}
+	});
 </script>
 
 <template>
@@ -52,35 +49,35 @@
 						src="/logo.png"
 					/>
 				</div>
-                <div class="absolute right-[15%] hidden lg:block">
-                    <button
-                        class="flex items-center p-2 transition-all duration-150"
-                        @click="accountState.logout()"
-                    >
-                        <img src="/icons/logout.svg" alt="Logout" class="w-4 h-4"/>
-                    </button>
-                </div>
+				<div class="absolute right-[15%] hidden lg:block">
+					<button
+						class="flex items-center p-2 transition-all duration-150"
+						@click="accountState.logout()"
+					>
+						<img src="/icons/logout.svg" alt="Logout" class="w-4 h-4" />
+					</button>
+				</div>
 
-                <div class="absolute right-4 block lg:hidden">
-                    <button
-                        class="flex items-center bg-gray-100 p-2 rounded-lg transition-all duration-150"
-                        @click="accountState.logout()"
-                    >
-                        <img src="/icons/logout.svg" alt="Logout" class="w-4 h-4"/>
-                    </button>
-                </div>
-            </nav>
+				<div class="absolute right-4 block lg:hidden">
+					<button
+						class="flex items-center bg-gray-100 p-2 rounded-lg transition-all duration-150"
+						@click="accountState.logout()"
+					>
+						<img src="/icons/logout.svg" alt="Logout" class="w-4 h-4" />
+					</button>
+				</div>
+			</nav>
 
-            <div class="flex flex-grow justify-center px-6">
-                <div class="w-[850px] max-w-full lg:mt-20 mt-12">
-                    <SubmissionNotStarted
-                        v-if="accountState.user?.status == AccountStatus.NEW"
-                    />
-                    <SubmissionSubmitted
-                        v-if="accountState.user?.status == AccountStatus.IN_REVIEW"
-                    />
-                </div>
-            </div>
-        </section>
-    </section>
+			<div class="flex flex-grow justify-center px-6">
+				<div class="w-[850px] max-w-full lg:mt-20 mt-12">
+					<SubmissionNotStarted
+						v-if="accountState.user?.status == AccountStatus.NEW"
+					/>
+					<SubmissionSubmitted
+						v-if="accountState.user?.status == AccountStatus.IN_REVIEW"
+					/>
+				</div>
+			</div>
+		</section>
+	</section>
 </template>

@@ -13,23 +13,21 @@
 	const router = useRouter();
 
 	const isLoading = ref(true);
-  
-    useHead({
-        title: 'apply - creatormate'
-    })
-
-    definePageMeta({
-        layout: 'empty'
-    })
-	async function submitApplication() {
-		if (!accountState.user) return;
 
 	const apiError = ref("");
 
+	useHead({
+		title: "apply - creatormate",
+	});
+
+	definePageMeta({
+		layout: "empty",
+	});
+
 	async function submitApplication() {
-		if (!accountState.creator) {
+		if (!accountState.user) {
 			apiError.value =
-				"error updating creator: account state is missing a creator.";
+				"error updating creator: account state is missing a user.";
 			return;
 		}
 
@@ -124,7 +122,6 @@
 		resetApiError();
 
 		// onboardingStore.reset();
-		console.log(onboardingStore.answers);
 	});
 </script>
 
