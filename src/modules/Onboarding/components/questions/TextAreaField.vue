@@ -71,7 +71,7 @@
 
 		<div class="relative">
 			<textarea
-				v-model="value as any"
+				v-model="value"
 				class="w-full bg-gray-100 text-gray-700 px-5 py-5 h-[150px] rounded-md focus:outline-none"
 				type="text"
 				:placeholder="field.placeholder || ''"
