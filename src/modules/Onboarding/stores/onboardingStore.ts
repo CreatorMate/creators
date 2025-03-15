@@ -124,6 +124,14 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 	// Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
 	function next(): void {
+		// If user came from review, jump back to review step and reset flag
+		if (cameFromReview.value) {
+			currentStep.value = totalSteps.value;
+			cameFromReview.value = false;
+			resetErrorMessage();
+			return;
+		}
+
 		if (canProceed.value && currentStep.value < totalSteps.value) {
 			currentStep.value++;
 			resetErrorMessage();
@@ -133,14 +141,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// Decrements the current step in the quiz, if the user can go back. Also resets any error messages.
 	function back(): void {
 		if (!canGoBack.value) return;
-
-		// If user came from review, jump back to review step and reset flag
-		if (cameFromReview.value) {
-			currentStep.value = totalSteps.value;
-			cameFromReview.value = false;
-			resetErrorMessage();
-			return;
-		}
 
 		currentStep.value--;
 		resetErrorMessage();

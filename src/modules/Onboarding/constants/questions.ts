@@ -162,7 +162,6 @@ export const onboardingQuestions: Question[] = [
 	{
 		key: "additional_info_question",
 		label: "is there anything else we should know?",
-		required: false,
 		fields: [
 			{
 				key: "additional_info",
@@ -170,7 +169,7 @@ export const onboardingQuestions: Question[] = [
 				type: "textarea",
 				placeholder: "recent client you have worked with.",
 				required: false,
-				maxLength: 255,
+				maxLength: 500,
 			},
 		],
 	},

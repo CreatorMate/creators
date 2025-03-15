@@ -27,7 +27,6 @@ export function validateQuestion(
 	const answerGroup = answers[question.key] ?? {};
 
 	for (const field of question.fields) {
-		if (!field.required) continue;
 		const answer = answerGroup[field.key];
 		let validation;
 
@@ -59,10 +58,24 @@ export function validateQuestion(
 	return { valid: true };
 }
 
+/**
+ * Validates a text field based on its properties and the provided answer.
+ *
+ * @param {TextField} field - The text field definition containing validation rules.
+ * @param {string} answer - The user's input to be validated.
+ * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
+ */
 export function validateTextField(
 	field: TextField,
 	answer: string,
 ): ValidationAnswer {
+	// if answer exceeds maxLength, invalidate it, even if it is not required
+	if (answer && field.maxLength && answer.length > field.maxLength) {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
+		};
+	}
 	if (!field.required) return { valid: true };
 
 	if (!answer || answer === "") {
@@ -71,15 +84,16 @@ export function validateTextField(
 			errorMessage: `${field.label} field cannot be empty`,
 		};
 	}
-	if (field.maxLength && answer.length > field.maxLength) {
-		return {
-			valid: false,
-			errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
-		};
-	}
 	return { valid: true };
 }
 
+/**
+ * Validates a date field based on its properties and the provided answer.
+ *
+ * @param {DateField} field - The date field definition containing validation rules.
+ * @param {Date} answer - The user's input to be validated.
+ * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
+ */
 export function validateDateField(field: DateField, answer: Date) {
 	if (!field.required) return { valid: true };
 
@@ -105,6 +119,13 @@ export function validateDateField(field: DateField, answer: Date) {
 	return { valid: true };
 }
 
+/**
+ * Validates a multi-choice field based on its properties and the provided answer.
+ *
+ * @param {MultiChoiceField} field - The multi-choice field definition containing validation rules.
+ * @param {string[]} answer - The user's input to be validated.
+ * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
+ */
 export function validateMultiChoiceField(
 	field: MultiChoiceField,
 	answer: string[],
@@ -136,7 +157,21 @@ export function validateMultiChoiceField(
 	return { valid: true };
 }
 
+/**
+ * Validates a textarea field based on its properties and the provided answer.
+ *
+ * @param {TextAreaField} field - The textarea field definition containing validation rules.
+ * @param {string} answer - The user's input to be validated.
+ * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
+ */
 export function validateTextareaField(field: TextAreaField, answer: string) {
+	if (answer && field.maxLength && answer.length > field.maxLength) {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
+		};
+	}
+
 	if (!field.required) return { valid: true };
 
 	if (!answer || answer === "") {
@@ -145,15 +180,16 @@ export function validateTextareaField(field: TextAreaField, answer: string) {
 			errorMessage: `${field.label} field cannot be empty`,
 		};
 	}
-	if (field.maxLength && answer.length > field.maxLength) {
-		return {
-			valid: false,
-			errorMessage: `${field.label} field cannot exceed ${field.maxLength} characters`,
-		};
-	}
 	return { valid: true };
 }
 
+/**
+ * Validates a location field based on its properties and the provided answer.
+ *
+ * @param {LocationField} field - The location field definition containing validation rules.
+ * @param {string} answer - The user's input to be validated.
+ * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
+ */
 export function validateLocationField(field: LocationField, answer: string) {
 	if (!field.required) return { valid: true };
 

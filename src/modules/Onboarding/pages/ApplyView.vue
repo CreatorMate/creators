@@ -118,16 +118,16 @@
 			<!-- Back Button - Desktop -->
 			<button
 				class="absolute left-[15%] hidden lg:block"
-				v-if="onboardingStore.canGoBack"
+				v-if="onboardingStore.canGoBack && !onboardingStore.cameFromReview"
 				@click="handleBack"
 			>
-				{{ onboardingStore.cameFromReview ? "back to review" : "back" }}
+				back
 			</button>
 
 			<!-- Back Button - Mobile -->
 			<button
 				class="absolute left-4 block lg:hidden"
-				v-if="onboardingStore.canGoBack"
+				v-if="onboardingStore.canGoBack && !onboardingStore.cameFromReview"
 				@click="handleBack"
 			>
 				<img src="/icons/arrow-back.svg" alt="back" class="w-4 h-4" />
@@ -215,7 +215,7 @@
 				@click="handleNext"
 				:disabled="!onboardingStore.canProceed"
 			>
-				next
+				{{ onboardingStore.cameFromReview ? "save answer" : "next" }}
 			</button>
 		</div>
 
@@ -227,7 +227,7 @@
 				@click="handleNext"
 				:disabled="!onboardingStore.canProceed"
 			>
-				next
+				{{ onboardingStore.cameFromReview ? "save answer" : "next" }}
 			</button>
 		</div>
 
