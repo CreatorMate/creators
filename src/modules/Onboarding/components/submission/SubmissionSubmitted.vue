@@ -1,5 +1,11 @@
 <script setup lang="ts">
 	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
+
+	const router = useRouter();
+
+	async function clickUpdate() {
+		await router.push("/apply");
+	}
 </script>
 
 <template>
@@ -28,5 +34,13 @@
 			review process is complete. if you have any questions in the meantime,
 			feel free to contact us.
 		</p>
+
+		<button
+			@click="clickUpdate"
+			class="flex items-center bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
+		>
+			<span>update your application</span>
+			<img src="/icons/arrow-right.svg" alt="" class="w-4 h-4 invert ml-3" />
+		</button>
 	</div>
 </template>

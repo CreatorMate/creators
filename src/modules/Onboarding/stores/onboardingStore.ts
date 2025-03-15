@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import type { Answers, FieldType, Question } from "../types/onboardingTypes";
+import type { Answers, AnswerType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
 import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingUtils";
 import { STORAGE_KEY } from "@supabase/auth-js/src/lib/constants";
@@ -21,11 +21,14 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// Object storing the answers keyed by the questions' key field.
 	const answers = ref<Answers>({});
 
+	// Object to track which fields have been touched by the user
+	const touchedFields = ref<Record<string, Record<string, boolean>>>({});
+
 	// Boolean storing whether the state has been correctly loaded/initialized.
 	const isInitialized = ref(false);
 
 	// String storing an error message.
-	const errorMessage = ref("");
+	const error = ref("");
 
 	// Boolean storing whether the TOS have been accepted.
 	const isTOSAccepted = ref(false);
@@ -59,7 +62,20 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		if (!currentQuestion.value) return false;
 
 		// Validate current question.
-		return validateQuestion(currentQuestion.value, answers.value);
+		const { valid, errorMessage } = validateQuestion(
+			currentQuestion.value,
+			answers.value,
+		);
+
+		if (!valid && errorMessage) {
+			error.value = errorMessage;
+		}
+
+		if (valid) {
+			resetErrorMessage();
+		}
+
+		return valid;
 	});
 
 	/**
@@ -71,8 +87,21 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		() => currentStep.value > 1 || cameFromReview.value,
 	);
 
+	// Check if a field has been touched
+	function isFieldTouched(questionKey: string, fieldKey: string): boolean {
+		return touchedFields.value[questionKey]?.[fieldKey] || false;
+	}
+
+	// Mark a field as touched
+	function setFieldTouched(questionKey: string, fieldKey: string): void {
+		if (!touchedFields.value[questionKey]) {
+			touchedFields.value[questionKey] = {};
+		}
+		touchedFields.value[questionKey][fieldKey] = true;
+	}
+
 	// Sets the answer for the current question in the `answers` object.
-	function setAnswer(fieldKey: string, value: FieldType): void {
+	function setAnswer(fieldKey: string, value: AnswerType): void {
 		// Throw error if no currentQuestion exists
 		if (!currentQuestion.value) {
 			console.error("No current question available");
@@ -88,10 +117,21 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 		// Set field value
 		answers.value[questionKey][fieldKey] = value;
+
+		// Mark this field as touched
+		setFieldTouched(questionKey, fieldKey);
 	}
 
 	// Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
 	function next(): void {
+		// If user came from review, jump back to review step and reset flag
+		if (cameFromReview.value) {
+			currentStep.value = totalSteps.value;
+			cameFromReview.value = false;
+			resetErrorMessage();
+			return;
+		}
+
 		if (canProceed.value && currentStep.value < totalSteps.value) {
 			currentStep.value++;
 			resetErrorMessage();
@@ -101,14 +141,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// Decrements the current step in the quiz, if the user can go back. Also resets any error messages.
 	function back(): void {
 		if (!canGoBack.value) return;
-
-		// If user came from review, jump back to review step and reset flag
-		if (cameFromReview.value) {
-			currentStep.value = totalSteps.value;
-			cameFromReview.value = false;
-			resetErrorMessage();
-			return;
-		}
 
 		currentStep.value--;
 		resetErrorMessage();
@@ -166,7 +198,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 	// Resets error messages.
 	function resetErrorMessage(): void {
-		errorMessage.value = "";
+		error.value = "";
 	}
 
 	// Persist state on every change using a watcher.
@@ -195,7 +227,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isReviewStep,
 		canProceed,
 		canGoBack,
-		errorMessage,
+		error,
 		isTOSAccepted,
 		hydrate,
 		jumpToQuestion,
@@ -204,5 +236,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		back,
 		reset,
 		getQuestionStepByKey,
+		isFieldTouched,
+		setFieldTouched,
 	};
 });

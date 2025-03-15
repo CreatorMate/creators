@@ -1,17 +1,22 @@
 <script setup lang="ts">
-	import type { TextAreaField } from "~/src/modules/Onboarding/types/onboardingTypes";
+	import type { TextAreaFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import { validateTextareaField } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const props = defineProps<{
-		field: TextAreaField;
+		field: TextAreaFieldType;
 	}>();
-
-	const { field } = toRefs(props);
 
 	const onboardingStore = useOnboardingStore();
 
 	// Get key of current question
 	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
+
+	// Local state for tracking if field has been touched
+	const isTouched = ref(false);
+
+	// Local state for field-specific error message
+	const fieldError = ref("");
 
 	const value = computed({
 		get: () => {
@@ -31,21 +36,51 @@
 			onboardingStore.setAnswer(props.field.key, newValue);
 		},
 	});
+
+	// Function to validate the textarea field and update the error message
+	function validateField() {
+		const { valid, errorMessage } = validateTextareaField(
+			props.field,
+			value.value as string,
+		);
+		fieldError.value = !valid && errorMessage ? errorMessage : "";
+	}
+
+	// Mark field as touched and run validation
+	function markAsTouched() {
+		isTouched.value = true;
+		onboardingStore.setFieldTouched(questionKey.value, props.field.key);
+		validateField();
+	}
+
+	// Watch for changes in the field value and revalidate if the field has been touched
+	watch(value, () => {
+		if (isTouched.value) {
+			validateField();
+		}
+	});
 </script>
 
 <template>
 	<div class="mb-4">
-		<span class="block mb-2 font-medium">{{
-			field.label ? field.label : ""
-		}}</span>
+		<span class="block mb-2 font-medium"
+			>{{ field.label ? field.label : "" }}
+			<span v-if="field.required"> (required)</span>
+			<span v-else class="opacity-50"> (optional) </span>
+		</span>
 
 		<div class="relative">
 			<textarea
-				v-model="value"
+				v-model="value as any"
 				class="w-full bg-gray-100 text-gray-700 px-5 py-5 h-[150px] rounded-md focus:outline-none"
 				type="text"
 				:placeholder="field.placeholder || ''"
+				@blur="markAsTouched"
 			></textarea>
 		</div>
+		<!-- Field-specific error message -->
+		<p v-if="isTouched && fieldError" class="text-red-500 text-sm mt-1">
+			{{ fieldError }}
+		</p>
 	</div>
 </template>

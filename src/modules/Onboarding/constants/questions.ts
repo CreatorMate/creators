@@ -1,6 +1,5 @@
 import type { Question } from "~/src/modules/Onboarding/types/onboardingTypes";
 
-// TODO: think about whether questions should be here or on the backend
 export const onboardingQuestions: Question[] = [
 	{
 		key: "name_question",
@@ -11,12 +10,14 @@ export const onboardingQuestions: Question[] = [
 				key: "first_name",
 				type: "text",
 				label: "first name",
+				maxLength: 255,
 				required: true,
 				placeholder: "name",
 			},
 			{
 				key: "last_name",
 				type: "text",
+				maxLength: 255,
 				label: "last name",
 				required: true,
 				placeholder: "name",
@@ -33,6 +34,12 @@ export const onboardingQuestions: Question[] = [
 				type: "date",
 				label: "date of birth",
 				required: true,
+				minDate: new Date(1905, 0, 1),
+				maxDate: new Date(
+					new Date().getFullYear() - 13,
+					new Date().getMonth(),
+					new Date().getDate(),
+				),
 			},
 		],
 	},
@@ -43,10 +50,9 @@ export const onboardingQuestions: Question[] = [
 		fields: [
 			{
 				key: "based_in",
-				type: "text",
+				type: "location",
 				label: "location",
 				required: true,
-				placeholder: "place",
 			},
 		],
 	},
@@ -88,7 +94,7 @@ export const onboardingQuestions: Question[] = [
 		key: "project_types_question",
 		label: "what types of projects do you usually work on?",
 		description:
-			"(choose as many as you like)\nsearch for a project type or select from the list below:",
+			"(choose at least one option)\nsearch for a project type or select from the list below:",
 		required: true,
 		fields: [
 			{
@@ -129,6 +135,15 @@ export const onboardingQuestions: Question[] = [
 		key: "socials_question",
 		label: "where can we see your work?",
 		fields: [
+			// {
+			// 	key: "instagram_handle",
+			// 	label: "username",
+			// 	type: "text",
+			// 	required: true,
+			// 	maxLength: 255,
+			// 	placeholder: "@username",
+			// 	icon: "/icons/instagram_op.svg",
+			// },
 			{
 				key: "instagram_handle",
 				type: "social",
@@ -136,31 +151,34 @@ export const onboardingQuestions: Question[] = [
 				socialMediaIcon: "/icons/instagram.svg",
 				required: true,
 			},
-			{
-				key: "vimeo_handle",
-				type: "social",
-				socialMediaName: "vimeo",
-				socialMediaIcon: "/icons/vimeo.svg",
-				required: false,
-			},
+			// {
+			// 	key: "vimeo_handle",
+			// 	type: "social",
+			// 	socialMediaName: "vimeo",
+			// 	socialMediaIcon: "/icons/vimeo.svg",
+			// 	required: false,
+			// },
 			{
 				key: "website",
 				type: "text",
 				label: "website",
 				placeholder: "link to website",
 				required: false,
+				maxLength: 255,
 			},
 		],
 	},
 	{
 		key: "additional_info_question",
 		label: "is there anything else we should know?",
-		required: false,
 		fields: [
 			{
 				key: "additional_info",
+				label: "additional information",
 				type: "textarea",
 				placeholder: "recent client you have worked with.",
+				required: false,
+				maxLength: 500,
 			},
 		],
 	},

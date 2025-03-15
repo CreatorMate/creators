@@ -1,8 +1,5 @@
 <script setup lang='ts'>
-
     import {Icon} from "@iconify/vue";
-    import PopupModel from "~/src/modules/Auth/components/PopupModel.vue";
-    import AddJobPost from "~/src/modules/Core/components/AddJobPost.vue";
     import {API} from "~/src/utils/API/API";
     import {useAccountState} from "~/src/utils/Auth/AccountState";
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
