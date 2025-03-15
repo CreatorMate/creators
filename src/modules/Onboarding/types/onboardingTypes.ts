@@ -3,7 +3,7 @@
  * `required` and `validate`
  * attributes.
  */
-interface BaseField<T> {
+interface BaseFieldType<T> {
 	// Unique key for answer field
 	key: string;
 	// Generic answer type
@@ -17,7 +17,7 @@ interface BaseField<T> {
 /**
  * Text answer field. May have `maxLength` and `placeholder` attributes.
  */
-export interface TextField extends BaseField<"text"> {
+export interface TextFieldType extends BaseFieldType<"text"> {
 	// Max length of text answer, if applicable
 	maxLength?: number;
 	// Placeholder for text field, if applicable
@@ -29,7 +29,7 @@ export interface TextField extends BaseField<"text"> {
 /**
  * Date answer field. May have minimum and maximum possible input dates (`minDate`, resp. `maxDate).
  */
-export interface DateField extends BaseField<"date"> {
+export interface DateFieldType extends BaseFieldType<"date"> {
 	// Minimum accepted date
 	minDate?: Date;
 	// Maximum accepted date
@@ -40,7 +40,7 @@ export interface DateField extends BaseField<"date"> {
  * Multiple choice answer field. Requires `options` attribute holding possible options that the user can select. May
  * also have a `maxChoices` attribute representing the maximum number of options user can select.
  */
-export interface MultiChoiceField extends BaseField<"multi-choice"> {
+export interface MultiChoiceFieldType extends BaseFieldType<"multi-choice"> {
 	// Options user can choose
 	options: string[];
 	// Minimum number of choices user can make
@@ -54,7 +54,7 @@ export interface MultiChoiceField extends BaseField<"multi-choice"> {
 /**
  * Textarea answer field. May have `maxLength` and `placeholder` attributes.
  */
-export interface TextAreaField extends BaseField<"textarea"> {
+export interface TextAreaFieldType extends BaseFieldType<"textarea"> {
 	// Max length of text area answer, if applicable
 	maxLength?: number;
 	// Placeholder for text area field, if applicable
@@ -64,24 +64,24 @@ export interface TextAreaField extends BaseField<"textarea"> {
 /**
  * Social media answer field. May have `socialMedia` attribute representing chosen social media.
  */
-export interface SocialMediaField extends BaseField<"social"> {
+export interface SocialMediaFieldType extends BaseFieldType<"social"> {
 	// Type of social media
 	socialMediaName: string;
 	socialMediaIcon: string;
 }
 
-export interface LocationField extends BaseField<"location"> {}
+export interface LocationFieldType extends BaseFieldType<"location"> {}
 
 /**
  * Answer field type. May be `TextField`, `DateField`, `MultiChoiceField`, `TextAreaField`, or `SocialMediaField`.
  */
-export type Field =
-	| TextField
-	| DateField
-	| MultiChoiceField
-	| TextAreaField
-	| SocialMediaField
-	| LocationField;
+export type FieldType =
+	| TextFieldType
+	| DateFieldType
+	| MultiChoiceFieldType
+	| TextAreaFieldType
+	| SocialMediaFieldType
+	| LocationFieldType;
 
 /**
  * Question type. Requires (unique) `key`, `label`, and `fields` attributes. May have `description` and `required`
@@ -97,19 +97,19 @@ export type Question = {
 	// Dictates whether question (incl. all its fields) require an answer
 	required?: boolean;
 	// Question fields
-	fields: Field[];
+	fields: FieldType[];
 };
-
-/**
- * Field type
- */
-export type FieldType = string | string[] | Date | undefined;
 
 /**
  * Answer type
  */
+export type AnswerType = string | string[] | Date | undefined;
+
+/**
+ * Answers
+ */
 export type Answers = {
 	[questionKey: string]: {
-		[fieldKey: string]: FieldType;
+		[fieldKey: string]: AnswerType;
 	};
 };

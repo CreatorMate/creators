@@ -135,6 +135,15 @@ export const onboardingQuestions: Question[] = [
 		key: "socials_question",
 		label: "where can we see your work?",
 		fields: [
+			// {
+			// 	key: "instagram_handle",
+			// 	label: "username",
+			// 	type: "text",
+			// 	required: true,
+			// 	maxLength: 255,
+			// 	placeholder: "@username",
+			// 	icon: "/icons/instagram_op.svg",
+			// },
 			{
 				key: "instagram_handle",
 				type: "social",
@@ -142,13 +151,13 @@ export const onboardingQuestions: Question[] = [
 				socialMediaIcon: "/icons/instagram.svg",
 				required: true,
 			},
-			{
-				key: "vimeo_handle",
-				type: "social",
-				socialMediaName: "vimeo",
-				socialMediaIcon: "/icons/vimeo.svg",
-				required: false,
-			},
+			// {
+			// 	key: "vimeo_handle",
+			// 	type: "social",
+			// 	socialMediaName: "vimeo",
+			// 	socialMediaIcon: "/icons/vimeo.svg",
+			// 	required: false,
+			// },
 			{
 				key: "website",
 				type: "text",

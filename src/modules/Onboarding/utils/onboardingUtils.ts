@@ -1,11 +1,11 @@
 import type {
 	Question,
 	Answers,
-	TextField,
-	DateField,
-	MultiChoiceField,
-	TextAreaField,
-	LocationField,
+	TextFieldType,
+	DateFieldType,
+	MultiChoiceFieldType,
+	TextAreaFieldType,
+	LocationFieldType,
 } from "../types/onboardingTypes";
 
 type ValidationAnswer = {
@@ -61,12 +61,12 @@ export function validateQuestion(
 /**
  * Validates a text field based on its properties and the provided answer.
  *
- * @param {TextField} field - The text field definition containing validation rules.
+ * @param {TextFieldType} field - The text field definition containing validation rules.
  * @param {string} answer - The user's input to be validated.
  * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
  */
 export function validateTextField(
-	field: TextField,
+	field: TextFieldType,
 	answer: string,
 ): ValidationAnswer {
 	// if answer exceeds maxLength, invalidate it, even if it is not required
@@ -90,11 +90,11 @@ export function validateTextField(
 /**
  * Validates a date field based on its properties and the provided answer.
  *
- * @param {DateField} field - The date field definition containing validation rules.
+ * @param {DateFieldType} field - The date field definition containing validation rules.
  * @param {Date} answer - The user's input to be validated.
  * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
  */
-export function validateDateField(field: DateField, answer: Date) {
+export function validateDateField(field: DateFieldType, answer: Date) {
 	if (!field.required) return { valid: true };
 
 	const dateValue = new Date(answer);
@@ -122,12 +122,12 @@ export function validateDateField(field: DateField, answer: Date) {
 /**
  * Validates a multi-choice field based on its properties and the provided answer.
  *
- * @param {MultiChoiceField} field - The multi-choice field definition containing validation rules.
+ * @param {MultiChoiceFieldType} field - The multi-choice field definition containing validation rules.
  * @param {string[]} answer - The user's input to be validated.
  * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
  */
 export function validateMultiChoiceField(
-	field: MultiChoiceField,
+	field: MultiChoiceFieldType,
 	answer: string[],
 ) {
 	if (!field.required) return { valid: true };
@@ -160,11 +160,14 @@ export function validateMultiChoiceField(
 /**
  * Validates a textarea field based on its properties and the provided answer.
  *
- * @param {TextAreaField} field - The textarea field definition containing validation rules.
+ * @param {TextAreaFieldType} field - The textarea field definition containing validation rules.
  * @param {string} answer - The user's input to be validated.
  * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
  */
-export function validateTextareaField(field: TextAreaField, answer: string) {
+export function validateTextareaField(
+	field: TextAreaFieldType,
+	answer: string,
+) {
 	if (answer && field.maxLength && answer.length > field.maxLength) {
 		return {
 			valid: false,
@@ -186,11 +189,14 @@ export function validateTextareaField(field: TextAreaField, answer: string) {
 /**
  * Validates a location field based on its properties and the provided answer.
  *
- * @param {LocationField} field - The location field definition containing validation rules.
+ * @param {LocationFieldType} field - The location field definition containing validation rules.
  * @param {string} answer - The user's input to be validated.
  * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
  */
-export function validateLocationField(field: LocationField, answer: string) {
+export function validateLocationField(
+	field: LocationFieldType,
+	answer: string,
+) {
 	if (!field.required) return { valid: true };
 
 	if (!answer || answer === "") {

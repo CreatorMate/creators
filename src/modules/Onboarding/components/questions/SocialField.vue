@@ -1,10 +1,13 @@
 <script setup lang="ts">
-	import type { SocialMediaField } from "~/src/modules/Onboarding/types/onboardingTypes";
+	import type { SocialMediaFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import InstagramModal from "~/src/modules/Onboarding/components/questions/modals/InstagramModal.vue";
+	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 
 	const props = defineProps<{
-		field: SocialMediaField;
+		field: SocialMediaFieldType;
 	}>();
+
+	const onboardingStore = useOnboardingStore();
 
 	const { field } = toRefs(props);
 
@@ -38,6 +41,16 @@
 	function closeModal() {
 		currentModalComponent.value = null;
 	}
+
+	// Get the handle for the current social media
+	const socialMediaHandle = computed(() => {
+		const socialName = field.value.socialMediaName.toLowerCase();
+		const handleKey = `${socialName}_handle`;
+		return onboardingStore.answers.socials_question?.[handleKey] || "";
+	});
+
+	// Check if connected
+	const isConnected = computed(() => !!socialMediaHandle.value);
 </script>
 
 <template>
@@ -59,10 +72,14 @@
 			</div>
 
 			<button
-				class="px-5 py-2 bg-gray-100 rounded-lg hover:bg-[#E9E9E9] active:bg-[#D6D6D6] transition-all duration-150 w-auto sm:w-[120px] max-w-full"
+				class="px-5 py-2 rounded-lg transition-all duration-150 w-auto sm:w-[120px] max-w-full"
+				:class="{
+					'bg-gray-100 text-black hover:bg-[#E9E9E9]': !isConnected,
+					'bg-black text-white hover:bg-[#242424]': isConnected,
+				}"
 				@click="connect"
 			>
-				connect
+				{{ isConnected ? "connected" : "connect" }}
 			</button>
 		</div>
 		<!-- render modal -->

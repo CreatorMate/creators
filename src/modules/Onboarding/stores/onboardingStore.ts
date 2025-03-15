@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
-import type { Answers, FieldType, Question } from "../types/onboardingTypes";
+import type { Answers, AnswerType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
 import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingUtils";
 import { STORAGE_KEY } from "@supabase/auth-js/src/lib/constants";
@@ -101,7 +101,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	}
 
 	// Sets the answer for the current question in the `answers` object.
-	function setAnswer(fieldKey: string, value: FieldType): void {
+	function setAnswer(fieldKey: string, value: AnswerType): void {
 		// Throw error if no currentQuestion exists
 		if (!currentQuestion.value) {
 			console.error("No current question available");

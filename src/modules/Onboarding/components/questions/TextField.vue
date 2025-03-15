@@ -1,14 +1,15 @@
 <script setup lang="ts">
-	import type { TextField } from "~/src/modules/Onboarding/types/onboardingTypes";
+	import type { TextFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 	import { validateTextField } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const props = defineProps<{
-		field: TextField;
+		field: TextFieldType;
 	}>();
 
 	const emit = defineEmits<{
 		(e: "enter", inputEl: HTMLInputElement | null): void;
+		(e: "validation-change", isValid: boolean): void;
 	}>();
 
 	const onboardingStore = useOnboardingStore();
@@ -24,6 +25,9 @@
 
 	// Local state for field-specific error message
 	const fieldError = ref("");
+
+	// Track validation state
+	const isValid = ref(false);
 
 	const inputEl = ref<HTMLInputElement | null>(null);
 
@@ -53,6 +57,8 @@
 			value.value as string,
 		);
 		fieldError.value = !valid && errorMessage ? errorMessage : "";
+		isValid.value = valid;
+		emit("validation-change", valid);
 	}
 
 	// Mark field as touched and run validation
@@ -66,18 +72,28 @@
 		emit("enter", inputEl.value);
 	}
 
-	// Expose a focus method so the parent can programmatically focus this field.
-	defineExpose({
-		focus: () => {
-			inputEl.value?.focus();
-		},
-	});
-
 	// Watch for changes in the field value and revalidate if the field has been touched
 	watch(value, () => {
 		if (isTouched.value) {
 			validateField();
 		}
+	});
+
+	onMounted(() => {
+		// Only validate initially if there's already a value
+		if (value.value) {
+			isTouched.value = true;
+			validateField();
+		}
+	});
+
+	// Expose a focus method so the parent can programmatically focus this field.
+	defineExpose({
+		focus: () => {
+			inputEl.value?.focus();
+		},
+		validate: validateField,
+		isValid: computed(() => isValid.value),
 	});
 </script>
 

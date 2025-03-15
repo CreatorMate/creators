@@ -1,10 +1,10 @@
 <script setup lang="ts">
-	import type { DateField } from "~/src/modules/Onboarding/types/onboardingTypes";
+	import type { DateFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 	import { validateDateField } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const props = defineProps<{
-		field: DateField;
+		field: DateFieldType;
 	}>();
 
 	const emit = defineEmits<{

@@ -12,33 +12,34 @@
 	const onboardingStore = useOnboardingStore();
 	const router = useRouter();
 
-	const { logout } = useOidcAuth();
-
 	const isLoading = ref(true);
 
+	const apiError = ref("");
+
 	async function submitApplication() {
-		if (!accountState.creator) return;
+		if (!accountState.creator) {
+			apiError.value =
+				"error updating creator: account state is missing a creator.";
+			return;
+		}
 
-		const answers: any = {};
-
-		// TODO: simplify this
-		answers.handle = "blank_for_now";
-		answers.based_in = onboardingStore.answers.based_in_question.based_in;
-		answers.project_types =
-			onboardingStore.answers.project_types_question.project_types;
-		answers.work_types = onboardingStore.answers.work_types_question.work_types;
-		answers.date_of_birth =
-			onboardingStore.answers.date_of_birth_question.date_of_birth;
-		answers.first_name = onboardingStore.answers.name_question.first_name;
-		answers.last_name = onboardingStore.answers.name_question.last_name;
-		answers.additional_info =
-			onboardingStore.answers.additional_info_question.additional_info;
+		const { answers } = onboardingStore;
+		const extractedAnswers = {
+			handle: "blank_for_now",
+			based_in: answers.based_in_question.based_in,
+			project_types: answers.project_types_question.project_types,
+			work_types: answers.work_types_question.work_types,
+			date_of_birth: answers.date_of_birth_question.date_of_birth,
+			first_name: answers.name_question.first_name,
+			last_name: answers.name_question.last_name,
+			additional_info: answers.additional_info_question.additional_info,
+		};
 
 		try {
-			const creator = await $fetch("/API/creators/me", {
+			await $fetch("/API/creators/me", {
 				method: "put",
 				body: JSON.stringify({
-					...answers,
+					...extractedAnswers,
 					status: AccountStatus.IN_REVIEW,
 				}),
 			});
@@ -46,12 +47,9 @@
 			accountState.creator.status = AccountStatus.IN_REVIEW;
 			await router.push("/");
 		} catch (error) {
-			if (error instanceof Error) {
-				onboardingStore.error = error.message;
-			} else {
-				onboardingStore.error = "An unknown error occurred.";
-			}
-			console.error("Error updating creator:", error);
+			apiError.value =
+				error instanceof Error ? error.message : "an unknown error occurred.";
+			console.error("error updating creator:", error);
 		}
 	}
 
@@ -60,6 +58,7 @@
 	 * Navigates to the previous step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions.
 	 */
 	function handleBack() {
+		resetApiError();
 		onboardingStore.back();
 		// Use nextTick to ensure the DOM has updated
 		nextTick(() => {
@@ -73,6 +72,7 @@
 	 * Advances to the next step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions
 	 */
 	function handleNext() {
+		resetApiError();
 		onboardingStore.next();
 		nextTick(() => {
 			document.activeElement instanceof HTMLElement &&
@@ -85,11 +85,16 @@
 	 * Submits the completed application and removes focus from the active element to prevent unintended Enter key interactions
 	 */
 	function handleSubmit() {
+		resetApiError();
 		submitApplication();
 		nextTick(() => {
 			document.activeElement instanceof HTMLElement &&
 				document.activeElement.blur();
 		});
+	}
+
+	function resetApiError() {
+		apiError.value = "";
 	}
 
 	onMounted(() => {
@@ -105,7 +110,11 @@
 		// Set loading state to false
 		isLoading.value = false;
 
+		// Reset API error message
+		resetApiError();
+
 		// onboardingStore.reset();
+		console.log(onboardingStore.answers);
 	});
 </script>
 
@@ -190,6 +199,9 @@
 		<div v-else>
 			<div class="relative flex flex-grow justify-center px-6">
 				<div class="w-[636px] max-w-full mt-20 gap-5">
+					<p class="text-red-500" v-if="apiError">
+						{{ apiError }}
+					</p>
 					<!-- Content Components -->
 					<ApplicationReview
 						v-if="onboardingStore.isReviewStep"
