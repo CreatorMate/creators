@@ -23,5 +23,10 @@ export class CoreModule extends BaseModule {
             file: '@/src/modules/Core/pages/Hire.vue',
             path: '/hire'
         },
+        {
+            name: "error-404",
+            file: '@/src/modules/Core/pages/Error404.vue',
+            path: "/:catchAll(.*)*", // This catches all undefined routes
+        },
     ]
 }
