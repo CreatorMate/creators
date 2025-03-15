@@ -3,6 +3,7 @@
     import {API} from "~/src/utils/API/API";
     import {useAccountState} from "~/src/utils/Auth/AccountState";
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
+    import JobPost from "~/src/modules/Core/components/JobPost.vue";
 
     const accountState = useAccountState();
 
@@ -44,22 +45,7 @@
             <p class="text-center mt-1 text-black text-opacity-40 mb-8">you dont have any active posts</p>
         </div>
         <div v-else class="flex flex-col w-full mt-6 gap-4">
-            <div v-for="jobPost of jobPosts" class="w-full border p-4 flex rounded-2xl">
-
-                <div class="flex gap-6 items-center">
-                    <nuxt-img  class="rounded-full w-24 h-24" src="/apple-touch-icon.png"></nuxt-img>
-                    <div class="flex flex-col">
-                        <p class="text-2xl">{{jobPost.title}}</p>
-                        <div class="flex gap-2 text-black text-opacity-40">
-                            <p class="text-lg">{{jobPost.looking_for}}</p>
-                        </div>
-                        <div class="flex items-center gap-2 mt-4">
-                            <Icon width="32" icon="material-symbols:location-on"/>
-                            <p>{{jobPost.place}}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <JobPost v-for="jobPost of jobPosts" :jobPost/>
         </div>
     </section>
 </template>
