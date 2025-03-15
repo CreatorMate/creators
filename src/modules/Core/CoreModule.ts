@@ -8,5 +8,15 @@ export class CoreModule extends BaseModule {
             file: '@/src/modules/Core/pages/DashboardView.vue',
             path: '/'
         },
+        {
+            name: 'profile',
+            file: '@/src/modules/Core/pages/Profile.vue',
+            path: '/profile'
+        },
+        {
+            name: 'hire',
+            file: '@/src/modules/Core/pages/Hire.vue',
+            path: '/hire'
+        },
     ]
 }

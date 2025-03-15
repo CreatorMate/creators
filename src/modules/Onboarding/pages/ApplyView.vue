@@ -13,6 +13,16 @@
 	const router = useRouter();
 
 	const isLoading = ref(true);
+  
+    useHead({
+        title: 'apply - creatormate'
+    })
+
+    definePageMeta({
+        layout: 'empty'
+    })
+	async function submitApplication() {
+		if (!accountState.user) return;
 
 	const apiError = ref("");
 
@@ -36,7 +46,7 @@
 		};
 
 		try {
-			await $fetch("/API/creators/me", {
+			const user = await $fetch("/API/users/me", {
 				method: "put",
 				body: JSON.stringify({
 					...extractedAnswers,
@@ -44,7 +54,7 @@
 				}),
 			});
 
-			accountState.creator.status = AccountStatus.IN_REVIEW;
+			accountState.user.status = AccountStatus.IN_REVIEW;
 			await router.push("/");
 		} catch (error) {
 			apiError.value =
@@ -99,7 +109,7 @@
 
 	onMounted(() => {
 		// If creator has been accepted, route to home page
-		if (accountState.creator?.status == AccountStatus.ACCEPTED) {
+		if (accountState.user?.status == AccountStatus.ACCEPTED) {
 			onboardingStore.reset();
 			router.push("/");
 		}

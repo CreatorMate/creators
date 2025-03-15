@@ -5,23 +5,17 @@ import type {HonoUser} from "~/src/api/utils/HonoComposables";
 import {errorResponse, successResponse} from "~/src/api/utils/HonoResponses";
 import {AccountStatus} from "~/src/utils/SupabaseTypes";
 
-export class UpdateCreatorEndpoint extends Endpoint {
+export class UpdateSelfEndpoint extends Endpoint {
     protected readonly method: string = 'put'
-    protected readonly route: string = '/creators/me'
+    protected readonly route: string = '/users/me'
 
     protected async handle(context: Context) {
         const honoUser = this.getHonoUser(context);
-        const user = await this.prismaClient.users.findFirst({
-           where: { email: honoUser.email, external_id: honoUser.sub},
-            include: {
-               creators: true
-            }
-        });
-        if(!user || !user.creators) return errorResponse(context, 'USER_NOT_FOUND');
+
         const data = await context.req.json();
-        const updated = await this.prismaClient.creators.update({
+        const updated = await this.prismaClient.users.update({
             where: {
-                id: user.creators.id,
+                id: honoUser.id,
             },
             data: {
                 ...data

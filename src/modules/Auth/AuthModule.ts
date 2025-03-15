@@ -14,9 +14,9 @@ export class AuthModule extends BaseModule {
             path: '/auth/auth0/logout'
         },
         {
-            name: 'link-instagram',
-            file: '@/src/modules/Auth/pages/link-instagram.vue',
-            path: '/oauth/link-instagram'
+            name: 'callback',
+            file: '@/src/modules/Auth/pages/Callback.vue',
+            path: '/callback'
         }
     ]
 }
