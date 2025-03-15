@@ -4,14 +4,11 @@ import type {
 	TextFieldType,
 	DateFieldType,
 	MultiChoiceFieldType,
+	SocialMediaFieldType,
 	TextAreaFieldType,
 	LocationFieldType,
+	ValidationAnswer,
 } from "../types/onboardingTypes";
-
-type ValidationAnswer = {
-	valid: boolean;
-	errorMessage?: string;
-};
 
 /**
  * Validates answers of a question.
@@ -43,11 +40,13 @@ export function validateQuestion(
 			case "textarea":
 				validation = validateTextareaField(field, answer as string);
 				break;
+			case "social":
+				validation = validateSocialField(field, answer as string);
+				break;
 			case "location":
 				validation = validateLocationField(field, answer as string);
 				break;
 			default:
-				console.warn(`Unknown field type: ${field.type}`);
 				continue;
 		}
 
@@ -152,6 +151,21 @@ export function validateMultiChoiceField(
 		return {
 			valid: false,
 			errorMessage: `answer must have at most ${field.maxChoices} choices`,
+		};
+	}
+	return { valid: true };
+}
+
+export function validateSocialField(
+	field: SocialMediaFieldType,
+	answer: string,
+) {
+	if (!field.required) return { valid: true };
+
+	if (!answer || answer === "") {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot be empty`,
 		};
 	}
 	return { valid: true };

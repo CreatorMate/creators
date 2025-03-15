@@ -1,36 +1,47 @@
 <script setup lang="ts">
-	import type { SocialMediaFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
-	import TextField from "~/src/modules/Onboarding/components/questions/TextField.vue";
-	import type { TextFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
+	import type {
+		SocialMediaFieldType,
+		ValidationAnswer,
+	} from "~/src/modules/Onboarding/types/onboardingTypes";
 
-	const props = defineProps<{ field: SocialMediaFieldType }>();
+	const props = defineProps<{
+		field: SocialMediaFieldType;
+		initialValue?: string;
+	}>();
 
-	const emit = defineEmits(["close"]);
+	const emit = defineEmits(["confirm", "close"]);
 
-	const instagramTextField = ref<InstanceType<typeof TextField> | null>(null);
-	const isValid = ref(false); // Track validation state
+	const localValue = ref(props.initialValue);
+	const isTouched = ref(false);
+	const error = ref("");
 
-	const usernameInputField: TextFieldType = {
-		key: "instagram_handle",
-		label: "username",
-		type: "text",
-		required: true,
-		maxLength: 255,
-		placeholder: "@username",
-		icon: "/icons/instagram_op.svg",
-	};
+	// Validation function
+	function validate(): ValidationAnswer {
+		if (!localValue || localValue.value === "") {
+			return { valid: false, errorMessage: "username cannot be empty" };
+		}
+		if (localValue.value!.length > 100) {
+			return {
+				valid: false,
+				errorMessage: "username cannot exceed 100 characters",
+			};
+		}
+		return { valid: true };
+	}
 
-	// Function to handle validation updates from the TextField
-	const handleValidationChange = (valid: boolean) => {
-		isValid.value = valid;
-	};
+	function handleInput(event: Event) {
+		localValue.value = (event.target as HTMLInputElement).value;
+		isTouched.value = true; // Mark as touched when the user types
+		const { valid, errorMessage } = validate();
+		error.value = !valid && errorMessage ? errorMessage : "";
+	}
 
 	// Handle escape key press
-	const handleKeyDown = (event: KeyboardEvent) => {
+	function handleKeyDown(event: KeyboardEvent) {
 		if (event.key === "Escape") {
 			emit("close");
 		}
-	};
+	}
 
 	// Add event listener when component is mounted
 	onMounted(() => {
@@ -52,7 +63,7 @@
 		>
 			<button
 				class="absolute top-5 right-6 text-gray-500 hover:text-gray-700"
-				@click="$emit('close')"
+				@click="emit('close')"
 			>
 				<svg
 					xmlns="http://www.w3.org/2000/svg"
@@ -79,16 +90,31 @@
 				your application.
 			</p>
 
-			<TextField
-				:field="usernameInputField"
-				ref="instagramTextField"
-				@validation-change="handleValidationChange"
-			/>
+			<!-- input field -->
+			<div class="mb-3">
+				<div class="relative">
+					<input
+						class="w-full pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+						placeholder="username"
+						:value="localValue"
+						@input="handleInput"
+					/>
+					<div
+						class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"
+					>
+						<img src="/icons/instagram_op.svg" alt="" class="w-5 h-5" />
+					</div>
+				</div>
+				<!-- Error Message -->
+				<p v-if="isTouched && error" class="text-red-500 text-sm mt-1">
+					{{ error }}
+				</p>
+			</div>
 
 			<button
 				class="absolute bottom-8 right-6 bg-black text-white px-5 py-2 rounded-lg disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				:disabled="!isValid"
-				@click="$emit('close')"
+				:disabled="!validate().valid"
+				@click="emit('confirm', localValue)"
 			>
 				link to creatormate
 			</button>

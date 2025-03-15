@@ -33,7 +33,7 @@
 
 		const { answers } = onboardingStore;
 		const extractedAnswers = {
-			handle: "blank_for_now",
+			handle: answers.socials_question.instagram_handle,
 			based_in: answers.based_in_question.based_in,
 			project_types: answers.project_types_question.project_types,
 			work_types: answers.work_types_question.work_types,
