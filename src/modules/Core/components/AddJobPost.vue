@@ -43,7 +43,7 @@
 <template>
     <div class="bg-white w-[500px] rounded-3xl p-6 popup ">
         <div class="w-full flex justify-between items-center">
-            <h1 class="font-semibold text-3xl">new project</h1>
+            <h1 class="font-semibold text-3xl">post a job</h1>
             <Icon @click="emits('close')" class="cursor-pointer" icon="material-symbols:close"/>
         </div>
 
@@ -60,7 +60,7 @@
             <input type="text" v-model="date" class="w-full bg-[#FCFCFC] p-2 mt-2 border">
         </div>
         <div class="w-full mt-3">
-            <p>place]</p>
+            <p>place</p>
             <input type="text" v-model="place" class="w-full bg-[#FCFCFC] p-2 mt-2 border">
         </div>
         <div class="w-full mt-3">

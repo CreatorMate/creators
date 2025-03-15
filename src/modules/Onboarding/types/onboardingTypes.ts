@@ -113,3 +113,11 @@ export type Answers = {
 		[fieldKey: string]: AnswerType;
 	};
 };
+
+/**
+ * Validation answer
+ */
+export type ValidationAnswer = {
+	valid: boolean;
+	errorMessage?: string;
+};

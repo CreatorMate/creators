@@ -1,5 +1,6 @@
 <script setup lang='ts'>
-    import {Creator} from "@/creators";
+    import type {Creator} from "~/src/modules/Auth/data/creators";
+
     const {creator} = defineProps<{
         creator: Creator,
     }>();

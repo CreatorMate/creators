@@ -25,7 +25,11 @@
 				onboardingStore.answers[questionKey.value] = {};
 			}
 			// Return the current value or empty string
-			return onboardingStore.answers[questionKey.value][props.field.key] || "";
+			return (
+				(onboardingStore.answers[questionKey.value][
+					props.field.key
+				] as string) || ""
+			);
 		},
 		set: (newValue) => {
 			// Initialize the question's answer object if it doesn't exist
