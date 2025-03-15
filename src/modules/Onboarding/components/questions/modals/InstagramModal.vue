@@ -5,6 +5,8 @@
 
 	const props = defineProps<{ field: SocialMediaFieldType }>();
 
+	const emit = defineEmits(["close"]);
+
 	const instagramTextField = ref<InstanceType<typeof TextField> | null>(null);
 	const isValid = ref(false); // Track validation state
 
@@ -22,6 +24,23 @@
 	const handleValidationChange = (valid: boolean) => {
 		isValid.value = valid;
 	};
+
+	// Handle escape key press
+	const handleKeyDown = (event: KeyboardEvent) => {
+		if (event.key === "Escape") {
+			emit("close");
+		}
+	};
+
+	// Add event listener when component is mounted
+	onMounted(() => {
+		window.addEventListener("keydown", handleKeyDown);
+	});
+
+	// Remove event listener when component is unmounted
+	onUnmounted(() => {
+		window.removeEventListener("keydown", handleKeyDown);
+	});
 </script>
 
 <template>
