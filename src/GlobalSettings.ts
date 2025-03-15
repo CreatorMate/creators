@@ -2,6 +2,7 @@
 export const appSettings = {
     unGuardedRoutes: [
         "/auth0/callback",
+        '/login',
         /^\/invitation\/[^/]+\/[^/]+$/,
     ],
     defaultLimit: 10,

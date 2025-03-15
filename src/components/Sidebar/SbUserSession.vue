@@ -12,6 +12,6 @@
                 <p class="text-sm text-text-dark lowercase">{{accountState.user.first_name}} {{accountState.user.last_name}}</p>
             </div>
         </div>
-        <Icon size="20" class="mr-4 hover:text-black cursor-pointer transition duration-100 text-gray-950" @click="logout()" icon="material-symbols:logout"></Icon>
+        <Icon size="20" class="mr-4 hover:text-black cursor-pointer transition duration-100 text-gray-950" @click="accountState.logout()" icon="material-symbols:logout"></Icon>
     </div>
 </template>
