@@ -19,12 +19,30 @@ export class JobPostController extends BaseController {
         this.app.get('/jobposts/:id', async (context: Context): Promise<any> => {
             const id = context.req.param('id') as string;
             const jobPosts = await usePrisma().job_postings.findMany({
-                where: {posted_by: id}
+                where: {posted_by: id},
+                include: {
+                    job_applications: {
+                        include: {
+                            users: true
+                        }
+                    }
+                }
             });
 
             if(!jobPosts) return errorResponse(context, 'something_went_wrong');
 
             return successResponse(context, {job_posts: jobPosts});
+        });
+
+        this.app.get('/profiles/:id', async (context: Context): Promise<any> => {
+            const id = context.req.param('id') as string;
+            const user = await usePrisma().users.findUnique({
+                where: {id: id}
+            });
+
+            if(!user) return errorResponse(context, 'something_went_wrong');
+
+            return successResponse(context, user);
         });
 
         this.app.post('/jobposts', async (context: Context): Promise<any> => {
@@ -40,6 +58,22 @@ export class JobPostController extends BaseController {
             }
 
             return successResponse(context, added);
+        });
+
+        this.app.post('/jobposts/:id/submit', async (context: Context): Promise<any> => {
+            const data = await context.req.json();
+            const id = context.req.param('id') as string;
+            //@ts-ignore
+            const added = await usePrisma().job_applications.create({
+                data: {
+                    ...data
+                }
+            });
+            if (!added) {
+                return errorResponse(context, "Something went wrong while updating the creator");
+            }
+
+            return successResponse(context, added, 'applied to job post', 'applied to job post');
         });
     }
 }
