@@ -12,11 +12,17 @@
 	const onboardingStore = useOnboardingStore();
 	const router = useRouter();
 
-	const { logout } = useOidcAuth();
-
 	const isLoading = ref(true);
+
+    useHead({
+        title: 'apply - creatormate'
+    })
+
+    definePageMeta({
+        layout: 'empty'
+    })
 	async function submitApplication() {
-		if (!accountState.creator) return;
+		if (!accountState.user) return;
 
         const answers: any = {};
 
@@ -30,7 +36,7 @@
         answers.additional_info = onboardingStore.answers.additional_info_question.additional_info;
 
 		try {
-			const creator = await $fetch("/API/creators/me", {
+			const user = await $fetch("/API/users/me", {
 				method: "put",
 				body: JSON.stringify({
 					...answers,
@@ -38,7 +44,7 @@
 				}),
 			});
 
-			accountState.creator.status = AccountStatus.IN_REVIEW;
+			accountState.user.status = AccountStatus.IN_REVIEW;
 			await router.push("/");
 		} catch (error) {
 			if (error instanceof Error) {
@@ -46,13 +52,12 @@
 			} else {
 				onboardingStore.errorMessage = "An unknown error occurred.";
 			}
-			console.error("Error updating creator:", error);
 		}
 	}
 
 	onMounted(() => {
 		// If creator has been accepted, route to home page
-		if (accountState.creator?.status == AccountStatus.ACCEPTED) {
+		if (accountState.user?.status == AccountStatus.ACCEPTED) {
 			onboardingStore.reset();
 			router.push("/");
 		}

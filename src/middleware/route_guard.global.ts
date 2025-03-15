@@ -9,20 +9,12 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     const runtimeConfig = useRuntimeConfig();
     appSettings.baseUrl = runtimeConfig.public.BASE_URL;
 
-    const {login, loggedIn} = useOidcAuth();
-    if(!loggedIn.value) {
-        return navigateTo('/login');
-    }
-
     const accountStore = useAccountState();
     if(!accountStore.user) {
         await accountStore.initialize();
     }
     if(accountStore.user) {
-        if((accountStore.creator?.status == AccountStatus.NEW || accountStore.creator?.status == AccountStatus.IN_REVIEW)  && (to.path !== '/submission/status' && to.path !== '/apply' && to.path !== '/oauth/link-instagram')) {
-            return navigateTo('/submission/status');
-        }
-        if((accountStore.creator?.status== AccountStatus.ACCEPTED || accountStore.creator?.status== AccountStatus.INVITED)  && (to.path !== '/submission/status' && to.path !== '/apply' && to.path !== '/oauth/link-instagram' ) && !accountStore.instagramAccount) {
+        if((accountStore.user.status == AccountStatus.NEW || accountStore.user.status == AccountStatus.IN_REVIEW)  && (to.path !== '/submission/status' && to.path !== '/apply')) {
             return navigateTo('/submission/status');
         }
     }

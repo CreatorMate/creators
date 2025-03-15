@@ -21,23 +21,13 @@
         }
         appSettings.baseUrl = runtimeConfig.public.BASE_URL;
 
-        const {login, loggedIn} = useOidcAuth();
-        if(!loggedIn.value) {
-            ready.value = true;
-            return navigateTo('/login');
-        }
-
         const accountStore = useAccountState();
         if(!accountStore.user) {
             await accountStore.initialize();
         }
 
         if(accountStore.user) {
-            if((accountStore.creator?.status == AccountStatus.NEW || accountStore.creator?.status == AccountStatus.IN_REVIEW)  && (route.path !== '/submission/status' && route.path !== '/apply' && route.path !== '/oauth/link-instagram')) {
-                ready.value = true;
-                return navigateTo('/submission/status');
-            }
-            if((accountStore.creator?.status== AccountStatus.ACCEPTED || accountStore.creator?.status== AccountStatus.INVITED)  && (route.path !== '/submission/status' && route.path !== '/apply' && route.path !== '/oauth/link-instagram' ) && !accountStore.instagramAccount) {
+            if((accountStore.user?.status == AccountStatus.NEW || accountStore.user?.status == AccountStatus.IN_REVIEW)  && (route.path !== '/submission/status' && route.path !== '/apply')) {
                 ready.value = true;
                 return navigateTo('/submission/status');
             }
