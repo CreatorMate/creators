@@ -5,9 +5,13 @@ import { GetSelfEndpoint } from "~/src/api/modules/users/GetSelf/GetSelfEndpoint
 import { UpdateSelfEndpoint } from "~/src/api/modules/users/UpdateSelf/UpdateSelfEndpoint";
 import { GetCityCountryCodes } from "~/src/api/modules/onboarding/GetCityCountryCodes";
 import { JobPostController } from "~/src/api/modules/jobposts/JobPostController";
+import {OnboardingVerificationController} from "~/src/api/modules/onboarding/OnboardingVerificationController";
 
 export function initializeHonoRouter(app: Hono) {
-	const controllers: BaseController[] = [new JobPostController(app)];
+	const controllers: BaseController[] = [
+		new JobPostController(app),
+		new OnboardingVerificationController(app)
+	];
 
 	const endpoints: Endpoint[] = [
 		new GetSelfEndpoint(),

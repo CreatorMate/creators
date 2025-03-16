@@ -6,6 +6,7 @@
     import {useAccountState} from "~/src/utils/Auth/AccountState";
     import Login from "~/src/modules/Auth/components/Landing/Login.vue";
     import VerifyComponent from "~/src/modules/Auth/components/Landing/Verify.vue";
+    import {API} from "~/src/utils/API/API";
 
     const email = ref("");
     const router = useRouter();

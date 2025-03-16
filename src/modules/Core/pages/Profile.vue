@@ -5,12 +5,12 @@
     import ToggleButton from "~/src/components/Core/ToggleButton.vue";
     import {useSupabaseUser} from "#imports";
     import {Icon} from "@iconify/vue";
+    import {onMounted} from "vue";
 
     const router = useRouter();
     const accountState = useAccountState();
     const user = useSupabaseUser();
     const isOn = ref(false);
-
 </script>
 
 <template>
