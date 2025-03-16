@@ -1,28 +1,35 @@
 import {Hono} from "hono";
-import {logger} from "hono/logger";
-//@ts-ignore
-import {getUserSession} from 'nuxt-oidc-auth/runtime/server/utils/session.js'
+
 import dotenv from 'dotenv';
 import {initializeHonoRouter} from "~/src/api/router";
+import createApp from "./src/lib/createApp";
+import {serverSupabaseUser} from "#supabase/server";
 
-let app: Hono = new Hono();
-dotenv.config();
-
-app.use('*', logger());
-app.use('*', async (ctx, next) => {
-    // @ts-ignore
-    const user = ctx.req.raw['user'];
-    // @ts-ignore
-    ctx.set('user', user);
-    await next();
-});
+let app: Hono = createApp();
 
 initializeHonoRouter(app);
-
 export default defineEventHandler(async (event) => {
-    event.node.req.originalUrl = '';
-    const webReq = toWebRequest(event);
-    const session = await getUserSession(event);
-    (webReq as any)['user'] = session.userInfo;
-    return app.fetch(webReq);
+    try {
+        event.node.req.originalUrl = '';
+        const webReq = toWebRequest(event);
+        if (event.path.startsWith('/webhook')) {
+            return app.fetch(webReq);
+        }
+        const user = await serverSupabaseUser(event);
+        if(!user) {
+            throw createError({ // Use createError
+                statusCode: 401,
+                statusMessage: 'Unauthorized',
+            });
+        }
+
+
+        (webReq as any)['user'] = user;
+        return app.fetch(webReq);
+    } catch (error) {
+        throw createError({ // Use createError
+            statusCode: 401,
+            statusMessage: 'Unauthorized',
+        });
+    }
 });

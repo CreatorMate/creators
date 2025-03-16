@@ -1,45 +1,45 @@
-<script setup lang='ts'>
-    import {useAccountStore} from "~/src/utils/Auth/AccountStore";
-    import {onMounted} from "vue";
-    import {AccountStatus} from "~/src/utils/SupabaseTypes";
+<script setup lang="ts">
+	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
 
-    const accountState = useAccountStore();
-    const {user} = useOidcAuth();
+	const router = useRouter();
 
-    const router = useRouter();
-
-    const checked = ref(false);
-
-    onMounted(() => {
-
-    });
-
-    async function apply() {
-        await router.push('/apply');
-    }
-
-    const statusMap = new Map();
+	async function clickStart() {
+		await router.push("/apply");
+	}
 </script>
 
 <template>
-    <h1 class="text-2xl font-medium">Application: Not started</h1>
-    <p class="text-[#8D8D8D] font-medium mt-2 w-[440px] max-w-full">Welcome to creatormate, before we can start working
-        with you we would like to review your account, to be able do this properly we would like you to answer some
-        questions</p>
-    <div class="flex gap-2 items-center my-6 text-[#5E5E5E]">
-        <input v-model="checked" type="checkbox" class="accent-black">
-        <p class="">by checking the box you agree to our <span class="underline">terms <br/> and conditions</span> and
-            <span class="underline">privacy policy</span></p>
-    </div>
-    <button @click="apply" :disabled="!checked"
-            class="bg-black text-white px-14 py-3 rounded-lg mb-6 disabled:bg-gray-400">apply
-    </button>
-    <p>join and work with our creators & brands</p>
+	<div class="mt-10 ml-0 lg:ml-10 mx-4 lg:mx-0">
+		<div class="space-y-4">
+			<p class="text-2xl font-[400]">application status:</p>
+
+			<p class="text-[28px] font-[500]">not started.</p>
+		</div>
+
+		<!-- progress indicator -->
+		<div class="w-fit">
+			<ProgressIndicator
+				:step="1"
+				:total="3"
+				:height="5"
+				:width="25"
+				class="mt-7 mb-4 ml-[-1px]"
+			/>
+		</div>
+
+		<p class="text-[#151515] font-[400] mt-2 w-[408px] max-w-full">
+			<span class="font-semibold">creatormate</span> is a curated community of
+			creatives, carefully selected based on portfolio quality and experience.
+			share your details, and our team will review your application with
+			attention to your work and expertise.
+		</p>
+
+		<button
+			@click="clickStart"
+			class="flex items-center bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
+		>
+			<span>let's start</span>
+			<img src="/icons/arrow-right.svg" alt="" class="w-4 h-4 invert ml-3" />
+		</button>
+	</div>
 </template>
-
-
-<style scoped>
-.progress-bar {
-    transition: width 0.3s; /* You can adjust the duration as needed */
-}
-</style>

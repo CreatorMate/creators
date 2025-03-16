@@ -1,5 +1,6 @@
 import {type Context, Hono} from "hono";
 import {getPrismaClient, type HonoUser} from "~/src/api/utils/HonoComposables";
+import type {User} from "@supabase/auth-js";
 
 export abstract class Endpoint {
     protected abstract readonly route: string;
@@ -19,7 +20,7 @@ export abstract class Endpoint {
     }
 
 
-    protected getHonoUser(ctx: Context): HonoUser {
+    protected getHonoUser(ctx: Context): User {
         return ctx.get('user');
     }
 }

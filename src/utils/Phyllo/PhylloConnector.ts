@@ -1,7 +1,7 @@
 //@ts-ignore
 import {defineStore} from "pinia";
 import {type Ref, ref} from "vue";
-import {useAccountStore} from "~/src/utils/Auth/AccountStore";
+import {useAccountState} from "~/src/utils/Auth/AccountState";
 
 
 class PhylloConnection {
@@ -16,7 +16,7 @@ export const usePhylloConnection = defineStore("phyllo", () => {
     });
 
     async function get() {
-        const accountStore = useAccountStore();
+        const accountStore = useAccountState();
         connection.value = await $fetch( `/API/phyllo/${accountStore.user}`);
     }
 

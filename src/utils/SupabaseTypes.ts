@@ -1,29 +1,20 @@
 export type User = {
     id: string,
-    email: string,
-    brand_id: number,
-    picture: string,
-    full_name: string
-}
-
-export type Creator = {
-    id: string,
-    sub: string,
-    status: AccountStatus,
     handle: string,
     email: string,
+    status: AccountStatus,
+    picture: string,
     based_in: string,
-    project_types: string,
-    created_at: string,
+    project_types: string[],
     date_of_birth: string,
     additional_info: string,
-    tik_tok: string
-    linked: boolean
+    first_name: string,
+    last_name: string,
+    work_types: string[]
 }
 
 export enum AccountStatus {
     NEW = "NEW",
-    INVITED = "INVITED",
     IN_REVIEW = "IN_REVIEW",
     ACCEPTED = "ACCEPTED"
 }
