@@ -8,7 +8,6 @@ import { z } from "zod";
 export class GetCityCountryCodes extends Endpoint {
 	protected readonly method: string = "get";
 	protected readonly route: string = "/onboarding/countries";
-
 	protected async handle(context: Context) {
 		const search = context.req.query("search");
 

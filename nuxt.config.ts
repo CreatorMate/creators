@@ -18,7 +18,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/callback',
-      exclude: ['/callback']
+      exclude: ['/callback', '/API/webhook']
     },
     redirect: true
   },

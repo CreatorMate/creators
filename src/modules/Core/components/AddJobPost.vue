@@ -3,7 +3,6 @@
     import {Icon} from "@iconify/vue";
     import {API} from "~/src/utils/API/API";
     import {useAccountState} from "~/src/utils/Auth/AccountState";
-    import {load} from "yaml-ast-parser";
 
     const title = ref('');
     const description = ref('');
