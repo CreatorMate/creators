@@ -10,7 +10,9 @@ export type User = {
     additional_info: string,
     first_name: string,
     last_name: string,
-    work_types: string[]
+    work_types: string[],
+    roles: any,
+    rights: any
 }
 
 export enum AccountStatus {

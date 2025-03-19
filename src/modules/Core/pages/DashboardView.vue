@@ -4,6 +4,7 @@
     import {useAccountState} from "~/src/utils/Auth/AccountState";
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
     import JobPost from "~/src/modules/Core/components/JobPost.vue";
+    import MobileNavigation from "~/src/components/Navigation/MobileNavigation.vue";
 
     const accountState = useAccountState();
 
@@ -26,9 +27,9 @@
 </script>
 
 <template>
-    <section class="w-full flex flex-col">
+    <section class="w-full flex flex-col max-h-full">
         <div class="flex w-full justify-between">
-            <h1 class="text-3xl font-semibold">Discover work</h1>
+            <h1 class="text-3xl font-semibold">discovery</h1>
         </div>
         <div class="mt-12 flex gap-2">
             <button class="p-1 px-4 border rounded-full text-white bg-black">Active</button>
@@ -48,4 +49,5 @@
             <JobPost v-for="jobPost of jobPosts" :jobPost/>
         </div>
     </section>
+    <MobileNavigation/>
 </template>

@@ -3,8 +3,9 @@ import type {Context} from "hono";
 import type {HonoUser} from "~/src/api/utils/HonoComposables";
 import {errorResponse, successResponse} from "~/src/api/utils/HonoResponses";
 import hono from "~/src/api/hono";
+import {usePrisma} from "~/src/api/src/lib/prisma";
 
-export class GetSelfEndpoint extends Endpoint {
+export class GetRolesAndRightsEndpoint extends Endpoint {
     protected readonly method: string = 'get'
     protected readonly route: string = '/users/me'
 
