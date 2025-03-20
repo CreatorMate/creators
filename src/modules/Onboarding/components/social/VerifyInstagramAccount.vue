@@ -8,7 +8,7 @@
     const model = defineModel<string>();
     const toastState = useToastState();
 
-    const emit = defineEmits(['confirmName']);
+    const emit = defineEmits(['confirmName', 'cancel']);
     const {verified} = defineProps<{
         verified: InstagramVerification
     }>();
@@ -48,9 +48,13 @@
     </div>
     <p v-if="notComplete" class="text-red-600">account not verified yet, try sending the code again.</p>
     <div class="flex w-full justify-end mt-6">
+        <div @click="emit('cancel')"
+           class="bg-gray-400 cursor-pointer text-white px-5 py-2 rounded-lg disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150 mr-4"
+        >
+            change name
+        </div>
         <a href="https://www.instagram.com/direct/t/17846872649832030/" target="_blank"
             class="bg-gray-400 text-white px-5 py-2 rounded-lg disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150 mr-4"
-            @click=""
         >
             open instagram
         </a>
