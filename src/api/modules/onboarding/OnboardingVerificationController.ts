@@ -77,6 +77,7 @@ export class OnboardingVerificationController extends BaseController {
                 if (!response.ok) {
                     // Handle HTTP errors (e.g., 400, 401, 500)
                     console.error(`HTTP error! Status: ${response.status}`);
+                    await this.sendMessage(senderId, 'Instagram verification service down try again later');
                     return null;
                 }
 
@@ -124,7 +125,7 @@ export class OnboardingVerificationController extends BaseController {
     }
 
     private async sendMessage(senderId: string, message: string) {
-        const ig_id = "17841405952792875";
+        const ig_id = "17841454960888679";
         const key = process.env.INSTAGRAM_KEY;
         const url = `https://graph.instagram.com/v22.0/${ig_id}/messages?access_token=${key}`;
         const send = await fetch(url, {
