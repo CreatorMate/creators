@@ -84,6 +84,6 @@
                 <Icon @click="deleteAccount" class="cursor-pointer hover:text-black text-gray-800" icon="material-symbols:close-rounded" width="14"/>
             </div>
         </div>
-        <VerifyInstagramAccount v-else @confirm-name="verifyNewName" v-model="localValue" :verified/>
+        <VerifyInstagramAccount v-else @confirm-name="emit('confirm')" v-model="localValue" :verified/>
     </div>
 </template>
