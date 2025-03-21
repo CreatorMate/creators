@@ -24,6 +24,7 @@ model users {
   job_applications  job_applications[]
   job_postings      job_postings[]
   roles     user_roles[]
+  profile_picture   String?
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
