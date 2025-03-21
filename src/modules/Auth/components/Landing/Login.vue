@@ -45,7 +45,7 @@
 </script>
 
 <template>
-    <h2 class="text-2xl mb-6 font-medium">login to creatormate</h2>
+    <h2 class="text-2xl mb-6 font-medium text-black">login to creatormate</h2>
     <button @click="withGoogle"
             class="bg-white flex items-center justify-center gap-2 w-full rounded-full py-3 text-black font-medium leading-6 hover:bg-opacity-80 transition duration-300 border">
         <Icon class=" leading-6 icon" width="24px" icon="ri:google-fill"></Icon>
@@ -59,8 +59,8 @@
     <input @keydown.enter="signIn" v-model="email" placeholder="your@email.com"
            class="w-full py-3 px-4 text-center rounded-full bg-gray-200 placeholder-gray-500 text-black mb-2 outline-0 border focus:shadow-input"
            type="email">
-    <button @click="signIn" v-if="!loading" class="px-3 py-3 rounded-full bg-gray-200 w-full mb-6">continue with email</button>
-    <button v-else class="px-3 py-3 rounded-full bg-white  w-full mb-6">
+    <button @click="signIn" v-if="!loading" class="px-3 py-3 rounded-full bg-gray-200 w-full mb-6 text-black">continue with email</button>
+    <button v-else class="px-3 py-3 rounded-full bg-white  w-full mb-6 text-black">
         <Icon class="icon" width="23px" icon="line-md:loading-loop"></Icon>
     </button>
     <p v-if="validationError" class="mb-6 text-red-500">Please enter a valid email</p>

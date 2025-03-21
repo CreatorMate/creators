@@ -111,7 +111,7 @@
 </script>
 
 <template>
-    <h2 class="text-2xl mb-6 font-medium">verify email</h2>
+    <h2 class="text-2xl mb-6 font-medium text-black">verify email</h2>
     <p class="text-black text-opacity-40">enter the code sent to your email address</p>
     <form ref="form" @submit.prevent="verify" class="h-full my-4">
         <div class="grid grid-cols-6 gap-2">

@@ -8,6 +8,9 @@
 
     }
 }
+* {
+    text-transform: lowercase !important;
+}
 
 html, body {
     font-family: "Figtree", sans-serif;
