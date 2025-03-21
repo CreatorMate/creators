@@ -13,6 +13,7 @@
     const router = useRouter();
     const verificationError = ref(false)
     const inputValues = ref(Array(7).fill(''));
+    const success = ref(false);
 
     const {email} = defineProps<{
         email: string
@@ -36,12 +37,17 @@
 
     async function verify() {
         loading.value = true;
+        if(success.value) return;
+        success.value = true;
         const {error, data} = await supabase.auth.verifyOtp({email: email, token: text.value, type: 'email'});
         if(error) {
             verificationError.value = true;
             loading.value = false;
+            success.value = false;
             return;
         }
+
+
 
         await accountState.initialize();
         loading.value = false;
