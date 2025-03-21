@@ -1,6 +1,5 @@
 import {Hono} from "hono";
 
-import dotenv from 'dotenv';
 import {initializeHonoRouter} from "~/src/api/router";
 import createApp from "./src/lib/createApp";
 import {serverSupabaseUser} from "#supabase/server";
@@ -15,6 +14,7 @@ export default defineEventHandler(async (event) => {
         if (event.path.startsWith('/webhook')) {
             return app.fetch(webReq);
         }
+
         const user = await serverSupabaseUser(event);
         if(!user) {
             throw createError({ // Use createError
@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
                 statusMessage: 'Unauthorized',
             });
         }
-
 
         (webReq as any)['user'] = user;
         return app.fetch(webReq);

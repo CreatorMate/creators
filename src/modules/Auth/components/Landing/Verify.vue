@@ -13,6 +13,7 @@
     const router = useRouter();
     const verificationError = ref(false)
     const inputValues = ref(Array(7).fill(''));
+    const success = ref(false);
 
     const {email} = defineProps<{
         email: string
@@ -36,12 +37,17 @@
 
     async function verify() {
         loading.value = true;
+        if(success.value) return;
+        success.value = true;
         const {error, data} = await supabase.auth.verifyOtp({email: email, token: text.value, type: 'email'});
         if(error) {
             verificationError.value = true;
             loading.value = false;
+            success.value = false;
             return;
         }
+
+
 
         await accountState.initialize();
         loading.value = false;
@@ -111,7 +117,7 @@
 </script>
 
 <template>
-    <h2 class="text-2xl mb-6 font-medium">verify email</h2>
+    <h2 class="text-2xl mb-6 font-medium text-black">verify email</h2>
     <p class="text-black text-opacity-40">enter the code sent to your email address</p>
     <form ref="form" @submit.prevent="verify" class="h-full my-4">
         <div class="grid grid-cols-6 gap-2">

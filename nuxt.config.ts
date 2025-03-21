@@ -94,5 +94,14 @@ export default defineNuxtConfig({
     {
       route: '/API', handler: './src/api/hono.ts', middleware: true
     }
-  ]
+  ],
+  vite: {
+    server: {
+      allowedHosts: [
+        'localhost',
+        '.localhost',
+        '6407-2a02-a460-9614-0-31af-d4c1-5d9d-a33a.ngrok-free.app'  // Or use an environment variable
+      ]
+    }
+  }
 });

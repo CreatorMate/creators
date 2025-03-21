@@ -10,3 +10,4 @@ export function checkUnguarded(to: string) {
         return routePattern === to;
     })
 }
+

@@ -3,7 +3,6 @@
     import {useAccountState} from "~/src/utils/Auth/AccountState";
 
     const accountState = useAccountState();
-
 </script>
 
 <template>
@@ -16,7 +15,7 @@
         <nav class="mt-7 flex flex-col flex-grow">
             <NavButton :premium="false" link-to="/"
                        name="find work" icon-name="material-symbols:work-outline"/>
-            <NavButton :premium="false" link-to="/hire"
+            <NavButton v-if="accountState.rights.includes('hiring')" :premium="false" link-to="/hire"
                        name="hire" icon-name="material-symbols:add-notes-outline-sharp"/>
             <NavButton :premium="false" link-to="/content"
                        name="discover" icon-name="material-symbols:animated-images-outline"/>

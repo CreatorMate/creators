@@ -1,10 +1,11 @@
 <script setup lang="ts">
     import '~/src/assets/css/tailwind.css'
     import ToastArea from "~/src/utils/Toast/ToastArea.vue";
-    import {checkUnguarded} from "~/src/utils/GuardChecker";
+    import {checkUnguarded} from "~/src/utils/AuthGuard/GuardChecker";
     import {appSettings} from "~/src/GlobalSettings";
     import {useAccountState} from "~/src/utils/Auth/AccountState";
     import {AccountStatus} from "~/src/utils/SupabaseTypes";
+    import {protectedRoutes} from "~/src/utils/AuthGuard/ProtectedRoutes";
     const colorMode = useColorMode();
     const runtimeConfig = useRuntimeConfig();
     const accountStore = useAccountState();
@@ -30,6 +31,9 @@
             if((accountStore.user?.status == AccountStatus.NEW || accountStore.user?.status == AccountStatus.IN_REVIEW)  && (route.path !== '/submission/status' && route.path !== '/apply')) {
                 ready.value = true;
                 return navigateTo('/submission/status');
+            }
+            if(protectedRoutes.has(route.path) && !accountStore.rights.includes(protectedRoutes.get(route.path) as string)) {
+                return navigateTo('/');
             }
         }
         ready.value = true;

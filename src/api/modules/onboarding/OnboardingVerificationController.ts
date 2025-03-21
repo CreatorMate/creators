@@ -9,12 +9,17 @@ import {usePrisma} from "~/src/api/src/lib/prisma";
 export class OnboardingVerificationController extends BaseController {
     async endpoints() {
         this.app.get('/onboarding/verification',  async (context: Context): Promise<any> => {
-           const userId = context.req.query('userId') as string;
            const handle = context.req.query('handle') as string;
-           if(!userId || !handle) return errorResponse(context, 'invalid_request');
+           const user = this.getHonoUser(context);
+           if(!handle) {
+               const getVerification = await this.getPrisma().instagram_account.findFirst({
+                   where: {user_id: user.id}
+               });
+               return successResponse(context, getVerification);
+           }
 
            const getVerification = await this.getPrisma().instagram_account.findFirst({
-               where: {user_id: userId, handle: handle}
+               where: {user_id: user.id, handle: handle}
            });
 
            if(getVerification) {
@@ -25,7 +30,7 @@ export class OnboardingVerificationController extends BaseController {
 
            const verification = await this.getPrisma().instagram_account.create({
                data: {
-                   user_id: userId,
+                   user_id: user.id,
                    handle: handle,
                    verification_code: code,
                }
@@ -34,6 +39,17 @@ export class OnboardingVerificationController extends BaseController {
            if(!verification) return errorResponse(context, 'something went wrong generating verification code.');
 
            return successResponse(context, verification);
+        });
+
+        this.app.delete('/onboarding/verification',  async (context: Context): Promise<any> => {
+            const handle = context.req.query('handle') as string;
+            if(!handle) return errorResponse(context, 'invalid_request');
+            const user = this.getHonoUser(context);
+            const getVerification = await this.getPrisma().instagram_account.deleteMany({
+                where: {user_id: user.id, handle: handle}
+            });
+
+            return successResponse(context, getVerification);
         });
 
         this.app.get('/webhook',  async (c: Context): Promise<any> => {
@@ -61,6 +77,7 @@ export class OnboardingVerificationController extends BaseController {
                 if (!response.ok) {
                     // Handle HTTP errors (e.g., 400, 401, 500)
                     console.error(`HTTP error! Status: ${response.status}`);
+                    await this.sendMessage(senderId, 'Instagram verification service down try again later');
                     return null;
                 }
 
@@ -97,13 +114,18 @@ export class OnboardingVerificationController extends BaseController {
             'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let result = '';
         for (let i = 0; i < length; i++) {
-            result += characters.charAt(Math.floor(Math.random() * characters.length));
+            result += characters.charAt(
+                Math.floor(Math.random() * characters.length),
+            );
+            if ((i + 1) % 5 === 0 && i !== length - 1) {
+                result += '-';
+            }
         }
         return result;
     }
 
     private async sendMessage(senderId: string, message: string) {
-        const ig_id = "17841405952792875";
+        const ig_id = "17841454960888679";
         const key = process.env.INSTAGRAM_KEY;
         const url = `https://graph.instagram.com/v22.0/${ig_id}/messages?access_token=${key}`;
         const send = await fetch(url, {
