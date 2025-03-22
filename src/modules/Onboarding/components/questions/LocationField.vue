@@ -13,7 +13,6 @@
 
 	const searchQuery = ref("");
 
-	//@todo create database for the popular cities, every time someone saves a new one from the ai add it to the popular cities table, when searhing first look in the table before using AI.
 	const results = ref<string[]>([...popularCities]);
 
 	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
@@ -113,7 +112,7 @@
 </script>
 
 <template>
-	<div class="location-field">
+	<div>
 		<!-- Search bar -->
 		<div class="mb-4 mt-3">
 			<div class="relative">
@@ -122,7 +121,7 @@
 					@input="handleInput()"
 					type="text"
 					placeholder="Search cities"
-					class="w-full pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+					class="w-full pl-10 h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 				/>
 				<div
 					class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"

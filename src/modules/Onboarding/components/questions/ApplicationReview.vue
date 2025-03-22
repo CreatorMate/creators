@@ -50,7 +50,7 @@
 		>
 			<span class="font-medium">{{ displayKey }}</span>
 			<div
-				class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
+				class="w-full h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
 			>
 				<span>{{ value.answer }}</span>
 				<button
@@ -75,9 +75,19 @@
 			<input type="checkbox" id="tos" v-model="onboardingStore.isTOSAccepted" />
 			<label for="tos" class="mx-2">
 				i accept creatormate's
-				<a href="https://creatormate.com/privacy-policy" target="_blank" class="underline">privacy policy</a>
+				<a
+					href="https://creatormate.com/privacy-policy"
+					target="_blank"
+					class="underline"
+					>privacy policy</a
+				>
 				and
-				<a href="https://creatormate.com/terms-of-service" target="_blank" class="underline">terms of service</a>
+				<a
+					href="https://creatormate.com/terms-of-service"
+					target="_blank"
+					class="underline"
+					>terms of service</a
+				>
 			</label>
 		</div>
 	</div>

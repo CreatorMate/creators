@@ -72,6 +72,13 @@
 		emit("enter", inputEl.value);
 	}
 
+	// Filter to only accept digits on numeric fields
+	// const filterInput = (event: Event) => {
+	// 	if (!props.field.numeric) return;
+	// 	const target = event.target as HTMLInputElement;
+	// 	value.value = target.value.replace(/[^0-9+\-() ]/g, "");
+	// };
+
 	// Watch for changes in the field value and revalidate if the field has been touched
 	watch(value, () => {
 		if (isTouched.value) {
@@ -109,7 +116,7 @@
 			<input
 				v-model="value"
 				ref="inputEl"
-				class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+				class="w-full h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 				:class="{
 					'pl-10': hasIcon,
 				}"

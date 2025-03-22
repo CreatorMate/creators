@@ -133,7 +133,7 @@
 				v-model="searchQuery"
 				type="text"
 				placeholder="search"
-				class="w-full pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+				class="w-full h-[72px] pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 			/>
 			<div
 				class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"

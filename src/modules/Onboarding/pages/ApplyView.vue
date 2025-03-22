@@ -37,7 +37,7 @@
 			based_in: answers.based_in_question.based_in,
 			project_types: answers.project_types_question.project_types,
 			work_types: answers.work_types_question.work_types,
-			date_of_birth: answers.date_of_birth_question.date_of_birth,
+			date_of_birth: answers.personal_info_question.date_of_birth,
 			first_name: answers.name_question.first_name,
 			last_name: answers.name_question.last_name,
 			additional_info: answers.additional_info_question.additional_info,
@@ -212,13 +212,13 @@
 					<!-- Content Components -->
 					<ApplicationReview
 						v-if="onboardingStore.isReviewStep"
-						class="mb-16"
+						class="mb-16 mt-6"
 					/>
 
 					<QuestionRenderer
 						v-else-if="onboardingStore.currentQuestion"
 						:question="onboardingStore.currentQuestion"
-						class="mb-16"
+						class="mb-16 mt-6"
 						@last-enter="onboardingStore.next"
 					/>
 				</div>

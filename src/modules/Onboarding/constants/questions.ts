@@ -25,8 +25,8 @@ export const onboardingQuestions: Question[] = [
 		],
 	},
 	{
-		key: "date_of_birth_question",
-		label: "what is your birth date?",
+		key: "personal_info_question",
+		label: "tell us more about you",
 		required: true,
 		fields: [
 			{
@@ -40,6 +40,19 @@ export const onboardingQuestions: Question[] = [
 					new Date().getMonth(),
 					new Date().getDate(),
 				),
+			},
+			{
+				key: "phone_number",
+				type: "text",
+				label: "phone number",
+				numeric: true,
+				required: true,
+				maxLength: 18,
+			},
+			{
+				key: "profile_picture",
+				type: "picture",
+				label: "picture",
 			},
 		],
 	},

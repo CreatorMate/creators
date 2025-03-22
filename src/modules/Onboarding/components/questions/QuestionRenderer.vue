@@ -6,8 +6,10 @@
 	import MultiChoiceField from "~/src/modules/Onboarding/components/questions/MultiChoiceField.vue";
 	import SocialField from "~/src/modules/Onboarding/components/questions/SocialField.vue";
 	import LocationField from "~/src/modules/Onboarding/components/questions/LocationField.vue";
+	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+	import PictureField from "~/src/modules/Onboarding/components/questions/PictureField.vue";
 
-	// const onboardingStore = useOnboardingStore();
+	const onboardingStore = useOnboardingStore();
 
 	const props = defineProps<{
 		question: Question;
@@ -28,6 +30,7 @@
 		"multi-choice": MultiChoiceField,
 		social: SocialField,
 		location: LocationField,
+		picture: PictureField,
 	};
 
 	const handleFieldEnter = (
@@ -71,7 +74,6 @@
 <template>
 	<div>
 		<p class="text-2xl mb-[20px] font-semibold">{{ props.question.label }}</p>
-		<!--  <p class="text-[#8D8D8D] font-medium mt-2">{{ props.question.label }}</p>-->
 		<p
 			v-if="props.question.description"
 			class="text-black font-medium mt-2 mb-2 whitespace-pre-line"
@@ -79,19 +81,56 @@
 			{{ props.question.description }}
 		</p>
 
+		<!-- TODO: Fix this messy code!!!! -->
 		<!-- Answer fields -->
-		<component
-			v-for="(field, index) in fields"
-			:key="field.key"
-			:is="fieldMap[field.type] as any"
-			:field="field"
-			class="mb-[24px]"
-			:ref="
-				(el: any) => {
-					if (el) fieldRefs[index] = el;
-				}
-			"
-			@enter="handleFieldEnter(index, $event)"
-		/>
+		<div :class="{ 'flex flex-row gap-6': onboardingStore.currentStep === 1 }">
+			<template v-if="onboardingStore.currentStep === 2">
+				<!-- First field (full row) -->
+				<component
+					:is="fieldMap[fields[0].type] as any"
+					:field="fields[0]"
+					class="mb-[24px] w-full"
+					:ref="
+						(el: any) => {
+							if (el) fieldRefs[0] = el;
+						}
+					"
+					@enter="handleFieldEnter(0, $event)"
+				/>
+
+				<!-- Second & Third fields in flex-row -->
+				<div class="flex flex-row gap-6 w-full">
+					<component
+						v-for="(field, index) in fields.slice(1)"
+						:key="field.key"
+						:is="fieldMap[field.type] as any"
+						:field="field"
+						class="mb-[24px] w-1/2"
+						:ref="
+							(el: any) => {
+								if (el) fieldRefs[index + 1] = el;
+							}
+						"
+						@enter="handleFieldEnter(index + 1, $event)"
+					/>
+				</div>
+			</template>
+
+			<template v-else>
+				<component
+					v-for="(field, index) in fields"
+					:key="field.key"
+					:is="fieldMap[field.type] as any"
+					:field="field"
+					class="mb-[24px] w-full"
+					:ref="
+						(el: any) => {
+							if (el) fieldRefs[index] = el;
+						}
+					"
+					@enter="handleFieldEnter(index, $event)"
+				/>
+			</template>
+		</div>
 	</div>
 </template>
