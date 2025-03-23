@@ -33,7 +33,7 @@
 
 		const { answers } = onboardingStore;
 		const extractedAnswers = {
-			handle: answers.socials_question.instagram_handle,
+			handle: "test",
 			based_in: answers.based_in_question.based_in,
 			project_types: answers.project_types_question.project_types,
 			work_types: answers.work_types_question.work_types,
@@ -41,6 +41,7 @@
 			first_name: answers.name_question.first_name,
 			last_name: answers.name_question.last_name,
 			additional_info: answers.additional_info_question.additional_info,
+			profile_picture: answers.personal_info_question.profile_picture,
 		};
 
 		try {
@@ -120,6 +121,8 @@
 
 		// Reset API error message
 		resetApiError();
+
+		console.log(onboardingStore.answers);
 
 		// onboardingStore.reset();
 	});

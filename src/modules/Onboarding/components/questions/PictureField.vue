@@ -3,18 +3,36 @@
 	import { Icon } from "@iconify/vue";
 	import UploadPictureModal from "~/src/modules/Onboarding/components/questions/modals/UploadPictureModal.vue";
 	import { ref } from "vue";
+	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 
 	const props = defineProps<{
 		field: PictureField;
 	}>();
 
+	const onboardingStore = useOnboardingStore();
+
 	const showModal = ref(false);
 	const selectedImage = ref<File | null>(null);
 	const imagePreviewUrl = ref<string>("");
 
-	function handleUpload(file: File) {
+	async function handleUpload(file: File) {
 		selectedImage.value = file;
 		imagePreviewUrl.value = URL.createObjectURL(file);
+
+		const filePath = `${Date.now()}_${file.name}`;
+
+		const supabase = useSupabaseClient();
+
+		const { data, error } = await supabase.storage
+			.from("user_pictures")
+			.upload(filePath, file);
+
+		if (error) {
+			console.error(error);
+			return;
+		}
+
+		onboardingStore.setAnswer("profile_picture", data.path);
 	}
 </script>
 
