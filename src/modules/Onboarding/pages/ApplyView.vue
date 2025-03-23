@@ -119,8 +119,6 @@
 		// Reset API error message
 		resetApiError();
 
-		console.log(extractAnswers(onboardingStore.answers));
-
 		// onboardingStore.reset();
 	});
 </script>

@@ -162,7 +162,7 @@ export const onboardingQuestions: Question[] = [
 				type: "social",
 				socialMediaName: "instagram",
 				socialMediaIcon: "/icons/instagram.svg",
-				required: false,
+				required: true,
 			},
 			// {
 			// 	key: "vimeo_handle",
