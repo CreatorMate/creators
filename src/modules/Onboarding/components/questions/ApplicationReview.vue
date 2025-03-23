@@ -1,6 +1,6 @@
 <script setup lang="ts">
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import { formatDisplayKey } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { formatDisplayKey } from "~/src/modules/Onboarding/utils/onboardingValidators";
 
 	const onboardingStore = useOnboardingStore();
 

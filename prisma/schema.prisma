@@ -19,8 +19,9 @@ model users {
   work_types        String[]
   email             String
   status            account_status      @default(NEW)
-  picture           String?
   profile_picture   String?
+  phone_number      String?
+  website           String?
   instagram_account instagram_account[]
   job_applications  job_applications[]
   job_postings      job_postings[]

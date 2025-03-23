@@ -46,7 +46,7 @@ export const onboardingQuestions: Question[] = [
 				type: "text",
 				label: "phone number",
 				numeric: true,
-				required: true,
+				required: false, // TODO: should this be true?
 				maxLength: 18,
 			},
 			{
@@ -158,11 +158,11 @@ export const onboardingQuestions: Question[] = [
 			// 	icon: "/icons/instagram_op.svg",
 			// },
 			{
-				key: "instagram_handle",
+				key: "handle",
 				type: "social",
 				socialMediaName: "instagram",
 				socialMediaIcon: "/icons/instagram.svg",
-				required: true,
+				required: false,
 			},
 			// {
 			// 	key: "vimeo_handle",

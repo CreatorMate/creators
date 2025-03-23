@@ -7,6 +7,8 @@
 	import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
 	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
+	import { extractAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { API } from "~/src/utils/API/API";
 
 	const accountState = useAccountState();
 	const onboardingStore = useOnboardingStore();
@@ -24,6 +26,9 @@
 		layout: "empty",
 	});
 
+	/**
+	 * Function which submits application answers to database.
+	 */
 	async function submitApplication() {
 		if (!accountState.user) {
 			apiError.value =
@@ -32,29 +37,21 @@
 		}
 
 		const { answers } = onboardingStore;
-		const extractedAnswers = {
-			handle: "test",
-			based_in: answers.based_in_question.based_in,
-			project_types: answers.project_types_question.project_types,
-			work_types: answers.work_types_question.work_types,
-			date_of_birth: answers.personal_info_question.date_of_birth,
-			first_name: answers.name_question.first_name,
-			last_name: answers.name_question.last_name,
-			additional_info: answers.additional_info_question.additional_info,
-			profile_picture: answers.personal_info_question.profile_picture,
-		};
+		const extractedAnswers = extractAnswers(answers);
 
 		try {
-			const user = await $fetch("/API/users/me", {
-				method: "put",
-				body: JSON.stringify({
-					...extractedAnswers,
-					status: AccountStatus.IN_REVIEW,
-				}),
+			const response = await API.ask("/users/me", "PUT", {
+				...extractedAnswers,
+				status: AccountStatus.IN_REVIEW,
 			});
 
-			accountState.user.status = AccountStatus.IN_REVIEW;
-			await router.push("/");
+			if (response.success) {
+				accountState.user.status = AccountStatus.IN_REVIEW;
+				await router.push("/");
+			} else {
+				apiError.value =
+					response.message || "An error occurred while updating creator.";
+			}
 		} catch (error) {
 			apiError.value =
 				error instanceof Error ? error.message : "an unknown error occurred.";
@@ -122,7 +119,7 @@
 		// Reset API error message
 		resetApiError();
 
-		console.log(onboardingStore.answers);
+		console.log(extractAnswers(onboardingStore.answers));
 
 		// onboardingStore.reset();
 	});
