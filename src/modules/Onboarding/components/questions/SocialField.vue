@@ -31,15 +31,17 @@
 	});
 
 	async function getVerificationProgress() {
-		const igProfile: APIResponse<InstagramVerification> = await API.ask(`/onboarding/verification`);
+		const igProfile: APIResponse<InstagramVerification> = await API.ask(
+			`/onboarding/verification`,
+		);
 		if (igProfile.success) {
 			verified.value = igProfile.data;
 			value.value = igProfile.data.handle;
-			console.log(verified.value)
+			console.log(verified.value);
 			if (verified.value.verified) {
-				onboardingStore.setAnswer("handle", igProfile.data.handle);
+				onboardingStore.setAnswer(props.field.key, igProfile.data.handle);
 			} else {
-				onboardingStore.setAnswer("handle", "");
+				onboardingStore.setAnswer(props.field.key, "");
 			}
 			return;
 		}
@@ -48,7 +50,7 @@
 
 	function reset() {
 		verified.value = null;
-		onboardingStore.setAnswer("handle", "");
+		onboardingStore.setAnswer(props.field.key, "");
 		value.value = "";
 	}
 
@@ -56,7 +58,7 @@
 	const modalInstagramValue = ref("");
 
 	async function onModalConfirm(newValue: string) {
-		onboardingStore.setAnswer("handle", newValue);
+		onboardingStore.setAnswer(props.field.key, newValue);
 		modalInstagramValue.value = newValue;
 		value.value = newValue;
 		open.value = false;
@@ -108,7 +110,12 @@
 		</div>
 	</div>
 	<ModalPopup @close="closeModal" :model-active="open">
-		<LinkSocialPopup :field="field" :initialValue="value" @close="closeModal" @confirm="onModalConfirm"
-										 @delete="reset" />
+		<LinkSocialPopup
+			:field="field"
+			:initialValue="value"
+			@close="closeModal"
+			@confirm="onModalConfirm"
+			@delete="reset"
+		/>
 	</ModalPopup>
 </template>
