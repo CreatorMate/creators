@@ -50,9 +50,11 @@
 		>
 			<span class="font-medium">{{ displayKey }}</span>
 			<div
-				class="w-full h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
+				class="w-full min-h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
 			>
-				<span>{{ value.answer }}</span>
+				<div class="max-w-[90%] break-words flex-grow pr-4">
+					<span>{{ value.answer }}</span>
+				</div>
 				<button
 					@click="
 						() => {

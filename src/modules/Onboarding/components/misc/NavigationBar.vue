@@ -10,6 +10,7 @@
 
 	const emit = defineEmits<{
 		(e: "back"): void;
+		(e: "save-and-exit"): void;
 	}>();
 </script>
 
@@ -37,14 +38,22 @@
 
 		<!-- Action Buttons - Desktop -->
 		<div class="absolute right-[15%] hidden lg:flex space-x-2">
-			<ActionButton :to="'/submission/status'" :isMobile="false">
+			<ActionButton
+				:to="'/submission/status'"
+				:isMobile="false"
+				@click="emit('save-and-exit')"
+			>
 				save & exit
 			</ActionButton>
 		</div>
 
 		<!-- Action Buttons - Mobile -->
 		<div class="absolute right-4 flex items-center space-x-2 lg:hidden">
-			<ActionButton :to="'/submission/status'" :isMobile="true">
+			<ActionButton
+				:to="'/submission/status'"
+				:isMobile="true"
+				@click="emit('save-and-exit')"
+			>
 				save & exit
 			</ActionButton>
 		</div>

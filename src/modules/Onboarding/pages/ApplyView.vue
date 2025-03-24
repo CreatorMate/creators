@@ -30,8 +30,9 @@
 
 	/**
 	 * Function which submits application answers to database.
+	 * TODO: save & exit
 	 */
-	async function submitApplication() {
+	async function submitApplication(status: AccountStatus) {
 		if (!accountState.user) {
 			apiError.value =
 				"error updating creator: account state is missing a user.";
@@ -44,11 +45,11 @@
 		try {
 			const response = await API.ask("/users/me", "PUT", {
 				...extractedAnswers,
-				status: AccountStatus.IN_REVIEW,
+				status: status,
 			});
 
 			if (response.success) {
-				accountState.user.status = AccountStatus.IN_REVIEW;
+				accountState.user.status = status;
 				await router.push("/");
 			} else {
 				apiError.value =
@@ -94,7 +95,7 @@
 	 */
 	function handleSubmit() {
 		resetApiError();
-		submitApplication();
+		submitApplication(AccountStatus.IN_REVIEW);
 		nextTick(() => {
 			document.activeElement instanceof HTMLElement &&
 				document.activeElement.blur();
@@ -132,6 +133,7 @@
 			:canGoBack="onboardingStore.canGoBack"
 			:cameFromReview="onboardingStore.cameFromReview"
 			@back="handleBack"
+			@save-and-exit="submitApplication(AccountStatus.IN_PROCESS)"
 		/>
 
 		<!-- Progress Indicator -->

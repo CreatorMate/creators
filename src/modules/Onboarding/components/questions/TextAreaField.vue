@@ -18,28 +18,12 @@
 	// Local state for field-specific error message
 	const fieldError = ref("");
 
-	const value = computed({
-		get: () => {
-			// Initialize the question's answer object if it doesn't exist
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			// Return the current value or empty string
-			return (
-				(onboardingStore.answers[questionKey.value][
-					props.field.key
-				] as string) || ""
-			);
-		},
-		set: (newValue) => {
-			// Initialize the question's answer object if it doesn't exist
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			// Update answer
-			onboardingStore.setAnswer(props.field.key, newValue);
-		},
-	});
+	// Track validation state
+	const isValid = ref(false);
+
+	const value = ref(
+		onboardingStore.answers[questionKey.value]?.[props.field.key] || "",
+	);
 
 	// Function to validate the textarea field and update the error message
 	function validateField() {
@@ -48,6 +32,7 @@
 			value.value as string,
 		);
 		fieldError.value = !valid && errorMessage ? errorMessage : "";
+		isValid.value = valid;
 	}
 
 	// Mark field as touched and run validation
@@ -57,9 +42,47 @@
 		validateField();
 	}
 
+	// Restrict input and show error when max is reached
+	function handleKeyDown(e: KeyboardEvent) {
+		const max = props.field.maxLength;
+
+		// Allow control keys
+		const allowedKeys = [
+			"Backspace",
+			"Delete",
+			"ArrowLeft",
+			"ArrowRight",
+			"Tab",
+		];
+		if (
+			max &&
+			(value.value as string).length >= max &&
+			!allowedKeys.includes(e.key)
+		) {
+			e.preventDefault();
+			fieldError.value = `max length of ${max} reached`;
+		} else {
+			fieldError.value = "";
+		}
+	}
+
 	// Watch for changes in the field value and revalidate if the field has been touched
 	watch(value, () => {
 		if (isTouched.value) {
+			validateField();
+		}
+	});
+
+	watch(value, (newValue) => {
+		if (newValue === "" || isValid.value || !isTouched.value) {
+			onboardingStore.setAnswer(props.field.key, newValue);
+		}
+	});
+
+	onMounted(() => {
+		// Only validate initially if there's already a value
+		if (value.value) {
+			isTouched.value = true;
 			validateField();
 		}
 	});
@@ -75,11 +98,12 @@
 
 		<div class="relative">
 			<textarea
-				v-model="value"
+				v-model="value as string"
 				class="w-full bg-gray-100 text-gray-700 px-5 py-5 h-[150px] rounded-md focus:outline-none"
 				type="text"
 				:placeholder="field.placeholder || ''"
 				@blur="markAsTouched"
+				@keydown="handleKeyDown"
 			></textarea>
 		</div>
 		<!-- Field-specific error message -->
