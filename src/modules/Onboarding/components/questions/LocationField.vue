@@ -2,8 +2,8 @@
 	import type { LocationFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 	import { popularCities } from "~/src/modules/Onboarding/constants/popularCities";
-    import {API} from "~/src/utils/API/API";
-    import type {APIResponse} from "~/src/api/utils/HonoResponses";
+	import { API } from "~/src/utils/API/API";
+	import type { APIResponse } from "~/src/api/utils/HonoResponses";
 
 	const props = defineProps<{
 		field: LocationFieldType;
@@ -13,12 +13,10 @@
 
 	const searchQuery = ref("");
 
-    //@todo create database for the popular cities, every time someone saves a new one from the ai add it to the popular cities table, when searhing first look in the table before using AI.
 	const results = ref<string[]>([...popularCities]);
 
-
 	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
-    let timeoutId: NodeJS.Timeout | null = null;
+	let timeoutId: NodeJS.Timeout | null = null;
 
 	// Create a computed property to manage the selected city.
 	// This field is designed to allow only a single selection.
@@ -47,46 +45,60 @@
 	});
 
 	async function getNewOptions() {
-        // If the search query is empty, reset to popular cities.
-        if (!searchQuery.value.trim()) {
-            results.value = [...popularCities];
-            return;
-        }
+		// If the search query is empty, reset to popular cities.
+		if (!searchQuery.value.trim()) {
+			results.value = [...popularCities];
+			return;
+		}
 
-        const response: APIResponse<{results: string[]}> = await API.ask(`onboarding/countries?search=${searchQuery.value}`)
+		const response: APIResponse<{ results: string[] }> = await API.ask(
+			`onboarding/countries?search=${searchQuery.value}`,
+		);
 
-        if(!response.success) {
-            console.error("something went wrong",);
-            return;
-        }
+		if (!response.success) {
+			console.error("something went wrong");
+			return;
+		}
 
-        results.value = response.data.results;
-    };
+		results.value = response.data.results;
+	}
 
-    const debounce = <T extends (...args: any[]) => any>(
-        func: T,
-        delay: number
-    ) => {
-        return (...args: Parameters<T>) => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-            timeoutId = setTimeout(() => {
-                func(...args);
-                timeoutId = null;
-            }, delay);
-        };
-    };
+	const debounce = <T extends (...args: any[]) => any>(
+		func: T,
+		delay: number,
+	) => {
+		return (...args: Parameters<T>) => {
+			if (timeoutId) {
+				clearTimeout(timeoutId);
+			}
+			timeoutId = setTimeout(() => {
+				func(...args);
+				timeoutId = null;
+			}, delay);
+		};
+	};
 
-    const debouncedFunction = debounce(getNewOptions, 300);
+	const debouncedFunction = debounce(getNewOptions, 300);
 
-    const handleInput = () => {
-        debouncedFunction();
-    };
+	const handleInput = () => {
+		debouncedFunction();
+	};
 
 	// When a city is selected, update the stored value.
-	function selectCity(city: string) {
+	async function selectCity(city: string) {
 		value.value = city;
+
+		// post to db
+		const response: APIResponse<{ results: string[] }> = await API.ask(
+			"onboarding/countries",
+			"POST",
+			{ input: city },
+		);
+
+		if (!response.success) {
+			console.error("something went wrong");
+			return;
+		}
 	}
 
 	function removeCity(city: string) {
@@ -97,21 +109,19 @@
 	function clearSearch() {
 		searchQuery.value = "";
 	}
-
-
 </script>
 
 <template>
-	<div class="location-field">
+	<div>
 		<!-- Search bar -->
 		<div class="mb-4 mt-3">
 			<div class="relative">
 				<input
 					v-model="searchQuery"
-                    @input="handleInput()"
+					@input="handleInput()"
 					type="text"
 					placeholder="Search cities"
-					class="w-full pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+					class="w-full pl-10 h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 				/>
 				<div
 					class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"

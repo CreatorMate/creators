@@ -1,70 +1,71 @@
 <script setup lang="ts">
 	import type { SocialMediaFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-    import LinkSocialPopup from "~/src/modules/Onboarding/components/social/LinkSocialPopup.vue";
-    import type {APIResponse} from "~/src/api/utils/HonoResponses";
-    import type {InstagramVerification} from "~/src/api/modules/onboarding/OnboardingTypes";
-    import {API} from "~/src/utils/API/API";
-    import {awaitExpression} from "@babel/types";
+	import LinkSocialPopup from "~/src/modules/Onboarding/components/social/LinkSocialPopup.vue";
+	import type { APIResponse } from "~/src/api/utils/HonoResponses";
+	import type { InstagramVerification } from "~/src/api/modules/onboarding/OnboardingTypes";
+	import { API } from "~/src/utils/API/API";
+	import { awaitExpression } from "@babel/types";
 
 	const props = defineProps<{
 		field: SocialMediaFieldType;
 	}>();
 
-    const verified = ref<InstagramVerification | null>(null);
+	const verified = ref<InstagramVerification | null>(null);
 
-    const open = ref(false);
-    const isConnected = computed(() => !!value.value);
+	const open = ref(false);
+	const isConnected = computed(() => !!value.value);
 	const onboardingStore = useOnboardingStore();
 
 	// Get key of current question
 	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
 
-    const value = ref('');
+	const value = ref("");
 
-    onMounted(async () => {
-        if (!onboardingStore.answers[questionKey.value]) {
-            onboardingStore.answers[questionKey.value] = {};
-        }
+	onMounted(async () => {
+		if (!onboardingStore.answers[questionKey.value]) {
+			onboardingStore.answers[questionKey.value] = {};
+		}
 
-        await getVerificationProgress();
-    });
+		await getVerificationProgress();
+	});
 
-    async function getVerificationProgress() {
-        const igProfile: APIResponse<InstagramVerification> = await API.ask(`/onboarding/verification`);
-        if(igProfile.success) {
-            verified.value = igProfile.data;
-            value.value = igProfile.data.handle;
-            if(verified.value.verified) {
-                onboardingStore.setAnswer("instagram_handle", igProfile.data.handle);
-            } else {
-                onboardingStore.setAnswer("instagram_handle", '');
-            }
-            return;
-        }
-        value.value = '';
-    }
+	async function getVerificationProgress() {
+		const igProfile: APIResponse<InstagramVerification> = await API.ask(`/onboarding/verification`);
+		if (igProfile.success) {
+			verified.value = igProfile.data;
+			value.value = igProfile.data.handle;
+			console.log(verified.value)
+			if (verified.value.verified) {
+				onboardingStore.setAnswer("handle", igProfile.data.handle);
+			} else {
+				onboardingStore.setAnswer("handle", "");
+			}
+			return;
+		}
+		value.value = "";
+	}
 
-    function reset() {
-        verified.value = null;
-        onboardingStore.setAnswer("instagram_handle", '');
-        value.value = '';
-    }
+	function reset() {
+		verified.value = null;
+		onboardingStore.setAnswer("handle", "");
+		value.value = "";
+	}
 
 	// Local state for the modal input. This will hold the user's input inside the modal.
 	const modalInstagramValue = ref("");
 
-    async function onModalConfirm(newValue: string) {
-		onboardingStore.setAnswer("instagram_handle", newValue);
-        modalInstagramValue.value = newValue;
-        value.value = newValue;
-        open.value = false;
+	async function onModalConfirm(newValue: string) {
+		onboardingStore.setAnswer("handle", newValue);
+		modalInstagramValue.value = newValue;
+		value.value = newValue;
+		open.value = false;
 
-        await getVerificationProgress();
+		await getVerificationProgress();
 	}
 
 	function closeModal() {
-        open.value = false;
+		open.value = false;
 	}
 </script>
 
@@ -90,7 +91,7 @@
 				<!-- Display the handle value when connected -->
 				<p v-if="isConnected" class="ml-9 mt-1 text-[14px] text-gray-600">
 					@{{ value }}
-                    {{verified.verified ? '' : '(not verified)'}}
+					{{ verified?.verified ? "" : "(not verified)" }}
 				</p>
 			</div>
 
@@ -106,7 +107,8 @@
 			</button>
 		</div>
 	</div>
-    <ModalPopup @close="closeModal" :model-active="open">
-        <LinkSocialPopup :field="field" :initialValue="value" @close="closeModal" @confirm="onModalConfirm" @delete="reset"/>
-    </ModalPopup>
+	<ModalPopup @close="closeModal" :model-active="open">
+		<LinkSocialPopup :field="field" :initialValue="value" @close="closeModal" @confirm="onModalConfirm"
+										 @delete="reset" />
+	</ModalPopup>
 </template>

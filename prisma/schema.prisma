@@ -19,12 +19,13 @@ model users {
   work_types        String[]
   email             String
   status            account_status      @default(NEW)
-  picture           String?
+  profile_picture   String?
+  phone_number      String?
+  website           String?
   instagram_account instagram_account[]
   job_applications  job_applications[]
   job_postings      job_postings[]
-  roles     user_roles[]
-  profile_picture   String?
+  roles             user_roles[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -64,32 +65,42 @@ model instagram_account {
 }
 
 model roles {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique
+  id     Int           @id @default(autoincrement())
+  name   String        @unique
   rights role_rights[]
-  users user_roles[]
+  users  user_roles[]
 }
 
 model rights {
-  id    Int     @id @default(autoincrement())
-  name  String  @unique
+  id    Int           @id @default(autoincrement())
+  name  String        @unique
   roles role_rights[]
 }
 
 model user_roles {
-  user   users  @relation(fields: [userId], references: [id])
-  userId String @db.Uuid // Explicitly specify Uuid type
-  role   roles @relation(fields: [roleId], references: [id])
+  userId String @db.Uuid
   roleId Int
+  role   roles  @relation(fields: [roleId], references: [id])
+  user   users  @relation(fields: [userId], references: [id])
+
   @@id([userId, roleId])
 }
 
 model role_rights {
-  role   roles @relation(fields: [roleId], references: [id])
-  roleId Int
-  right rights @relation(fields: [rightId], references: [id])
+  roleId  Int
   rightId Int
+  right   rights @relation(fields: [rightId], references: [id])
+  role    roles  @relation(fields: [roleId], references: [id])
+
   @@id([roleId, rightId])
+}
+
+model cities {
+  id           Int    @id @default(autoincrement())
+  city_name    String
+  country_name String
+
+  @@unique([city_name, country_name])
 }
 
 enum account_status {

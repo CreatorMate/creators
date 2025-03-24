@@ -14,7 +14,9 @@ CREATE TABLE "users" (
     "work_types" TEXT[],
     "email" TEXT NOT NULL,
     "status" "account_status" NOT NULL DEFAULT 'NEW',
-    "picture" TEXT,
+    "profile_picture" TEXT,
+    "phone_number" TEXT,
+    "website" TEXT,
 
     CONSTRAINT "creators_pkey" PRIMARY KEY ("id")
 );
@@ -88,11 +90,23 @@ CREATE TABLE "role_rights" (
     CONSTRAINT "role_rights_pkey" PRIMARY KEY ("roleId","rightId")
 );
 
+-- CreateTable
+CREATE TABLE "cities" (
+    "id" SERIAL NOT NULL,
+    "city_name" TEXT NOT NULL,
+    "country_name" TEXT NOT NULL,
+
+    CONSTRAINT "cities_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "rights_name_key" ON "rights"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "cities_city_name_country_name_key" ON "cities"("city_name", "country_name");
 
 -- AddForeignKey
 ALTER TABLE "job_postings" ADD CONSTRAINT "job_post_posted_by_fkey" FOREIGN KEY ("posted_by") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
@@ -107,13 +121,14 @@ ALTER TABLE "job_applications" ADD CONSTRAINT "job_applications_user_id_fkey" FO
 ALTER TABLE "instagram_account" ADD CONSTRAINT "instagram_account_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION;
 
 -- AddForeignKey
+ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "role_rights" ADD CONSTRAINT "role_rights_rightId_fkey" FOREIGN KEY ("rightId") REFERENCES "rights"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "role_rights" ADD CONSTRAINT "role_rights_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "roles"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
--- AddForeignKey
-ALTER TABLE "role_rights" ADD CONSTRAINT "role_rights_rightId_fkey" FOREIGN KEY ("rightId") REFERENCES "rights"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
