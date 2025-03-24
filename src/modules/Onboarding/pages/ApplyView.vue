@@ -11,6 +11,7 @@
 	import { API } from "~/src/utils/API/API";
 	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
 	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
+	import { formatAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
 
 	const accountState = useAccountState();
 	const onboardingStore = useOnboardingStore();
@@ -50,6 +51,9 @@
 
 			if (response.success) {
 				accountState.user.status = status;
+
+				onboardingStore.reset();
+
 				await router.push("/");
 			} else {
 				apiError.value =
@@ -59,6 +63,35 @@
 			apiError.value =
 				error instanceof Error ? error.message : "an unknown error occurred.";
 			console.error("error updating creator:", error);
+		}
+	}
+
+	/**
+	 * Retrieves answers from database
+	 */
+	async function retrieveApplicationAnswers() {
+		if (!accountState.user) {
+			apiError.value =
+				"error updating creator: account state is missing a user.";
+			return;
+		}
+
+		try {
+			const response = await API.ask("/users/me", "GET");
+
+			if (response.success) {
+				const data = response.data;
+				return formatAnswers(data as Record<string, string | string[]>);
+			} else {
+				apiError.value =
+					response.message || "Error retrieving application answers";
+				return null;
+			}
+		} catch (error) {
+			apiError.value =
+				error instanceof Error ? error.message : "An unknown error occurred";
+			console.error("Error retrieving application answers:", error);
+			return null;
 		}
 	}
 
@@ -102,27 +135,55 @@
 		});
 	}
 
+	/**
+	 * Handles partial application submit.
+	 */
+	function handleSaveAndExit() {
+		resetApiError();
+
+		// If the user had finished the application before, updating it should not change his status to IN_PROCESS
+		const status: AccountStatus =
+			accountState.user?.status == AccountStatus.IN_REVIEW
+				? AccountStatus.IN_REVIEW
+				: AccountStatus.IN_PROCESS;
+
+		submitApplication(status);
+		nextTick(() => {
+			document.activeElement instanceof HTMLElement &&
+				document.activeElement.blur();
+		});
+	}
+
 	function resetApiError() {
 		apiError.value = "";
 	}
 
-	onMounted(() => {
+	onMounted(async () => {
 		// If creator has been accepted, route to home page
 		if (accountState.user?.status == AccountStatus.ACCEPTED) {
 			onboardingStore.reset();
-			router.push("/");
+			await router.push("/");
 		}
 
-		// retrieve past answers from local storage
-		onboardingStore.hydrate();
+		// Try to pull answers from database
+		const retrievedAnswers = await retrieveApplicationAnswers();
+
+		if (retrievedAnswers) {
+			// If database retrieval is successful, update the store
+			onboardingStore.answers = retrievedAnswers;
+			onboardingStore.currentStep = onboardingStore.getQuestionStepByKey(
+				Object.keys(retrievedAnswers)[Object.keys(retrievedAnswers).length - 1],
+			);
+		} else {
+			// If database retrieval fails, hydrate from local storage
+			onboardingStore.hydrate();
+		}
 
 		// Set loading state to false
 		isLoading.value = false;
 
 		// Reset API error message
 		resetApiError();
-
-		// onboardingStore.reset();
 	});
 </script>
 
@@ -133,7 +194,7 @@
 			:canGoBack="onboardingStore.canGoBack"
 			:cameFromReview="onboardingStore.cameFromReview"
 			@back="handleBack"
-			@save-and-exit="submitApplication(AccountStatus.IN_PROCESS)"
+			@save-and-exit="handleSaveAndExit"
 		/>
 
 		<!-- Progress Indicator -->
