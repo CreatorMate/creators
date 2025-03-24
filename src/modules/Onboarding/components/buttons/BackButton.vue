@@ -1,9 +1,6 @@
 <script setup lang="ts">
 	const props = defineProps<{
-		isMobile: {
-			type: Boolean;
-			default: false;
-		};
+		isMobile: boolean;
 	}>();
 
 	const emit = defineEmits<{
