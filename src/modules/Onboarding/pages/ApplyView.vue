@@ -9,6 +9,8 @@
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
 	import { extractAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
 	import { API } from "~/src/utils/API/API";
+	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
+	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
 
 	const accountState = useAccountState();
 	const onboardingStore = useOnboardingStore();
@@ -126,63 +128,11 @@
 <template>
 	<section class="flex screen-size flex-col pb-10 overflow-x-hidden">
 		<!-- Navigation Bar -->
-		<nav
-			class="relative w-full flex items-center text-center px-12 py-6 justify-center"
-		>
-			<!-- Back Button - Desktop -->
-			<button
-				class="absolute left-[15%] hidden lg:block"
-				v-if="onboardingStore.canGoBack && !onboardingStore.cameFromReview"
-				@click="handleBack"
-			>
-				back
-			</button>
-
-			<!-- Back Button - Mobile -->
-			<button
-				class="absolute left-4 block lg:hidden"
-				v-if="onboardingStore.canGoBack && !onboardingStore.cameFromReview"
-				@click="handleBack"
-			>
-				<img src="/icons/arrow-back.svg" alt="back" class="w-4 h-4" />
-			</button>
-
-			<!-- Logo and Progress Container -->
-			<div class="flex flex-col items-center">
-				<!-- Logo - Desktop -->
-				<img
-					src="/creatormate.svg"
-					alt="creatormate-logo"
-					class="h-[15.134px] w-[128px] hidden lg:block"
-				/>
-				<!-- Logo - Mobile -->
-				<img
-					src="/logo.png"
-					alt="cm"
-					class="h-[10px] w-[26.6px] block lg:hidden"
-				/>
-			</div>
-
-			<!-- Action Buttons - Desktop -->
-			<div class="absolute right-[15%] hidden lg:flex space-x-2">
-				<NuxtLink
-					to="/submission/status"
-					class="flex items-center gap-2 px-5 py-2 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
-				>
-					save & exit
-				</NuxtLink>
-			</div>
-
-			<!-- Action Buttons - Mobile -->
-			<div class="absolute right-4 flex items-center space-x-2 lg:hidden">
-				<NuxtLink
-					to="/submission/status"
-					class="flex items-center text-sm gap-2 px-3 py-2 rounded-lg"
-				>
-					save & exit
-				</NuxtLink>
-			</div>
-		</nav>
+		<NavigationBar
+			:canGoBack="onboardingStore.canGoBack"
+			:cameFromReview="onboardingStore.cameFromReview"
+			@back="handleBack"
+		/>
 
 		<!-- Progress Indicator -->
 		<div class="flex justify-center w-full mt-3 lg:mt-[-5px]">
@@ -226,50 +176,50 @@
 		<!-- Navigation Buttons -->
 		<!-- Next Button - Desktop -->
 		<div class="hidden md:block">
-			<button
+			<NavigationButton
 				v-if="!onboardingStore.isLastStep"
-				class="fixed bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleNext"
+				:isMobile="false"
 				:disabled="!onboardingStore.canProceed"
+				@click="handleNext"
 			>
 				{{ onboardingStore.cameFromReview ? "save answer" : "next" }}
-			</button>
+			</NavigationButton>
 		</div>
 
 		<!-- Next Button - Mobile -->
 		<div class="md:hidden">
-			<button
+			<NavigationButton
 				v-if="!onboardingStore.isLastStep"
-				class="fixed bottom-4 mx-auto left-0 right-0 w-[95%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleNext"
+				:isMobile="true"
 				:disabled="!onboardingStore.canProceed"
+				@click="handleNext"
 			>
 				{{ onboardingStore.cameFromReview ? "save answer" : "next" }}
-			</button>
+			</NavigationButton>
 		</div>
 
 		<!-- Submit Button - Desktop -->
 		<div class="hidden md:block">
-			<button
+			<NavigationButton
 				v-if="onboardingStore.isReviewStep"
-				class="fixed bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleSubmit"
+				:isMobile="false"
 				:disabled="!onboardingStore.isTOSAccepted"
+				@click="handleSubmit"
 			>
 				submit application
-			</button>
+			</NavigationButton>
 		</div>
 
 		<!-- Submit Button - Mobile -->
 		<div class="md:hidden">
-			<button
+			<NavigationButton
 				v-if="onboardingStore.isReviewStep"
-				class="fixed bottom-4 mx-auto left-0 right-0 w-[95%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleSubmit"
+				:isMobile="true"
 				:disabled="!onboardingStore.isTOSAccepted"
+				@click="handleSubmit"
 			>
 				submit application
-			</button>
+			</NavigationButton>
 		</div>
 	</section>
 </template>
