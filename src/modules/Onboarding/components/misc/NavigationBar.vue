@@ -4,14 +4,8 @@
 	import ActionButton from "~/src/modules/Onboarding/components/buttons/ActionButton.vue";
 
 	const props = defineProps<{
-		canGoBack: {
-			type: Boolean;
-			default: false;
-		};
-		cameFromReview: {
-			type: Boolean;
-			default: false;
-		};
+		canGoBack: boolean;
+		cameFromReview: boolean;
 	}>();
 
 	const emit = defineEmits<{
