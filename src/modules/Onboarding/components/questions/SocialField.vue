@@ -37,7 +37,7 @@
 		if (igProfile.success) {
 			verified.value = igProfile.data;
 			value.value = igProfile.data.handle;
-			console.log(verified.value);
+			// console.log(verified.value);
 			if (verified.value.verified) {
 				onboardingStore.setAnswer(props.field.key, igProfile.data.handle);
 			} else {

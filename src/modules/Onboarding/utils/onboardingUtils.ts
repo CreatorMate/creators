@@ -23,7 +23,7 @@ export const extractAnswers = (
 };
 
 /**
- * TODO: create opposite which retrieves answers from database and formats them by question by following the
+ * Formats answers. TODO: Better documentation for this
  * @param flattenedAnswers
  * @param questions
  */
