@@ -100,7 +100,7 @@ model cities {
   city_name    String
   country_name String
 
-  @@unique([city_name, country_name], map: "cities_cityName_countryName_key")
+  @@unique([city_name, country_name])
 }
 
 enum account_status {

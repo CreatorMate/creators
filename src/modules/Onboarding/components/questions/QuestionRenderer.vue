@@ -81,7 +81,7 @@
 			{{ props.question.description }}
 		</p>
 
-		<!-- TODO: Fix this messy code!!!! -->
+		<!-- TODO: Fix this messy code!!!! robin: yes pleaseeeeee -->
 		<!-- Answer fields -->
 		<div :class="{ 'flex flex-row gap-6': onboardingStore.currentStep === 1 }">
 			<template v-if="onboardingStore.currentStep === 2">

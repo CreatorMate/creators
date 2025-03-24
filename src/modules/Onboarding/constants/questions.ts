@@ -46,7 +46,7 @@ export const onboardingQuestions: Question[] = [
 				type: "text",
 				label: "phone number",
 				numeric: true,
-				required: false, // TODO: should this be true?
+				required: true, 
 				maxLength: 18,
 			},
 			{
