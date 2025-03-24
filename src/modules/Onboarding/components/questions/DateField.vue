@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import type { DateFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import { validateDateField } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { validateDateField } from "~/src/modules/Onboarding/utils/onboardingValidators";
 
 	const props = defineProps<{
 		field: DateFieldType;
@@ -89,7 +89,7 @@
 		<input
 			v-model="value"
 			ref="inputEl"
-			class="w-full bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+			class="w-full h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 			type="date"
 			@blur="markAsTouched"
 			@keydown.enter.prevent="handleEnter"

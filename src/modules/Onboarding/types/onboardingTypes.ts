@@ -24,6 +24,8 @@ export interface TextFieldType extends BaseFieldType<"text"> {
 	placeholder?: string;
 	// Text field icon
 	icon?: string;
+	// Flag which, when set true, only allows user to input numerals
+	numeric?: boolean;
 }
 
 /**
@@ -72,6 +74,8 @@ export interface SocialMediaFieldType extends BaseFieldType<"social"> {
 
 export interface LocationFieldType extends BaseFieldType<"location"> {}
 
+export interface PictureField extends BaseFieldType<"picture"> {}
+
 /**
  * Answer field type. May be `TextField`, `DateField`, `MultiChoiceField`, `TextAreaField`, or `SocialMediaField`.
  */
@@ -81,7 +85,8 @@ export type FieldType =
 	| MultiChoiceFieldType
 	| TextAreaFieldType
 	| SocialMediaFieldType
-	| LocationFieldType;
+	| LocationFieldType
+	| PictureField;
 
 /**
  * Question type. Requires (unique) `key`, `label`, and `fields` attributes. May have `description` and `required`

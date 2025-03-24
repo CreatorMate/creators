@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { computed, ref, watch } from "vue";
 import type { Answers, AnswerType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
-import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingUtils";
+import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingValidators";
 import { STORAGE_KEY } from "@supabase/auth-js/src/lib/constants";
 import type { StoredState } from "~/src/modules/Onboarding/utils/onboardingStorage";
 import {

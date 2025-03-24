@@ -7,6 +7,10 @@
 	import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
 	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
+	import { extractAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { API } from "~/src/utils/API/API";
+	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
+	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
 
 	const accountState = useAccountState();
 	const onboardingStore = useOnboardingStore();
@@ -24,6 +28,9 @@
 		layout: "empty",
 	});
 
+	/**
+	 * Function which submits application answers to database.
+	 */
 	async function submitApplication() {
 		if (!accountState.user) {
 			apiError.value =
@@ -32,28 +39,21 @@
 		}
 
 		const { answers } = onboardingStore;
-		const extractedAnswers = {
-			handle: answers.socials_question.instagram_handle,
-			based_in: answers.based_in_question.based_in,
-			project_types: answers.project_types_question.project_types,
-			work_types: answers.work_types_question.work_types,
-			date_of_birth: answers.date_of_birth_question.date_of_birth,
-			first_name: answers.name_question.first_name,
-			last_name: answers.name_question.last_name,
-			additional_info: answers.additional_info_question.additional_info,
-		};
+		const extractedAnswers = extractAnswers(answers);
 
 		try {
-			const user = await $fetch("/API/users/me", {
-				method: "put",
-				body: JSON.stringify({
-					...extractedAnswers,
-					status: AccountStatus.IN_REVIEW,
-				}),
+			const response = await API.ask("/users/me", "PUT", {
+				...extractedAnswers,
+				status: AccountStatus.IN_REVIEW,
 			});
 
-			accountState.user.status = AccountStatus.IN_REVIEW;
-			await router.push("/");
+			if (response.success) {
+				accountState.user.status = AccountStatus.IN_REVIEW;
+				await router.push("/");
+			} else {
+				apiError.value =
+					response.message || "An error occurred while updating creator.";
+			}
 		} catch (error) {
 			apiError.value =
 				error instanceof Error ? error.message : "an unknown error occurred.";
@@ -128,63 +128,11 @@
 <template>
 	<section class="flex screen-size flex-col pb-10 overflow-x-hidden">
 		<!-- Navigation Bar -->
-		<nav
-			class="relative w-full flex items-center text-center px-12 py-6 justify-center"
-		>
-			<!-- Back Button - Desktop -->
-			<button
-				class="absolute left-[15%] hidden lg:block"
-				v-if="onboardingStore.canGoBack && !onboardingStore.cameFromReview"
-				@click="handleBack"
-			>
-				back
-			</button>
-
-			<!-- Back Button - Mobile -->
-			<button
-				class="absolute left-4 block lg:hidden"
-				v-if="onboardingStore.canGoBack && !onboardingStore.cameFromReview"
-				@click="handleBack"
-			>
-				<img src="/icons/arrow-back.svg" alt="back" class="w-4 h-4" />
-			</button>
-
-			<!-- Logo and Progress Container -->
-			<div class="flex flex-col items-center">
-				<!-- Logo - Desktop -->
-				<img
-					src="/creatormate.svg"
-					alt="creatormate-logo"
-					class="h-[15.134px] w-[128px] hidden lg:block"
-				/>
-				<!-- Logo - Mobile -->
-				<img
-					src="/logo.png"
-					alt="cm"
-					class="h-[10px] w-[26.6px] block lg:hidden"
-				/>
-			</div>
-
-			<!-- Action Buttons - Desktop -->
-			<div class="absolute right-[15%] hidden lg:flex space-x-2">
-				<NuxtLink
-					to="/submission/status"
-					class="flex items-center gap-2 px-5 py-2 hover:bg-[#E9E9E9] rounded-lg transition-all duration-150"
-				>
-					save & exit
-				</NuxtLink>
-			</div>
-
-			<!-- Action Buttons - Mobile -->
-			<div class="absolute right-4 flex items-center space-x-2 lg:hidden">
-				<NuxtLink
-					to="/submission/status"
-					class="flex items-center text-sm gap-2 px-3 py-2 rounded-lg"
-				>
-					save & exit
-				</NuxtLink>
-			</div>
-		</nav>
+		<NavigationBar
+			:canGoBack="onboardingStore.canGoBack"
+			:cameFromReview="onboardingStore.cameFromReview"
+			@back="handleBack"
+		/>
 
 		<!-- Progress Indicator -->
 		<div class="flex justify-center w-full mt-3 lg:mt-[-5px]">
@@ -212,13 +160,13 @@
 					<!-- Content Components -->
 					<ApplicationReview
 						v-if="onboardingStore.isReviewStep"
-						class="mb-16"
+						class="mb-16 mt-6"
 					/>
 
 					<QuestionRenderer
 						v-else-if="onboardingStore.currentQuestion"
 						:question="onboardingStore.currentQuestion"
-						class="mb-16"
+						class="mb-16 mt-6"
 						@last-enter="onboardingStore.next"
 					/>
 				</div>
@@ -228,50 +176,50 @@
 		<!-- Navigation Buttons -->
 		<!-- Next Button - Desktop -->
 		<div class="hidden md:block">
-			<button
+			<NavigationButton
 				v-if="!onboardingStore.isLastStep"
-				class="fixed bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleNext"
+				:isMobile="false"
 				:disabled="!onboardingStore.canProceed"
+				@click="handleNext"
 			>
 				{{ onboardingStore.cameFromReview ? "save answer" : "next" }}
-			</button>
+			</NavigationButton>
 		</div>
 
 		<!-- Next Button - Mobile -->
 		<div class="md:hidden">
-			<button
+			<NavigationButton
 				v-if="!onboardingStore.isLastStep"
-				class="fixed bottom-4 mx-auto left-0 right-0 w-[95%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleNext"
+				:isMobile="true"
 				:disabled="!onboardingStore.canProceed"
+				@click="handleNext"
 			>
 				{{ onboardingStore.cameFromReview ? "save answer" : "next" }}
-			</button>
+			</NavigationButton>
 		</div>
 
 		<!-- Submit Button - Desktop -->
 		<div class="hidden md:block">
-			<button
+			<NavigationButton
 				v-if="onboardingStore.isReviewStep"
-				class="fixed bottom-4 right-[15%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleSubmit"
+				:isMobile="false"
 				:disabled="!onboardingStore.isTOSAccepted"
+				@click="handleSubmit"
 			>
 				submit application
-			</button>
+			</NavigationButton>
 		</div>
 
 		<!-- Submit Button - Mobile -->
 		<div class="md:hidden">
-			<button
+			<NavigationButton
 				v-if="onboardingStore.isReviewStep"
-				class="fixed bottom-4 mx-auto left-0 right-0 w-[95%] bg-black text-white px-5 py-2 rounded-lg mt-6 disabled:bg-gray-400 hover:bg-[#242424] transition-all duration-150"
-				@click="handleSubmit"
+				:isMobile="true"
 				:disabled="!onboardingStore.isTOSAccepted"
+				@click="handleSubmit"
 			>
 				submit application
-			</button>
+			</NavigationButton>
 		</div>
 	</section>
 </template>

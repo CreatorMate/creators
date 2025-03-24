@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import type { MultiChoiceFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import { validateMultiChoiceField } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { validateMultiChoiceField } from "~/src/modules/Onboarding/utils/onboardingValidators";
 
 	const props = defineProps<{
 		field: MultiChoiceFieldType;
@@ -133,7 +133,7 @@
 				v-model="searchQuery"
 				type="text"
 				placeholder="search"
-				class="w-full pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
+				class="w-full h-[72px] pl-10 bg-gray-100 text-gray-700 px-5 py-5 rounded-md focus:outline-none"
 			/>
 			<div
 				class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none"

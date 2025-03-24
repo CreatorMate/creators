@@ -3,7 +3,6 @@ import {getModuleRoutes} from "./src/register-modules";
 import type {NuxtPage} from "@nuxt/schema";
 
 const moduleRoutes: NuxtPage[] = getModuleRoutes();
-
 export default defineNuxtConfig({
   compatibilityDate: '2024-11-01',
   pages: true,

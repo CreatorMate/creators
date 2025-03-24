@@ -1,7 +1,7 @@
 <script setup lang="ts">
 	import type { TextAreaFieldType } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import { validateTextareaField } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { validateTextareaField } from "~/src/modules/Onboarding/utils/onboardingValidators";
 
 	const props = defineProps<{
 		field: TextAreaFieldType;
