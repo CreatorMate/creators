@@ -13,13 +13,13 @@
 		<div class="space-y-4">
 			<p class="text-2xl font-[400]">application status:</p>
 
-			<p class="text-[28px] font-[500]">in process.</p>
+			<p class="text-[28px] font-[500]">unfinished.</p>
 		</div>
 
 		<!-- progress indicator -->
 		<div class="w-fit">
 			<ProgressIndicator
-				:step="2"
+				:step="1"
 				:total="3"
 				:height="5"
 				:width="25"

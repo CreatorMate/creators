@@ -19,7 +19,7 @@
 
 	const isLoading = ref(true);
 
-	const apiError = ref("");
+	const errorMessage = ref("");
 
 	useHead({
 		title: "apply - creatormate",
@@ -35,7 +35,7 @@
 	 */
 	async function submitApplication(status: AccountStatus) {
 		if (!accountState.user) {
-			apiError.value =
+			errorMessage.value =
 				"error updating creator: account state is missing a user.";
 			return;
 		}
@@ -56,11 +56,11 @@
 
 				await router.push("/");
 			} else {
-				apiError.value =
+				errorMessage.value =
 					response.message || "An error occurred while updating creator.";
 			}
 		} catch (error) {
-			apiError.value =
+			errorMessage.value =
 				error instanceof Error ? error.message : "an unknown error occurred.";
 			console.error("error updating creator:", error);
 		}
@@ -71,7 +71,7 @@
 	 */
 	async function retrieveApplicationAnswers() {
 		if (!accountState.user) {
-			apiError.value =
+			errorMessage.value =
 				"error updating creator: account state is missing a user.";
 			return;
 		}
@@ -83,12 +83,12 @@
 				const data = response.data;
 				return formatAnswers(data as Record<string, string | string[]>);
 			} else {
-				apiError.value =
+				errorMessage.value =
 					response.message || "Error retrieving application answers";
 				return null;
 			}
 		} catch (error) {
-			apiError.value =
+			errorMessage.value =
 				error instanceof Error ? error.message : "An unknown error occurred";
 			console.error("Error retrieving application answers:", error);
 			return null;
@@ -100,7 +100,7 @@
 	 * Navigates to the previous step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions.
 	 */
 	function handleBack() {
-		resetApiError();
+		resetErrorMessage();
 		onboardingStore.back();
 		// Use nextTick to ensure the DOM has updated
 		nextTick(() => {
@@ -114,7 +114,7 @@
 	 * Advances to the next step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions
 	 */
 	function handleNext() {
-		resetApiError();
+		resetErrorMessage();
 		onboardingStore.next();
 		nextTick(() => {
 			document.activeElement instanceof HTMLElement &&
@@ -127,7 +127,18 @@
 	 * Submits the completed application and removes focus from the active element to prevent unintended Enter key interactions
 	 */
 	function handleSubmit() {
-		resetApiError();
+		resetErrorMessage();
+
+		// Check if all questions are valid
+		onboardingStore.validateAllQuestions();
+
+		console.log(onboardingStore.error);
+
+		if (!onboardingStore.allQuestionsValid) {
+			errorMessage.value = onboardingStore.error;
+			return;
+		}
+
 		submitApplication(AccountStatus.IN_REVIEW);
 		nextTick(() => {
 			document.activeElement instanceof HTMLElement &&
@@ -139,13 +150,15 @@
 	 * Handles partial application submit.
 	 */
 	function handleSaveAndExit() {
-		resetApiError();
+		resetErrorMessage();
 
 		// If the user had finished the application before, updating it should not change his status to IN_PROCESS
-		const status: AccountStatus =
-			accountState.user?.status == AccountStatus.IN_REVIEW
-				? AccountStatus.IN_REVIEW
-				: AccountStatus.IN_PROCESS;
+		// const status: AccountStatus =
+		// 	accountState.user?.status == AccountStatus.IN_REVIEW
+		// 		? AccountStatus.IN_REVIEW
+		// 		: AccountStatus.IN_PROCESS;
+
+		const status = AccountStatus.IN_PROCESS;
 
 		submitApplication(status);
 		nextTick(() => {
@@ -154,8 +167,8 @@
 		});
 	}
 
-	function resetApiError() {
-		apiError.value = "";
+	function resetErrorMessage() {
+		errorMessage.value = "";
 	}
 
 	onMounted(async () => {
@@ -183,7 +196,7 @@
 		isLoading.value = false;
 
 		// Reset API error message
-		resetApiError();
+		resetErrorMessage();
 	});
 </script>
 
@@ -217,8 +230,8 @@
 		<div v-else>
 			<div class="relative flex flex-grow justify-center px-6">
 				<div class="w-[636px] max-w-full mt-20 gap-5">
-					<p class="text-red-500" v-if="apiError">
-						{{ apiError }}
+					<p class="text-red-500" v-if="errorMessage">
+						{{ errorMessage }}
 					</p>
 					<!-- Content Components -->
 					<ApplicationReview

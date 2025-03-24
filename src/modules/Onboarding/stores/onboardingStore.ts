@@ -36,6 +36,9 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// Flag storing if user came from review page.
 	const cameFromReview = ref(false);
 
+	// Flag storing if all questions are valid
+	const allQuestionsValid = ref(false);
+
 	// Computed property that determines the total number of steps (questions + application review page).
 	const totalSteps = computed(() => questions.value.length + 1);
 
@@ -201,6 +204,20 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		error.value = "";
 	}
 
+	// Validate all Questions
+	function validateAllQuestions() {
+		allQuestionsValid.value = questions.value.every((question) => {
+			const { valid, errorMessage } = validateQuestion(question, answers.value);
+
+			if (!valid) {
+				error.value = errorMessage!;
+				return false;
+			}
+
+			return true;
+		});
+	}
+
 	// Persist state on every change using a watcher.
 	watch(
 		[answers, currentStep],
@@ -229,6 +246,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		canGoBack,
 		error,
 		isTOSAccepted,
+		allQuestionsValid,
 		hydrate,
 		jumpToQuestion,
 		setAnswer,
@@ -238,5 +256,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		getQuestionStepByKey,
 		isFieldTouched,
 		setFieldTouched,
+		validateAllQuestions,
 	};
 });
