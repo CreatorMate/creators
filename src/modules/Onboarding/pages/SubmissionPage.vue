@@ -4,7 +4,7 @@
 	import { AccountStatus } from "~/src/utils/SupabaseTypes";
 	import SubmissionNotStarted from "~/src/modules/Onboarding/components/submission/SubmissionNotStarted.vue";
 	import SubmissionSubmitted from "~/src/modules/Onboarding/components/submission/SubmissionSubmitted.vue";
-	import SubmissionUnfinished from "~/src/modules/Onboarding/components/submission/SubmissionUnfinished.vue";
+	import SubmissionInProgress from "~/src/modules/Onboarding/components/submission/SubmissionInProgress.vue";
 
 	const accountState = useAccountState();
 
@@ -77,7 +77,7 @@
 					<SubmissionSubmitted
 						v-if="accountState.user?.status == AccountStatus.IN_REVIEW"
 					/>
-					<SubmissionUnfinished
+					<SubmissionInProgress
 						v-if="accountState.user?.status == AccountStatus.IN_PROCESS"
 					/>
 				</div>

@@ -13,7 +13,7 @@
 		<div class="space-y-4">
 			<p class="text-2xl font-[400]">application status:</p>
 
-			<p class="text-[28px] font-[500]">unfinished.</p>
+			<p class="text-[28px] font-[500]">in progress.</p>
 		</div>
 
 		<!-- progress indicator -->
