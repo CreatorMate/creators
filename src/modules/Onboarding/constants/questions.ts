@@ -43,11 +43,10 @@ export const onboardingQuestions: Question[] = [
 			},
 			{
 				key: "phone_number",
-				type: "text",
+				type: "phone-number",
 				label: "phone number",
-				numeric: true,
+				defaultCountryCode: "+31",
 				required: true,
-				maxLength: 18,
 			},
 			{
 				key: "profile_picture",

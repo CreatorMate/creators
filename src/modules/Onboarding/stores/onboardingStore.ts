@@ -219,19 +219,22 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	}
 
 	// Persist state on every change using a watcher.
-	watch(
-		[answers, currentStep],
-		() => {
-			if (isInitialized.value) {
-				const state: StoredState = {
-					currentStep: currentStep.value,
-					answers: answers.value,
-				};
-				saveOnboardingState(state);
-			}
-		},
-		{ deep: true },
-	);
+	function initializeWatcher() {
+		watch(
+			[answers, currentStep],
+			() => {
+				// Only save if there are actual answers (i.e., it's not an empty object)
+				if (Object.keys(answers.value).length > 0) {
+					const state: StoredState = {
+						currentStep: currentStep.value,
+						answers: answers.value,
+					};
+					saveOnboardingState(state);
+				}
+			},
+			{ deep: true },
+		);
+	}
 
 	return {
 		questions,
@@ -257,5 +260,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isFieldTouched,
 		setFieldTouched,
 		validateAllQuestions,
+		initializeWatcher,
 	};
 });

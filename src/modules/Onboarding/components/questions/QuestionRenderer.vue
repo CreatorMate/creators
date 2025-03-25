@@ -8,6 +8,7 @@
 	import LocationField from "~/src/modules/Onboarding/components/questions/LocationField.vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 	import PictureField from "~/src/modules/Onboarding/components/questions/PictureField.vue";
+	import PhoneNumberField from "~/src/modules/Onboarding/components/questions/modals/PhoneNumberField.vue";
 
 	const onboardingStore = useOnboardingStore();
 
@@ -31,6 +32,7 @@
 		social: SocialField,
 		location: LocationField,
 		picture: PictureField,
+		"phone-number": PhoneNumberField,
 	};
 
 	const handleFieldEnter = (
@@ -132,5 +134,6 @@
 				/>
 			</template>
 		</div>
+		<p>{{ onboardingStore.answers }}</p>
 	</div>
 </template>

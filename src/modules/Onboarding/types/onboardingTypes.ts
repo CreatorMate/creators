@@ -76,6 +76,15 @@ export interface LocationFieldType extends BaseFieldType<"location"> {}
 
 export interface PictureField extends BaseFieldType<"picture"> {}
 
+export interface PhoneNumberFieldType extends BaseFieldType<"phone-number"> {
+	// Optional default country code
+	defaultCountryCode?: string;
+	// Optional list of allowed country codes
+	allowedCountryCodes?: string[];
+	// Optional field placeholder
+	placeholder?: string;
+}
+
 /**
  * Answer field type. May be `TextField`, `DateField`, `MultiChoiceField`, `TextAreaField`, or `SocialMediaField`.
  */
@@ -86,7 +95,8 @@ export type FieldType =
 	| TextAreaFieldType
 	| SocialMediaFieldType
 	| LocationFieldType
-	| PictureField;
+	| PictureField
+	| PhoneNumberFieldType;
 
 /**
  * Question type. Requires (unique) `key`, `label`, and `fields` attributes. May have `description` and `required`

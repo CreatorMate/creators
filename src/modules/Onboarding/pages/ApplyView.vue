@@ -12,6 +12,7 @@
 	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
 	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
 	import { formatAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import { STORAGE_KEY } from "~/src/modules/Onboarding/utils/onboardingStorage";
 
 	const accountState = useAccountState();
 	const onboardingStore = useOnboardingStore();
@@ -132,8 +133,6 @@
 		// Check if all questions are valid
 		onboardingStore.validateAllQuestions();
 
-		console.log(onboardingStore.error);
-
 		if (!onboardingStore.allQuestionsValid) {
 			errorMessage.value = onboardingStore.error;
 			return;
@@ -178,24 +177,29 @@
 			await router.push("/");
 		}
 
-		// Try to pull answers from database
-		const retrievedAnswers = await retrieveApplicationAnswers();
+		// Check if there are already stored answers in local storage
+		const storedAnswers = localStorage.getItem(STORAGE_KEY);
 
-		if (retrievedAnswers) {
-			// If database retrieval is successful, update the store
-			onboardingStore.answers = retrievedAnswers;
-			onboardingStore.currentStep = onboardingStore.getQuestionStepByKey(
-				Object.keys(retrievedAnswers)[Object.keys(retrievedAnswers).length - 1],
-			);
+		if (!storedAnswers) {
+			// First visit in this session: pull from the database
+			const retrievedAnswers = await retrieveApplicationAnswers();
+			if (retrievedAnswers) {
+				onboardingStore.answers = retrievedAnswers;
+				const keys = Object.keys(retrievedAnswers);
+				onboardingStore.currentStep = onboardingStore.getQuestionStepByKey(
+					keys[keys.length - 1],
+				);
+			}
 		} else {
-			// If database retrieval fails, hydrate from local storage
+			// If answers already exist hydrate from the store
 			onboardingStore.hydrate();
 		}
 
+		// Initialize storage watcher
+		onboardingStore.initializeWatcher();
+
 		// Set loading state to false
 		isLoading.value = false;
-
-		// Reset API error message
 		resetErrorMessage();
 	});
 </script>
