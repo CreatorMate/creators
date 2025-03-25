@@ -125,6 +125,26 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		setFieldTouched(questionKey, fieldKey);
 	}
 
+	// Retrieve an answer for a specific field within a question
+	function getAnswer(
+		fieldKey: string,
+		questionKey?: string,
+	): AnswerType | null {
+		// If no questionKey is provided, use the current question's key
+		if (!questionKey && currentQuestion.value) {
+			questionKey = currentQuestion.value.key;
+		}
+
+		// If still no questionKey, return null
+		if (!questionKey) {
+			console.error("No question key available");
+			return null;
+		}
+
+		// Return the specific field's answer, or null if not found
+		return answers.value[questionKey]?.[fieldKey] ?? null;
+	}
+
 	// Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
 	function next(): void {
 		// If user came from review, jump back to review step and reset flag
@@ -253,6 +273,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		hydrate,
 		jumpToQuestion,
 		setAnswer,
+		getAnswer,
 		next,
 		back,
 		reset,

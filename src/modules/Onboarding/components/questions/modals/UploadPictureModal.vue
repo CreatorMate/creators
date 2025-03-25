@@ -2,11 +2,15 @@
 	import { ref, onMounted, onUnmounted, computed } from "vue";
 	import { Icon } from "@iconify/vue";
 
+	const props = defineProps<{
+		imgPreviewUrl?: string | null;
+	}>();
+
 	const emit = defineEmits(["close", "upload"]);
 
 	const fileInput = ref<HTMLInputElement | null>(null);
 	const selectedFile = ref<File | null>(null);
-	const previewUrl = ref<string>("");
+	const previewUrl = ref<string>(props.imgPreviewUrl ?? "");
 	const isDragging = ref(false);
 
 	function handleFileSelect(event: Event) {
@@ -32,7 +36,6 @@
 	function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		isDragging.value = false;
-
 		if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
 			const file = event.dataTransfer.files[0];
 			if (isValidImageFile(file)) {
@@ -69,11 +72,9 @@
 	// Truncate filename
 	function truncateFilename(filename: string, maxLength: number = 20): string {
 		if (filename.length <= maxLength) return filename;
-
 		const extensionStart = filename.lastIndexOf(".");
 		const extension = filename.slice(extensionStart);
 		const name = filename.slice(0, extensionStart);
-
 		return name.slice(0, maxLength - extension.length - 3) + "..." + extension;
 	}
 
@@ -89,6 +90,9 @@
 		return selectedFile.value ? truncateFilename(selectedFile.value.name) : "";
 	});
 
+	// Determines whether to show the upload instructions
+	const showUploadMenu = computed(() => previewUrl.value === "");
+
 	onMounted(() => {
 		window.addEventListener("keydown", handleKeyDown);
 	});
@@ -96,7 +100,7 @@
 	onUnmounted(() => {
 		window.removeEventListener("keydown", handleKeyDown);
 		// Clean up any object URLs to avoid memory leaks
-		if (previewUrl.value) {
+		if (previewUrl.value && previewUrl.value.startsWith("blob:")) {
 			URL.revokeObjectURL(previewUrl.value);
 		}
 	});
@@ -117,12 +121,11 @@
 			</button>
 
 			<h2 class="text-lg font-semibold mb-2">Add profile picture</h2>
-
 			<p class="mb-4 text-[#3C3C3C] font-medium">
 				upload a photo to represent you on creatormate.
 			</p>
 
-			<!-- file input (hidden) -->
+			<!-- hidden file input -->
 			<input
 				ref="fileInput"
 				type="file"
@@ -138,14 +141,15 @@
 					isDragging
 						? 'border-blue-500 bg-blue-50'
 						: 'border-gray-300 hover:border-gray-400',
-					selectedFile ? 'py-4' : 'py-12',
+					showUploadMenu ? 'py-12' : 'py-4',
 				]"
 				@click="openFileBrowser"
 				@dragover="handleDragOver"
 				@dragleave="handleDragLeave"
 				@drop="handleDrop"
 			>
-				<div v-if="!selectedFile">
+				<!-- show upload instructions if no preview available -->
+				<div v-if="showUploadMenu">
 					<div class="flex justify-center mb-4">
 						<Icon
 							icon="material-symbols:image-outline"
@@ -162,7 +166,7 @@
 						JPG, PNG, GIF, or WEBP (max 5MB)
 					</p>
 				</div>
-
+				<!-- Show preview if available -->
 				<div v-else class="flex items-center justify-center">
 					<div class="relative w-24 h-24 mr-4">
 						<img
@@ -173,10 +177,12 @@
 					</div>
 					<div class="text-left font-medium">
 						<p class="text-gray-800 font-medium">
-							{{ truncatedFileName }}
+							{{ selectedFile ? truncatedFileName : "Current photo" }}
 						</p>
 						<p class="text-gray-500 text-sm">
-							{{ Math.round(selectedFile.size / 1024) }} kb
+							{{
+								selectedFile ? Math.round(selectedFile.size / 1024) + " kb" : ""
+							}}
 						</p>
 						<p class="text-blue-500 text-sm mt-1 cursor-pointer">
 							change photo

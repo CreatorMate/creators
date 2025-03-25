@@ -21,8 +21,9 @@
 	// Track validation state
 	const isValid = ref(false);
 
-	const value = ref(
-		onboardingStore.answers[questionKey.value]?.[props.field.key] || "",
+	const value = ref<string>(
+		(onboardingStore.answers[questionKey.value]?.[props.field.key] as string) ||
+			"",
 	);
 
 	// Function to validate the textarea field and update the error message
@@ -98,7 +99,7 @@
 
 		<div class="relative">
 			<textarea
-				v-model="value as string"
+				v-model="value"
 				class="w-full bg-gray-100 text-gray-700 px-5 py-5 h-[150px] rounded-md focus:outline-none"
 				type="text"
 				:placeholder="field.placeholder || ''"

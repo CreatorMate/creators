@@ -15,6 +15,26 @@
 	const selectedImage = ref<File | null>(null);
 	const imagePreviewUrl = ref<string>("");
 
+	// Fetches existing image from Supabase to display to user
+	async function fetchExistingImage() {
+		const supabase = useSupabaseClient();
+		const existingImagePath = onboardingStore.getAnswer(props.field.key);
+
+		if (existingImagePath) {
+			try {
+				const { data } = supabase.storage
+					.from("user_pictures")
+					.getPublicUrl(existingImagePath as string);
+
+				if (data?.publicUrl) {
+					imagePreviewUrl.value = data.publicUrl;
+				}
+			} catch (error) {
+				console.error("Error fetching existing image:", error);
+			}
+		}
+	}
+
 	async function handleUpload(file: File) {
 		selectedImage.value = file;
 		imagePreviewUrl.value = URL.createObjectURL(file);
@@ -32,8 +52,13 @@
 			return;
 		}
 
-		onboardingStore.setAnswer("profile_picture", data.path);
+		onboardingStore.setAnswer(props.field.key, data.path);
 	}
+
+	// Fetch existing image when component is mounted
+	onMounted(() => {
+		fetchExistingImage();
+	});
 </script>
 
 <template>
@@ -45,11 +70,11 @@
 		</span>
 
 		<div class="flex items-center">
-			<!-- Profile picture button -->
+			<!-- profile picture button -->
 			<button
 				class="flex justify-center items-center bg-gray-100 w-[72px] h-[72px] rounded-lg"
 				@click="showModal = true"
-				v-if="!selectedImage"
+				v-if="!imagePreviewUrl"
 			>
 				<Icon
 					icon="material-symbols:add-2-rounded"
@@ -59,7 +84,7 @@
 				/>
 			</button>
 
-			<!-- Selected image preview -->
+			<!-- selected image preview -->
 			<div
 				v-else
 				class="relative w-[72px] h-[72px] rounded-lg overflow-hidden cursor-pointer"
@@ -76,6 +101,7 @@
 		<!-- Modal component -->
 		<UploadPictureModal
 			v-if="showModal"
+			:img-preview-url="imagePreviewUrl"
 			@close="showModal = false"
 			@upload="handleUpload"
 		/>
