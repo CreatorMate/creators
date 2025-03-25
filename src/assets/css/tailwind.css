@@ -5,11 +5,11 @@
 @layer {
     :root {
         --background: #F5F5F5;
-
     }
 }
 * {
     text-transform: lowercase !important;
+    letter-spacing: -0.02em !important;
 }
 
 html, body {
@@ -21,7 +21,28 @@ html, body {
     background-color: white;
     font-weight: 400;
     font-feature-settings: 'ss01' on;
-    color: black;
+    color: black
+
+}
+
+.text-size-XL {
+    font-size: 1.5rem;
+    line-height: 2rem;
+}
+
+.text-size-M {
+    font-size: 1rem;
+    line-height: 1.5rem;
+}
+
+.text-size-S {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.text-size-XS {
+    font-size: 0.75rem;
+    line-height: 1rem;
 }
 
 .screen-size {

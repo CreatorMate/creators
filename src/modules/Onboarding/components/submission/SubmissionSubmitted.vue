@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
+	import ProgressIndicator from "~/src/components/Loading/ProgressIndicator.vue";
 
 	const router = useRouter();
 

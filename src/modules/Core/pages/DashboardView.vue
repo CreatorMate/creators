@@ -5,6 +5,7 @@
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
     import JobPost from "~/src/modules/Core/components/JobPost.vue";
     import MobileNavigation from "~/src/components/Navigation/MobileNavigation.vue";
+    import MobileBaseNavigationItems from "~/src/components/Navigation/MobileBaseNavigationItems.vue";
 
     const accountState = useAccountState();
 
@@ -49,5 +50,7 @@
             <JobPost v-for="jobPost of jobPosts" :jobPost/>
         </div>
     </section>
-    <MobileNavigation/>
+    <MobileNavigation>
+        <MobileBaseNavigationItems/>
+    </MobileNavigation>
 </template>

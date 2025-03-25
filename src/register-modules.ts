@@ -3,11 +3,13 @@ import type {NuxtPage} from "@nuxt/schema";
 import {OnboardingModule} from "./modules/Onboarding/OnboardingModule";
 import {CoreModule} from "./modules/Core/CoreModule";
 import {AuthModule} from "./modules/Auth/AuthModule";
+import {ProfileModule} from "./modules/Profile/ProfileModule";
 
 const modules: BaseModule[] = [
     new OnboardingModule(),
     new CoreModule(),
-    new AuthModule()
+    new AuthModule(),
+    new ProfileModule()
 ];
 export function getModuleRoutes() {
     const routes: NuxtPage[] = [];

@@ -4,8 +4,8 @@
 	import { AccountStatus } from "~/src/utils/SupabaseTypes";
 	import QuestionRenderer from "~/src/modules/Onboarding/components/questions/QuestionRenderer.vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
-	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
+	import LoadingSpinner from "~/src/components/Loading/LoadingSpinner.vue";
+	import ProgressIndicator from "~/src/components/Loading/ProgressIndicator.vue";
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
 	import { extractAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
 	import { API } from "~/src/utils/API/API";

@@ -28,6 +28,11 @@ module.exports = {
                 'text-normal': 'var(--text-normal)',
                 'text-dark': 'var(--text-dark)',
             },
+            borderColor: {
+              DEFAULT: '#F1F1F1',
+            },
+            fontSize: {
+            },
             boxShadow: {
                 'input': '0px 0px 0px 2px rgba(255, 255, 255, 0.40)',
                 'none': '0px 0px 0px 2px rgba(255, 255, 255, 0)',

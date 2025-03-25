@@ -74,7 +74,7 @@
 		<div class="flex w-full items-center justify-between">
 			<div class="flex flex-col">
 				<div class="flex w-full sm:w-[351.5px] items-center gap-3">
-					<img
+					<NuxtImg
 						:src="field.socialMediaIcon"
 						alt=""
 						class="w-6 h-6 flex-shrink-0 aspect-square"

@@ -9,19 +9,14 @@ export class CoreModule extends BaseModule {
             path: '/'
         },
         {
-            name: 'profile',
-            file: '@/src/modules/Core/pages/Profile.vue',
-            path: '/profile'
-        },
-        {
-            name: 'profile/:id',
-            file: '@/src/modules/Core/pages/UserProfile.vue',
-            path: '/profile/:id'
-        },
-        {
             name: 'hire',
             file: '@/src/modules/Core/pages/Hire.vue',
             path: '/hire'
+        },
+        {
+            name: "settings",
+            file: '@/src/modules/Core/pages/Settings.vue',
+            path: "/settings", // This catches all undefined routes
         },
         {
             name: "error-404",

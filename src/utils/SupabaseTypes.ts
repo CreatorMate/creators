@@ -3,7 +3,7 @@ export type User = {
 	handle: string;
 	email: string;
 	status: AccountStatus;
-	picture: string;
+	profile_picture: string;
 	based_in: string;
 	project_types: string[];
 	date_of_birth: string;
