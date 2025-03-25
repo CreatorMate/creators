@@ -1,5 +1,5 @@
 <script setup lang="ts">
-	import { ref, onMounted, onUnmounted } from "vue";
+	import { ref, onMounted, onUnmounted, computed } from "vue";
 	import { Icon } from "@iconify/vue";
 
 	const emit = defineEmits(["close", "upload"]);
@@ -66,14 +66,28 @@
 		}
 	}
 
-	// Upload function: for now, only emits the file for parent component to handle
-	// TODO: send to Supabase storage bucket
+	// Truncate filename
+	function truncateFilename(filename: string, maxLength: number = 20): string {
+		if (filename.length <= maxLength) return filename;
+
+		const extensionStart = filename.lastIndexOf(".");
+		const extension = filename.slice(extensionStart);
+		const name = filename.slice(0, extensionStart);
+
+		return name.slice(0, maxLength - extension.length - 3) + "..." + extension;
+	}
+
+	// Upload function
 	function handleUpload() {
 		if (selectedFile.value) {
 			emit("upload", selectedFile.value);
 			emit("close");
 		}
 	}
+
+	const truncatedFileName = computed(() => {
+		return selectedFile.value ? truncateFilename(selectedFile.value.name) : "";
+	});
 
 	onMounted(() => {
 		window.addEventListener("keydown", handleKeyDown);
@@ -108,7 +122,7 @@
 				upload a photo to represent you on creatormate.
 			</p>
 
-			<!-- File input (hidden) -->
+			<!-- file input (hidden) -->
 			<input
 				ref="fileInput"
 				type="file"
@@ -117,7 +131,7 @@
 				@change="handleFileSelect"
 			/>
 
-			<!-- Upload area -->
+			<!-- upload area -->
 			<div
 				class="mb-6 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors"
 				:class="[
@@ -141,7 +155,7 @@
 						/>
 					</div>
 					<p class="text-gray-700 mb-2 font-medium">
-						Drag and drop your photo here
+						drag and drop your photo here
 					</p>
 					<p class="text-gray-500 text-sm font-medium">or click to browse</p>
 					<p class="text-gray-500 text-sm mt-2 font-medium">
@@ -158,7 +172,9 @@
 						/>
 					</div>
 					<div class="text-left font-medium">
-						<p class="text-gray-800 font-medium">{{ selectedFile.name }}</p>
+						<p class="text-gray-800 font-medium">
+							{{ truncatedFileName }}
+						</p>
 						<p class="text-gray-500 text-sm">
 							{{ Math.round(selectedFile.size / 1024) }} kb
 						</p>
