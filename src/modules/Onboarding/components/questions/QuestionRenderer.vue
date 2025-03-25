@@ -134,6 +134,5 @@
 				/>
 			</template>
 		</div>
-		<p>{{ onboardingStore.answers }}</p>
 	</div>
 </template>
