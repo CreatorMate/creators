@@ -19,8 +19,9 @@
         jobPosts.value = [];
 
         const jobPostsRequest: APIResponse<{job_posts: any[]}> = await API.ask(`/jobposts`);
-        console.log(jobPostsRequest)
         if(!jobPostsRequest.success) return;
+
+        console.log(jobPostsRequest.data)
 
         jobPosts.value = jobPostsRequest.data.job_posts;
     }

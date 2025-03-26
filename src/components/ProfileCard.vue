@@ -1,6 +1,7 @@
 <script setup lang='ts'>
     import Label from "~/src/components/Core/Label.vue";
     import {Icon} from "@iconify/vue";
+    import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
 
     const {name, role, link, image} = defineProps<{
         name: string,
@@ -17,7 +18,7 @@
 <template>
     <NuxtLink :to="link" class="w-full border flex px-3 py-6 rounded-xl bg-[#FCFCFC] justify-between">
         <div class="flex items-center gap-3">
-            <NuxtImg class="rounded-full h-12 w-12 object-fill" :src="`https://accounts.creatormate.com/storage/v1/object/public/user_pictures/${image}`"/>
+            <SupabaseImage class="rounded-full h-12 w-12 object-fill" bucket="user-pictures" :name="image"/>
             <div>
                 <Label :text="name" class="font-medium"/>
                 <p class="text-size-S text-[#3C3C3C]">{{roles}}</p>

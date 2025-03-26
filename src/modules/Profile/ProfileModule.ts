@@ -13,5 +13,10 @@ export class ProfileModule extends BaseModule {
             file: '@/src/modules/Profile/pages/Profile.vue',
             path: '/profile/:id'
         },
+        {
+            name: 'work/add',
+            file: '@/src/modules/Profile/pages/AddWork.vue',
+            path: '/work/add'
+        },
     ]
 }

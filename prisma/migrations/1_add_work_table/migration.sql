@@ -4,6 +4,7 @@ CREATE TABLE "work_items" (
     "title" TEXT NOT NULL,
     "job_title" TEXT NOT NULL,
     "link_to" TEXT NOT NULL,
+    "image" TEXT NOT NULL,
     "user_id" UUID NOT NULL,
 
     CONSTRAINT "work_items_pkey" PRIMARY KEY ("id")

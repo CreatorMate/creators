@@ -24,22 +24,33 @@ model users {
   website           String?
   instagram_account instagram_account[]
   job_applications  job_applications[]
-  job_postings      job_postings[]
   roles             user_roles[]
   work_items        work_items[]
+  job_postings      job_postings[]
+  job_postings_as_creative_lead job_postings[] @relation("JobPostingCreativeLead")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model job_postings {
   id               Int                @id(map: "job_post_pkey") @default(autoincrement())
   posted_by        String             @db.Uuid
+  creative_lead_id String             @db.Uuid
   title            String?
   looking_for      String?
   date             String?
   description      String?
   place            String?
   job_applications job_applications[]
-  users            users              @relation(fields: [posted_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_posted_by_fkey")
+  requirements     String[]
+  labels           String[]
+  available_slots  Int
+  closes_on        DateTime
+  price            Int
+  active           Boolean
+  client_id        Int
+  client           clients           @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_client_fkey")
+  users            users             @relation(fields: [posted_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_posted_by_fkey")
+  creative_lead    users             @relation("JobPostingCreativeLead", fields: [creative_lead_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_postings_creative_lead_id_fkey")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -51,6 +62,22 @@ model job_applications {
   portfolio    String?
   job_postings job_postings? @relation(fields: [job_post], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users        users?        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model clients {
+  id           Int     @id @default(autoincrement())
+  name         String
+  headquarters String
+  employees    String
+  industry     String?
+  linkedin     String?
+  wikipedia    String?
+  x            String?
+  image        String
+  website      String?
+  instagram    String?
+  youtube      String?
+  job_postings job_postings[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -105,12 +132,13 @@ model cities {
 }
 
 model work_items {
-  id           Int    @id @default(autoincrement())
-  title        String
-  job_title    String
-  link_to      String
-  user_id      String  @db.Uuid
-  users        users   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id        Int    @id @default(autoincrement())
+  title     String
+  job_title String
+  link_to   String
+  image     String
+  user_id   String @db.Uuid
+  users     users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 enum account_status {

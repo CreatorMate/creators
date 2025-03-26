@@ -17,6 +17,15 @@ export type User = {
 	rights: any;
 };
 
+export type WorkItem = {
+	id: number,
+	title: string,
+	job_title: string,
+	link_to: string,
+	user_id: string,
+	image: string
+}
+
 export enum AccountStatus {
 	NEW = "NEW",
 	IN_REVIEW = "IN_REVIEW",

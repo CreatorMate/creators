@@ -14,20 +14,25 @@
     import AboutBlock from "~/src/modules/Profile/components/AboutBlock.vue";
     import WorkBlock from "~/src/modules/Profile/components/WorkBlock.vue";
     import type {User} from "~/src/utils/SupabaseTypes";
+    import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
 
     const router = useRouter();
+    const route = useRoute();
     const accountState = useAccountState();
     const isOn = ref(false);
-    const route = useRoute();
     const user = ref<User|null>(null)
 
     const active = ref('about');
     const user_id = route.params.id;
+    const activeRoute = route.query.tab;
     function goBack() {
         router.back();
     }
 
     onMounted(async () => {
+        if(activeRoute == 'about' || activeRoute == 'contact' || activeRoute == 'work') {
+            active.value = activeRoute;
+        }
         if(!user_id) {
             user.value = accountState.user;
             return;
@@ -37,6 +42,11 @@
 
         user.value = userRequest.data;
     });
+
+    function switchTab(tab: string) {
+        router.push({ path: route.path, query: {tab}});
+        active.value = tab;
+    }
 </script>
 
 <template>
@@ -52,7 +62,7 @@
                 <Header :text="`${user.first_name} ${user.last_name}`"/>
                 <p class="text-size-S text-[#3C3C3C]">{{user.project_types.join(',')}}</p>
             </div>
-            <NuxtImg class="rounded-full h-16 w-16 object-fill" :src="`https://accounts.creatormate.com/storage/v1/object/public/user_pictures/${user.profile_picture}`"/>
+            <SupabaseImage class="rounded-full h-16 w-16 object-fill"  bucket="user-pictures" :name="user.profile_picture"/>
         </div>
         <div class="flex w-full justify-between mt-3">
             <div class="flex items-center gap-1 text-[#3C3C3C]">
@@ -62,9 +72,9 @@
             <Icon icon="material-symbols:share-outline"/>
         </div>
         <div class="flex w-full justify-around mt-3 mb-6 gap-6">
-            <p @click="active = 'work'" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'work'}">work</p>
-            <p @click="active = 'about'" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'about'}">about</p>
-            <p @click="active = 'contact'" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'contact'}">contact</p>
+            <p @click="switchTab('work')" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'work'}">work</p>
+            <p @click="switchTab('about')" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'about'}">about</p>
+            <p @click="switchTab('contact')" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'contact'}">contact</p>
         </div>
         <div>
             <ContactBlock v-if="active === 'contact'" :user/>

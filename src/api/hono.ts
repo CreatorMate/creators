@@ -2,7 +2,8 @@ import {Hono} from "hono";
 
 import {initializeHonoRouter} from "~/src/api/router";
 import createApp from "./src/lib/createApp";
-import {serverSupabaseUser} from "#supabase/server";
+import {serverSupabaseClient, serverSupabaseUser} from "#supabase/server";
+import SupabaseServer from "~/src/api/utils/supabaseServerClient";
 
 let app: Hono = createApp();
 
@@ -22,6 +23,8 @@ export default defineEventHandler(async (event) => {
                 statusMessage: 'Unauthorized',
             });
         }
+
+        SupabaseServer.assign(user.id, await serverSupabaseClient(event));
 
         (webReq as any)['user'] = user;
         return app.fetch(webReq);

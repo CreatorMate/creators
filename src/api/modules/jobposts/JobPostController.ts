@@ -9,7 +9,11 @@ import {usePrisma} from "~/src/api/src/lib/prisma";
 export class JobPostController extends BaseController {
     async endpoints() {
         this.app.get('/jobposts', async (context: Context): Promise<any> => {
-            const jobPosts = await usePrisma().job_postings.findMany();
+            const jobPosts = await usePrisma().job_postings.findMany({
+                include: {
+                    creative_lead: true
+                }
+            });
 
             if(!jobPosts) return errorResponse(context, 'something_went_wrong');
 

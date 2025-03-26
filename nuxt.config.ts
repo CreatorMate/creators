@@ -69,6 +69,7 @@ export default defineNuxtConfig({
     pages: [],
     public: {
       BASE_URL: process.env.BASE_URL,
+      SUPABASE_URL: process.env.SUPABASE_URL
     },
   },
   image: {
