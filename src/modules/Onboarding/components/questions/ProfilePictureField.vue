@@ -23,7 +23,7 @@
 		if (existingImagePath) {
 			try {
 				const { data } = supabase.storage
-					.from("user_pictures")
+					.from("user-pictures")
 					.getPublicUrl(existingImagePath as string);
 
 				if (data?.publicUrl) {
@@ -44,7 +44,7 @@
 		const supabase = useSupabaseClient();
 
 		const { data, error } = await supabase.storage
-			.from("user_pictures")
+			.from("user-pictures")
 			.upload(filePath, file);
 
 		if (error) {

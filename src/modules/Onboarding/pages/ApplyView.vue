@@ -7,11 +7,13 @@
 	import LoadingSpinner from "~/src/components/Loading/LoadingSpinner.vue";
 	import ProgressIndicator from "~/src/components/Loading/ProgressIndicator.vue";
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
-	import { extractAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
+	import {
+		extractAnswers,
+		formatAnswers,
+	} from "~/src/modules/Onboarding/utils/onboardingUtils";
 	import { API } from "~/src/utils/API/API";
 	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
 	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
-	import { formatAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
 	import { STORAGE_KEY } from "~/src/modules/Onboarding/utils/onboardingStorage";
 
 	const accountState = useAccountState();
@@ -52,6 +54,7 @@
 
 			if (response.success) {
 				accountState.user.status = status;
+				accountState.updateUserAnswers(extractedAnswers);
 
 				onboardingStore.reset();
 
@@ -182,10 +185,15 @@
 
 		if (!storedAnswers) {
 			// First visit in this session: pull from the database
-			const retrievedAnswers = await retrieveApplicationAnswers();
-			if (retrievedAnswers) {
+			const retrievedAnswers = formatAnswers(
+				accountState.user as Record<string, string | string[]>,
+			);
+
+			const keys = Object.keys(retrievedAnswers);
+
+			// Only update onboarding question answers if retrieved answers object isn't empty
+			if (keys.length > 0) {
 				onboardingStore.answers = retrievedAnswers;
-				const keys = Object.keys(retrievedAnswers);
 				onboardingStore.currentStep = onboardingStore.getQuestionStepByKey(
 					keys[keys.length - 1],
 				);
