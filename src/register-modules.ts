@@ -4,12 +4,14 @@ import {OnboardingModule} from "./modules/Onboarding/OnboardingModule";
 import {CoreModule} from "./modules/Core/CoreModule";
 import {AuthModule} from "./modules/Auth/AuthModule";
 import {ProfileModule} from "./modules/Profile/ProfileModule";
+import {JobpostModule} from "./modules/Jobposts/JobpostModule";
 
 const modules: BaseModule[] = [
     new OnboardingModule(),
     new CoreModule(),
     new AuthModule(),
-    new ProfileModule()
+    new ProfileModule(),
+    new JobpostModule()
 ];
 export function getModuleRoutes() {
     const routes: NuxtPage[] = [];

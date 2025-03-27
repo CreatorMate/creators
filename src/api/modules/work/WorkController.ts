@@ -54,7 +54,7 @@ export class WorkController extends BaseController {
 
             if(!client) return errorResponse(context, 'SUPABASE_NOT_FOUND');
 
-            await client.storage.from('work-images').remove([fetchToDeleteItem.image])
+            await client.storage.from('work-images').remove([fetchToDeleteItem.image]);
 
             const deleteRequest = await this.getPrisma().work_items.delete({
                 where: {id: Number(id), user_id: user.id}

@@ -26,6 +26,48 @@ export type WorkItem = {
 	image: string
 }
 
+export type JobPost = {
+	id: number,
+	posted_by: string,
+	title: string,
+	looking_for: string,
+	date: string,
+	description: string,
+	place: string,
+	active: boolean,
+	available_slots: number,
+	client_id: number,
+	closes_on: string,
+	creative_load_id: string,
+	labels: string[],
+	price: number,
+	requirements: string,
+	creative_lead: User,
+	users: User,
+	client: Client,
+	job_applications: JobApplication[]
+}
+
+export type JobApplication = {
+	id: string,
+	user_id: string
+}
+
+export type Client = {
+	id: number,
+	name: string,
+	headquarters: string,
+	employees: string,
+	industry: string,
+	linkedin: string,
+	wikipedia: string,
+	x: string,
+	image: string,
+	website: string,
+	instagram: string,
+	youtube: string
+}
+
 export enum AccountStatus {
 	NEW = "NEW",
 	IN_REVIEW = "IN_REVIEW",

@@ -20,7 +20,6 @@
             <Header text="settings"/>
             <SubTitle text="oversee all your settings"/>
         </div>
-
         <Label text="profile" class=""/>
         <ProfileCard :name="`${accountState.user?.first_name} ${accountState.user?.last_name}`" :role="accountState.user?.project_types" link="/profile" :image="accountState.user?.profile_picture"/>
         <div>
