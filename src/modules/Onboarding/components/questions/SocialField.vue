@@ -5,7 +5,6 @@
 	import type { APIResponse } from "~/src/api/utils/HonoResponses";
 	import type { InstagramVerification } from "~/src/api/modules/onboarding/OnboardingTypes";
 	import { API } from "~/src/utils/API/API";
-	import { awaitExpression } from "@babel/types";
 
 	const props = defineProps<{
 		field: SocialMediaFieldType;
@@ -58,6 +57,7 @@
 	const modalInstagramValue = ref("");
 
 	async function onModalConfirm(newValue: string) {
+		console.log(newValue);
 		onboardingStore.setAnswer(props.field.key, newValue);
 		modalInstagramValue.value = newValue;
 		value.value = newValue;

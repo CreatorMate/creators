@@ -14,7 +14,8 @@
 	import { API } from "~/src/utils/API/API";
 	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
 	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
-	import { STORAGE_KEY } from "~/src/modules/Onboarding/utils/onboardingStorage";
+	import { loadOnboardingState } from "~/src/modules/Onboarding/utils/onboardingStorage";
+	import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingValidators";
 
 	const accountState = useAccountState();
 	const onboardingStore = useOnboardingStore();
@@ -67,35 +68,6 @@
 			errorMessage.value =
 				error instanceof Error ? error.message : "an unknown error occurred.";
 			console.error("error updating creator:", error);
-		}
-	}
-
-	/**
-	 * Retrieves answers from database
-	 */
-	async function retrieveApplicationAnswers() {
-		if (!accountState.user) {
-			errorMessage.value =
-				"error updating creator: account state is missing a user.";
-			return;
-		}
-
-		try {
-			const response = await API.ask("/users/me", "GET");
-
-			if (response.success) {
-				const data = response.data;
-				return formatAnswers(data as Record<string, string | string[]>);
-			} else {
-				errorMessage.value =
-					response.message || "Error retrieving application answers";
-				return null;
-			}
-		} catch (error) {
-			errorMessage.value =
-				error instanceof Error ? error.message : "An unknown error occurred";
-			console.error("Error retrieving application answers:", error);
-			return null;
 		}
 	}
 
@@ -154,12 +126,6 @@
 	function handleSaveAndExit() {
 		resetErrorMessage();
 
-		// If the user had finished the application before, updating it should not change his status to IN_PROCESS
-		// const status: AccountStatus =
-		// 	accountState.user?.status == AccountStatus.IN_REVIEW
-		// 		? AccountStatus.IN_REVIEW
-		// 		: AccountStatus.IN_PROCESS;
-
 		const status = AccountStatus.IN_PROCESS;
 
 		submitApplication(status);
@@ -180,8 +146,8 @@
 			await router.push("/");
 		}
 
-		// Check if there are already stored answers in local storage
-		const storedAnswers = localStorage.getItem(STORAGE_KEY);
+		// Check if there are already stored answers in session storage
+		const storedAnswers = loadOnboardingState();
 
 		if (!storedAnswers) {
 			// First visit in this session: pull from the database
@@ -194,9 +160,23 @@
 			// Only update onboarding question answers if retrieved answers object isn't empty
 			if (keys.length > 0) {
 				onboardingStore.answers = retrievedAnswers;
-				onboardingStore.currentStep = onboardingStore.getQuestionStepByKey(
-					keys[keys.length - 1],
-				);
+
+				// Find last invalid question
+				const lastInvalidQuestionKey = onboardingStore.questions.findLast(
+					(question) => {
+						const { valid } = validateQuestion(question, retrievedAnswers);
+						return !valid;
+					},
+				)?.key;
+
+				// Set current step to the last invalid question or the final step
+				if (lastInvalidQuestionKey) {
+					onboardingStore.currentStep = onboardingStore.getQuestionStepByKey(
+						lastInvalidQuestionKey,
+					);
+				} else {
+					onboardingStore.currentStep = onboardingStore.totalSteps;
+				}
 			}
 		} else {
 			// If answers already exist hydrate from the store
@@ -215,12 +195,7 @@
 <template>
 	<section class="flex screen-size flex-col pb-10 overflow-x-hidden">
 		<!-- Navigation Bar -->
-		<NavigationBar
-			:canGoBack="onboardingStore.canGoBack"
-			:cameFromReview="onboardingStore.cameFromReview"
-			@back="handleBack"
-			@save-and-exit="handleSaveAndExit"
-		/>
+		<NavigationBar @back="handleBack" @save-and-exit="handleSaveAndExit" />
 
 		<!-- Progress Indicator -->
 		<div class="flex justify-center w-full mt-3 lg:mt-[-5px]">

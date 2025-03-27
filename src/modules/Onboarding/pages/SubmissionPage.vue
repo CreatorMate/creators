@@ -10,10 +10,6 @@
 
 	const router = useRouter();
 
-	async function apply() {
-		await router.push("/apply");
-	}
-
 	useHead({
 		title: "status - creatormate",
 	});

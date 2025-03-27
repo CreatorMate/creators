@@ -2,11 +2,9 @@
 	import BackButton from "~/src/modules/Onboarding/components/buttons/BackButton.vue";
 	import LogoComponent from "~/src/modules/Onboarding/components/misc/LogoComponent.vue";
 	import ActionButton from "~/src/modules/Onboarding/components/buttons/ActionButton.vue";
+	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 
-	const props = defineProps<{
-		canGoBack: boolean;
-		cameFromReview: boolean;
-	}>();
+	const onboardingStore = useOnboardingStore();
 
 	const emit = defineEmits<{
 		(e: "back"): void;
@@ -20,12 +18,20 @@
 	>
 		<!-- Back Button -->
 		<BackButton
-			v-if="canGoBack && !cameFromReview"
+			v-if="
+				onboardingStore.canGoBack &&
+				!onboardingStore.cameFromReview &&
+				!onboardingStore.isReviewStep
+			"
 			:isMobile="false"
 			@click="emit('back')"
 		/>
 		<BackButton
-			v-if="canGoBack && !cameFromReview"
+			v-if="
+				onboardingStore.canGoBack &&
+				!onboardingStore.cameFromReview &&
+				!onboardingStore.isReviewStep
+			"
 			:isMobile="true"
 			@click="emit('back')"
 		/>
@@ -39,6 +45,7 @@
 		<!-- Action Buttons - Desktop -->
 		<div class="absolute right-[15%] hidden lg:flex space-x-2">
 			<ActionButton
+				v-if="!onboardingStore.cameFromReview && !onboardingStore.isReviewStep"
 				:to="'/submission/status'"
 				:isMobile="false"
 				@click="emit('save-and-exit')"
@@ -50,6 +57,7 @@
 		<!-- Action Buttons - Mobile -->
 		<div class="absolute right-4 flex items-center space-x-2 lg:hidden">
 			<ActionButton
+				v-if="!onboardingStore.cameFromReview && !onboardingStore.isReviewStep"
 				:to="'/submission/status'"
 				:isMobile="true"
 				@click="emit('save-and-exit')"

@@ -39,6 +39,8 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 	// Flag storing if all questions are valid
 	const allQuestionsValid = ref(false);
 
+	const shouldReturnToReview = ref(false);
+
 	// Computed property that determines the total number of steps (questions + application review page).
 	const totalSteps = computed(() => questions.value.length + 1);
 
@@ -208,6 +210,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		if (savedState) {
 			currentStep.value = savedState.currentStep;
 			answers.value = savedState.answers;
+			cameFromReview.value = savedState.cameFromReview ?? false;
 		} else {
 			// Initialize empty answer objects for all questions
 			questions.value.forEach((question) => {
@@ -238,6 +241,10 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		});
 	}
 
+	function setReturnToReview(value: boolean): void {
+		shouldReturnToReview.value = value;
+	}
+
 	// Persist state on every change using a watcher.
 	function initializeWatcher() {
 		watch(
@@ -248,6 +255,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 					const state: StoredState = {
 						currentStep: currentStep.value,
 						answers: answers.value,
+						cameFromReview: cameFromReview.value,
 					};
 					saveOnboardingState(state);
 				}
@@ -281,6 +289,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isFieldTouched,
 		setFieldTouched,
 		validateAllQuestions,
+		setReturnToReview,
 		initializeWatcher,
 	};
 });

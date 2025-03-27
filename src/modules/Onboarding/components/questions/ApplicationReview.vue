@@ -4,8 +4,6 @@
 
 	const onboardingStore = useOnboardingStore();
 
-	const accepted = ref(false);
-
 	const questions = onboardingStore.questions;
 	const answers = onboardingStore.answers;
 
@@ -14,7 +12,7 @@
 			const originalKey = question.key;
 			const displayKey = formatDisplayKey(originalKey);
 
-			// Map each field individuallyl
+			// Map each field individually
 			const fields = question.fields.map((field) => {
 				let answer = answers[originalKey]?.[field.key] ?? "";
 				if (Array.isArray(answer)) {
@@ -32,6 +30,10 @@
 				fields,
 			};
 		});
+	});
+
+	onMounted(() => {
+		onboardingStore.isTOSAccepted = false;
 	});
 </script>
 
