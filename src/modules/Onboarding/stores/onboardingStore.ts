@@ -241,10 +241,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		});
 	}
 
-	function setReturnToReview(value: boolean): void {
-		shouldReturnToReview.value = value;
-	}
-
 	// Persist state on every change using a watcher.
 	function initializeWatcher() {
 		watch(
@@ -289,7 +285,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isFieldTouched,
 		setFieldTouched,
 		validateAllQuestions,
-		setReturnToReview,
 		initializeWatcher,
 	};
 });
