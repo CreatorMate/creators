@@ -4,6 +4,7 @@
 	import UploadPictureModal from "~/src/modules/Onboarding/components/questions/modals/UploadPictureModal.vue";
 	import { ref } from "vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
+    import {useAccountState} from "~/src/utils/Auth/AccountState";
 
 	const props = defineProps<{
 		field: PictureField;
@@ -14,6 +15,7 @@
 	const showModal = ref(false);
 	const selectedImage = ref<File | null>(null);
 	const imagePreviewUrl = ref<string>("");
+    const accountState = useAccountState();
 
 	// Fetches existing image from Supabase to display to user
 	async function fetchExistingImage() {
@@ -39,20 +41,21 @@
 		selectedImage.value = file;
 		imagePreviewUrl.value = URL.createObjectURL(file);
 
-		const filePath = `${Date.now()}_${file.name}`;
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${accountState.user?.id}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
 
 		const supabase = useSupabaseClient();
 
 		const { data, error } = await supabase.storage
 			.from("user-pictures")
-			.upload(filePath, file);
+			.upload(fileName, file);
 
 		if (error) {
 			console.error(error);
 			return;
 		}
 
-		onboardingStore.setAnswer(props.field.key, data.path);
+		onboardingStore.setAnswer(props.field.key, fileName);
 	}
 
 	// Fetch existing image when component is mounted
