@@ -50,7 +50,10 @@ export type JobPost = {
 
 export type JobApplication = {
 	id: string,
-	user_id: string
+	user_id: string,
+	status: ApplicationStats,
+	job_postings: JobPost
+
 }
 
 export type Client = {
@@ -72,6 +75,13 @@ export enum AccountStatus {
 	NEW = "NEW",
 	IN_REVIEW = "IN_REVIEW",
 	ACCEPTED = "ACCEPTED",
+}
+
+export enum ApplicationStats {
+	HIRED = "HIRED",
+	PENDING = "PENDING",
+	CANCELLED = "CANCELLED",
+	DENIED = "DENIED"
 }
 
 export type Brand = {

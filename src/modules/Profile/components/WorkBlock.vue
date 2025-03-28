@@ -15,7 +15,7 @@
 
     onMounted(async () => {
        await loadItems();
-    })
+    });
 
     async function loadItems() {
         workItems.value = [];

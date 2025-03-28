@@ -7,6 +7,7 @@ import { JobPostController } from "~/src/api/modules/jobposts/JobPostController"
 import { OnboardingVerificationController } from "~/src/api/modules/onboarding/OnboardingVerificationController";
 import { CityCountryCodesController } from "~/src/api/modules/onboarding/CityCountryCodesController";
 import {WorkController} from "~/src/api/modules/work/WorkController";
+import {GetUserApplicationsEndpoint} from "~/src/api/modules/users/GetUserApplications/GetUserApplicationsEndpoint";
 
 export function initializeHonoRouter(app: Hono) {
 	const controllers: BaseController[] = [
@@ -19,6 +20,7 @@ export function initializeHonoRouter(app: Hono) {
 	const endpoints: Endpoint[] = [
 		new GetSelfEndpoint(),
 		new UpdateSelfEndpoint(),
+		new GetUserApplicationsEndpoint(),
 	];
 
 	for (const controller of controllers) {

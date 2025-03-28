@@ -59,9 +59,13 @@ model job_applications {
   job_post     Int?
   user_id      String?       @db.Uuid
   application  String?
-  portfolio    String?
+  status       application_status      @default(PENDING)
   job_postings job_postings? @relation(fields: [job_post], references: [id], onDelete: Cascade, onUpdate: NoAction)
   users        users?        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  work_items job_applications_work_items[]
+
+  @@unique([job_post, user_id])
 }
 
 model clients {
@@ -138,7 +142,17 @@ model work_items {
   link_to   String
   image     String
   user_id   String @db.Uuid
+  job_applications job_applications_work_items[]
   users     users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model job_applications_work_items {
+  job_applications_id Int
+  work_items_id       Int
+
+  work_items         work_items       @relation(fields: [work_items_id], references: [id])
+  job_applications   job_applications @relation(fields: [job_applications_id], references: [id])
+  @@id([job_applications_id, work_items_id])
 }
 
 enum account_status {
@@ -147,3 +161,11 @@ enum account_status {
   IN_PROCESS
   ACCEPTED
 }
+
+enum application_status {
+  PENDING
+  DENIED
+  CANCELLED
+  HIRED
+}
+

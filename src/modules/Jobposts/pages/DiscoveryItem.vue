@@ -15,6 +15,7 @@
     const jobPost = ref<JobPost|null>(null);
     const applied = ref(false);
     const accountState = useAccountState();
+    const available = ref(0);
 
     onMounted(async () => {
         if(!jobPostId) return;
@@ -25,15 +26,21 @@
             return;
         }
 
+        let remaining = jobPostRequest.data.available_slots;
+        for(const application of jobPostRequest.data.job_applications) {
+            if(application.status == "HIRED") {
+                remaining--;
+            }
+        }
+        available.value = remaining;
         for(const applicant of jobPostRequest.data.job_applications) {
             if(applicant.user_id == accountState.user?.id) {
                 applied.value = true;
-                break;
             }
         }
 
         jobPost.value = jobPostRequest.data;
-    })
+    });
     function goBack() {
         router.back();
     }
@@ -51,9 +58,9 @@
 
 <template>
     <div class="flex xs:hidden w-full justify-center py-6 relative">
-        <Icon @click="goBack" icon="material-symbols:arrow-back-ios" class="absolute left-6 top-1/2 -translate-y-1/2">
-            back
-        </Icon>
+        <NuxtLink to="/">
+            <Icon icon="material-symbols:arrow-back-ios" class="absolute left-6 top-1/2 -translate-y-1/2"></Icon>
+        </NuxtLink>
         <NuxtImg src="/logo-light.svg"/>
     </div>
     <NuxtImg class="w-full h-[244px] min-h-[244px] object-cover" src="/icons/jobpost.png"/>
@@ -75,7 +82,7 @@
             <h1 class="text-size-XL font-semibold mb-1">{{ jobPost.place }}<span class="text-[#8D8D8D]"> on </span>{{ jobPost.date }}</h1>
             <div class="flex gap-3 pb-6 border-b">
                 <div class="p-3">closes in {{getTimeRemaining(jobPost.closes_on)}} days</div>
-                <div class="p-3">{{jobPost.available_slots}} slots left</div>
+                <div class="p-3">{{available}} slots left</div>
             </div>
         </div>
         <Label class="mt-3 mb-2" text="about the job"/>
@@ -135,14 +142,15 @@
         </div>
     </section>
     <MobileNavigation v-if="jobPost && !applied">
-        <div class="w-full h-full flex p-1">
-            <div class="h-full w-full rounded-full text-left flex flex-col justify-center pl-6">
+        <div class="w-full h-full flex p-1 justify-between">
+            <div class="h-full rounded-full text-left flex flex-col justify-center pl-6">
                 <p class="text-size-S">€{{
                         jobPost.price > 1000 ? jobPost.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : jobPost.price
                     }}/day</p>
                 <p class="text-size-XS text-[#3C3C3C]">gig</p>
             </div>
-            <button class="h-full py-2 px-12 rounded-full bg-black text-white">apply</button>
+            <NuxtLink v-if="available > 0" :to="`/discovery/${jobPost.id}/apply`" class="h-full py-2 px-12 rounded-full bg-black text-white">apply</NuxtLink>
+            <button v-else class="h-full py-2 px-12 rounded-full bg-black bg-opacity-80 text-white">job already full</button>
         </div>
     </MobileNavigation>
     <MobileNavigation v-if="jobPost && applied">

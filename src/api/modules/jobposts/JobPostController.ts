@@ -52,6 +52,50 @@ export class JobPostController extends BaseController {
             return successResponse(context, jobPost);
         });
 
+        this.app.post(`/jobposts/:id/apply`, async (context: Context): Promise<any> => {
+            const id = context.req.param('id') as string;
+            const jobPost = await usePrisma().job_postings.findFirst({
+                where: {id: Number(id)},
+                include: {
+                    job_applications: true
+                }
+            });
+            if(!jobPost) return errorResponse(context, 'JOBPOST_NOT_FOUND');
+
+            let {application, workItems} = await context.req.json();
+
+            workItems = workItems as number[]
+
+            const user = this.getHonoUser(context);
+
+            let remaining = jobPost.available_slots;
+            for(const application of jobPost.job_applications) {
+                if(application.status == "HIRED") {
+                    remaining--;
+                }
+            }
+            if(remaining <= 0) return errorResponse(context, 'already_full', 'job already full');
+
+            const apply = await usePrisma().job_applications.create({
+                data: {
+                    application: application,
+                    user_id: user.id,
+                    job_post: jobPost.id,
+                    work_items: {
+                        create: workItems.map((workItemId: number) => ({
+                            work_items: {
+                                connect: {
+                                    id: workItemId,
+                                },
+                            },
+                        })),
+                    }
+                }
+            })
+
+            return successResponse(context, apply);
+        });
+
         this.app.get('/profiles/:id', async (context: Context): Promise<any> => {
             const id = context.req.param('id') as string;
             const user = await usePrisma().users.findUnique({

@@ -30,7 +30,7 @@
                                :name="jobPost.creative_lead.profile_picture"/>
                 <div class="flex flex-col">
                     <p class="text-size-XS text-[#3C3C3C]">director</p>
-                    <p class="text-size-S font-medium">daiki shino</p>
+                    <p class="text-size-S font-medium">{{jobPost.creative_lead.first_name}} {{jobPost.creative_lead.last_name}}</p>
                 </div>
             </div>
             <Icon width="32" icon="material-symbols:arrow-insert" class="rotate-90"/>

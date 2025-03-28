@@ -23,5 +23,10 @@ export class JobpostModule extends BaseModule {
             file: '@/src/modules/Jobposts/pages/DiscoveryItem.vue',
             path: '/discovery/:id'
         },
+        {
+            name: 'apply to job',
+            file: '@/src/modules/Jobposts/pages/ApplyJobPostView.vue',
+            path: '/discovery/:id/apply'
+        }
     ]
 }

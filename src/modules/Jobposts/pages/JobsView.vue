@@ -5,8 +5,9 @@
     import MobileNavigation from "~/src/components/Navigation/MobileNavigation.vue";
     import MobileBaseNavigationItems from "~/src/components/Navigation/MobileBaseNavigationItems.vue";
     import Header from "~/src/components/Core/Header.vue";
-    import type {JobPost} from "~/src/utils/SupabaseTypes";
+    import type {JobApplication, JobPost} from "~/src/utils/SupabaseTypes";
     import DiscoveryItems from "~/src/modules/Jobposts/components/DiscoveryItems.vue";
+    import MyJobPostItems from "~/src/modules/Jobposts/components/MyJobPostItems.vue";
     enum DiscoveryFilters {
         ACCEPTED = "accepted",
         PENDING = "pending",
@@ -15,7 +16,7 @@
 
     const accountState = useAccountState();
 
-    const jobPosts = ref<JobPost[]>([]);
+    const jobApplications = ref<JobApplication[]>([]);
 
     const active = ref(DiscoveryFilters.ACCEPTED)
 
@@ -25,14 +26,27 @@
 
     async function loadJobPosts() {
         if(!accountState.user) return;
-        jobPosts.value = [];
+        jobApplications.value = [];
 
         let query = '';
 
-        const jobPostsRequest: APIResponse<JobPost[]> = await API.ask(`/jobposts${query}`);
+        if(active.value == DiscoveryFilters.PENDING) {
+            query = '?status=PENDING';
+        }
+
+        if(active.value == DiscoveryFilters.ACCEPTED) {
+            query = '?status=HIRED';
+        }
+
+        if(active.value == DiscoveryFilters.CANCELLED) {
+            query = '?status=CANCELLED';
+        }
+
+        const jobPostsRequest: APIResponse<JobApplication[]> = await API.ask(`/me/applications${query}`);
+        console.log(jobPostsRequest)
         if (!jobPostsRequest.success) return;
 
-        jobPosts.value = jobPostsRequest.data;
+        jobApplications.value = jobPostsRequest.data;
     }
 
     async function switchTab(tab: DiscoveryFilters) {
@@ -61,7 +75,7 @@
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.CANCELLED}">cancelled
             </div>
         </div>
-        <DiscoveryItems :jobPosts/>
+        <MyJobPostItems :job-applications/>
     </section>
     <MobileNavigation>
         <MobileBaseNavigationItems/>
