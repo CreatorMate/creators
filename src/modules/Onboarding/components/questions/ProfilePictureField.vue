@@ -16,10 +16,10 @@
 	const selectedImage = ref<File | null>(null);
 	const imagePreviewUrl = ref<string>("");
     const accountState = useAccountState();
+    const supabase = useSupabaseClient();
 
 	// Fetches existing image from Supabase to display to user
 	async function fetchExistingImage() {
-		const supabase = useSupabaseClient();
 		const existingImagePath = onboardingStore.getAnswer(props.field.key);
 
 		if (existingImagePath) {
@@ -43,8 +43,6 @@
 
         const fileExt = file.name.split('.').pop();
         const fileName = `${accountState.user?.id}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-
-		const supabase = useSupabaseClient();
 
 		const { data, error } = await supabase.storage
 			.from("user-pictures")
