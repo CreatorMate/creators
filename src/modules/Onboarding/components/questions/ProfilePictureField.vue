@@ -1,52 +1,53 @@
 <script setup lang="ts">
 	import type { PictureField } from "~/src/modules/Onboarding/types/onboardingTypes";
 	import { Icon } from "@iconify/vue";
-	import UploadPictureModal from "~/src/modules/Onboarding/components/questions/modals/UploadPictureModal.vue";
 	import { ref } from "vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-    import {useAccountState} from "~/src/utils/Auth/AccountState";
+	import UploadPictureModal from "~/src/modules/Onboarding/components/questions/modals/UploadPictureModal.vue";
+	import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
 
 	const props = defineProps<{
 		field: PictureField;
 	}>();
 
 	const onboardingStore = useOnboardingStore();
+	const storageBucket = "user-pictures";
+	const supabase = useSupabaseClient();
 
 	const showModal = ref(false);
-	const selectedImage = ref<File | null>(null);
-	const imagePreviewUrl = ref<string>("");
-    const accountState = useAccountState();
-    const supabase = useSupabaseClient();
+	const localPreviewUrl = ref<string>("");
+	const imageFileName = ref<string>("");
 
-	// Fetches existing image from Supabase to display to user
-	async function fetchExistingImage() {
-		const existingImagePath = onboardingStore.getAnswer(props.field.key);
-
-		if (existingImagePath) {
-			try {
-				const { data } = supabase.storage
-					.from("user-pictures")
-					.getPublicUrl(existingImagePath as string);
-
-				if (data?.publicUrl) {
-					imagePreviewUrl.value = data.publicUrl;
-				}
-			} catch (error) {
-				console.error("Error fetching existing image:", error);
-			}
-		}
+	// Generate a unique filename for Supabase storage
+	function generateUniqueFileName(file: File) {
+		const fileExt = file.name.split(".").pop();
+		const user = useSupabaseUser();
+		return `${user.value?.id}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
 	}
 
 	async function handleUpload(file: File) {
-		selectedImage.value = file;
-		imagePreviewUrl.value = URL.createObjectURL(file);
+		if (!file) return;
 
-        const fileExt = file.name.split('.').pop();
-        const fileName = `${accountState.user?.id}/${Date.now()}-${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
+		// If an image is already stored, delete it from Supabase storage
+		if (imageFileName.value) {
+			const { error: deleteError } = await supabase.storage
+				.from(storageBucket)
+				.remove([imageFileName.value]);
+			if (deleteError) {
+				console.error("failed to delete previous image:", deleteError);
+			}
+		}
+
+		localPreviewUrl.value = URL.createObjectURL(file);
+
+		const fileName = generateUniqueFileName(file);
 
 		const { data, error } = await supabase.storage
-			.from("user-pictures")
-			.upload(fileName, file);
+			.from(storageBucket)
+			.upload(fileName, file, {
+				cacheControl: "3600",
+				upsert: false,
+			});
 
 		if (error) {
 			console.error(error);
@@ -54,11 +55,17 @@
 		}
 
 		onboardingStore.setAnswer(props.field.key, fileName);
+		imageFileName.value = fileName;
+
+		// Clear local preview
+		// localPreviewUrl.value = ""
 	}
 
-	// Fetch existing image when component is mounted
 	onMounted(() => {
-		fetchExistingImage();
+		const storedImage = onboardingStore.getAnswer(props.field.key) as string;
+		if (storedImage && storedImage !== "") {
+			imageFileName.value = storedImage;
+		}
 	});
 </script>
 
@@ -75,7 +82,7 @@
 			<button
 				class="flex justify-center items-center bg-gray-100 w-[72px] h-[72px] rounded-lg"
 				@click="showModal = true"
-				v-if="!imagePreviewUrl"
+				v-if="!localPreviewUrl && !imageFileName"
 			>
 				<Icon
 					icon="material-symbols:add-2-rounded"
@@ -85,15 +92,23 @@
 				/>
 			</button>
 
-			<!-- selected image preview -->
+			<!-- display immediate preview from blob if available -->
+			<div
+				v-else-if="localPreviewUrl"
+				class="relative w-[72px] h-[72px] rounded-lg overflow-hidden cursor-pointer"
+				@click="showModal = true"
+			>
+				<img :src="localPreviewUrl" class="w-full h-full object-cover" />
+			</div>
+			<!-- once uploaded, use the supabase image -->
 			<div
 				v-else
 				class="relative w-[72px] h-[72px] rounded-lg overflow-hidden cursor-pointer"
 				@click="showModal = true"
 			>
-				<img
-					:src="imagePreviewUrl"
-					alt="Profile picture"
+				<SupabaseImage
+					:bucket="storageBucket"
+					:name="imageFileName"
 					class="w-full h-full object-cover"
 				/>
 			</div>
@@ -102,7 +117,8 @@
 		<!-- Modal component -->
 		<UploadPictureModal
 			v-if="showModal"
-			:img-preview-url="imagePreviewUrl"
+			:img-preview-url="localPreviewUrl || imageFileName"
+			:storage-bucket="storageBucket"
 			@close="showModal = false"
 			@upload="handleUpload"
 		/>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
 	import { ref, onMounted, onUnmounted, computed } from "vue";
 	import { Icon } from "@iconify/vue";
+	import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
 
 	const props = defineProps<{
 		imgPreviewUrl?: string | null;
+		storageBucket: string;
 	}>();
 
 	const emit = defineEmits(["close", "upload"]);
@@ -12,6 +14,9 @@
 	const selectedFile = ref<File | null>(null);
 	const previewUrl = ref<string>(props.imgPreviewUrl ?? "");
 	const isDragging = ref(false);
+
+	// Computed property to check if previewUrl is a blob URL
+	const isBlobPreview = computed(() => previewUrl.value.startsWith("blob:"));
 
 	function handleFileSelect(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -69,7 +74,7 @@
 		}
 	}
 
-	// Truncate filename
+	// Truncate filename for display
 	function truncateFilename(filename: string, maxLength: number = 20): string {
 		if (filename.length <= maxLength) return filename;
 		const extensionStart = filename.lastIndexOf(".");
@@ -78,7 +83,6 @@
 		return name.slice(0, maxLength - extension.length - 3) + "..." + extension;
 	}
 
-	// Upload function
 	function handleUpload() {
 		if (selectedFile.value) {
 			emit("upload", selectedFile.value);
@@ -90,7 +94,7 @@
 		return selectedFile.value ? truncateFilename(selectedFile.value.name) : "";
 	});
 
-	// Determines whether to show the upload instructions
+	// Show upload instructions if no preview is available
 	const showUploadMenu = computed(() => previewUrl.value === "");
 
 	onMounted(() => {
@@ -99,7 +103,7 @@
 
 	onUnmounted(() => {
 		window.removeEventListener("keydown", handleKeyDown);
-		// Clean up any object URLs to avoid memory leaks
+		// Clean up any blob URLs to avoid memory leaks
 		if (previewUrl.value && previewUrl.value.startsWith("blob:")) {
 			URL.revokeObjectURL(previewUrl.value);
 		}
@@ -148,7 +152,7 @@
 				@dragleave="handleDragLeave"
 				@drop="handleDrop"
 			>
-				<!-- show upload instructions if no preview available -->
+				<!-- Show upload instructions if no preview available -->
 				<div v-if="showUploadMenu">
 					<div class="flex justify-center mb-4">
 						<Icon
@@ -166,14 +170,24 @@
 						JPG, PNG, GIF, or WEBP (max 5MB)
 					</p>
 				</div>
+
 				<!-- Show preview if available -->
 				<div v-else class="flex items-center justify-center">
 					<div class="relative w-24 h-24 mr-4">
-						<img
-							:src="previewUrl"
-							alt="Profile preview"
-							class="w-full h-full object-cover rounded-full"
-						/>
+						<template v-if="isBlobPreview">
+							<img
+								:src="previewUrl"
+								class="w-full h-full object-cover rounded-full"
+								alt=""
+							/>
+						</template>
+						<template v-else>
+							<SupabaseImage
+								:bucket="props.storageBucket"
+								:name="previewUrl"
+								class="w-full h-full object-cover rounded-full"
+							/>
+						</template>
 					</div>
 					<div class="text-left font-medium">
 						<p class="text-gray-800 font-medium">

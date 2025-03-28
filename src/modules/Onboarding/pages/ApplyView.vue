@@ -76,6 +76,7 @@
 	 * Navigates to the previous step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions.
 	 */
 	function handleBack() {
+		// Submit incomplete application
 		resetErrorMessage();
 		onboardingStore.back();
 		// Use nextTick to ensure the DOM has updated
@@ -90,6 +91,7 @@
 	 * Advances to the next step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions
 	 */
 	function handleNext() {
+		// Submit incomplete application
 		resetErrorMessage();
 		onboardingStore.next();
 		nextTick(() => {
@@ -162,7 +164,7 @@
 				onboardingStore.answers = retrievedAnswers;
 
 				// Find last invalid question
-				const lastInvalidQuestionKey = onboardingStore.questions.findLast(
+				const lastInvalidQuestionKey = onboardingStore.questions.find(
 					(question) => {
 						const { valid } = validateQuestion(question, retrievedAnswers);
 						return !valid;
