@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import type { Answers, AnswerType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
 import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingValidators";
-import { STORAGE_KEY } from "@supabase/auth-js/src/lib/constants";
+import { ONBOARDING_STORAGE_KEY } from "~/src/modules/Onboarding/utils/onboardingStorage";
 import type { StoredState } from "~/src/modules/Onboarding/utils/onboardingStorage";
 import {
 	loadOnboardingState,
@@ -38,8 +38,6 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 	// Flag storing if all questions are valid
 	const allQuestionsValid = ref(false);
-
-	const shouldReturnToReview = ref(false);
 
 	// Computed property that determines the total number of steps (questions + application review page).
 	const totalSteps = computed(() => questions.value.length + 1);
@@ -195,7 +193,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isInitialized.value = false;
 		currentStep.value = 1;
 		answers.value = {};
-		localStorage.removeItem(STORAGE_KEY);
+		localStorage.removeItem(ONBOARDING_STORAGE_KEY);
 		isInitialized.value = true;
 	}
 
