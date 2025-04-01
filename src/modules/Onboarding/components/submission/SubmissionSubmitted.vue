@@ -4,7 +4,8 @@
 	const router = useRouter();
 
 	async function clickUpdate() {
-		await router.push("/apply");
+		// await router.push("/apply");
+        location.href = 'https://tally.so/r/wA9jVl';
 	}
 </script>
 
