@@ -74,6 +74,7 @@ export type Client = {
 export enum AccountStatus {
 	NEW = "NEW",
 	IN_REVIEW = "IN_REVIEW",
+	IN_PROCESS = "IN_PROCESS",
 	ACCEPTED = "ACCEPTED",
 }
 

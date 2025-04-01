@@ -1,13 +1,22 @@
 <script setup lang="ts">
-	import { ref, onMounted, onUnmounted } from "vue";
+	import { ref, onMounted, onUnmounted, computed } from "vue";
 	import { Icon } from "@iconify/vue";
+	import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
+
+	const props = defineProps<{
+		imgPreviewUrl?: string | null;
+		storageBucket: string;
+	}>();
 
 	const emit = defineEmits(["close", "upload"]);
 
 	const fileInput = ref<HTMLInputElement | null>(null);
 	const selectedFile = ref<File | null>(null);
-	const previewUrl = ref<string>("");
+	const previewUrl = ref<string>(props.imgPreviewUrl ?? "");
 	const isDragging = ref(false);
+
+	// Computed property to check if previewUrl is a blob URL
+	const isBlobPreview = computed(() => previewUrl.value.startsWith("blob:"));
 
 	function handleFileSelect(event: Event) {
 		const input = event.target as HTMLInputElement;
@@ -32,7 +41,6 @@
 	function handleDrop(event: DragEvent) {
 		event.preventDefault();
 		isDragging.value = false;
-
 		if (event.dataTransfer?.files && event.dataTransfer.files[0]) {
 			const file = event.dataTransfer.files[0];
 			if (isValidImageFile(file)) {
@@ -66,8 +74,15 @@
 		}
 	}
 
-	// Upload function: for now, only emits the file for parent component to handle
-	// TODO: send to Supabase storage bucket
+	// Truncate filename for display
+	function truncateFilename(filename: string, maxLength: number = 20): string {
+		if (filename.length <= maxLength) return filename;
+		const extensionStart = filename.lastIndexOf(".");
+		const extension = filename.slice(extensionStart);
+		const name = filename.slice(0, extensionStart);
+		return name.slice(0, maxLength - extension.length - 3) + "..." + extension;
+	}
+
 	function handleUpload() {
 		if (selectedFile.value) {
 			emit("upload", selectedFile.value);
@@ -75,14 +90,21 @@
 		}
 	}
 
+	const truncatedFileName = computed(() => {
+		return selectedFile.value ? truncateFilename(selectedFile.value.name) : "";
+	});
+
+	// Show upload instructions if no preview is available
+	const showUploadMenu = computed(() => previewUrl.value === "");
+
 	onMounted(() => {
 		window.addEventListener("keydown", handleKeyDown);
 	});
 
 	onUnmounted(() => {
 		window.removeEventListener("keydown", handleKeyDown);
-		// Clean up any object URLs to avoid memory leaks
-		if (previewUrl.value) {
+		// Clean up any blob URLs to avoid memory leaks
+		if (previewUrl.value && previewUrl.value.startsWith("blob:")) {
 			URL.revokeObjectURL(previewUrl.value);
 		}
 	});
@@ -103,12 +125,11 @@
 			</button>
 
 			<h2 class="text-lg font-semibold mb-2">Add profile picture</h2>
-
 			<p class="mb-4 text-[#3C3C3C] font-medium">
 				upload a photo to represent you on creatormate.
 			</p>
 
-			<!-- File input (hidden) -->
+			<!-- hidden file input -->
 			<input
 				ref="fileInput"
 				type="file"
@@ -117,21 +138,22 @@
 				@change="handleFileSelect"
 			/>
 
-			<!-- Upload area -->
+			<!-- upload area -->
 			<div
 				class="mb-6 border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors"
 				:class="[
 					isDragging
 						? 'border-blue-500 bg-blue-50'
 						: 'border-gray-300 hover:border-gray-400',
-					selectedFile ? 'py-4' : 'py-12',
+					showUploadMenu ? 'py-12' : 'py-4',
 				]"
 				@click="openFileBrowser"
 				@dragover="handleDragOver"
 				@dragleave="handleDragLeave"
 				@drop="handleDrop"
 			>
-				<div v-if="!selectedFile">
+				<!-- Show upload instructions if no preview available -->
+				<div v-if="showUploadMenu">
 					<div class="flex justify-center mb-4">
 						<Icon
 							icon="material-symbols:image-outline"
@@ -141,7 +163,7 @@
 						/>
 					</div>
 					<p class="text-gray-700 mb-2 font-medium">
-						Drag and drop your photo here
+						drag and drop your photo here
 					</p>
 					<p class="text-gray-500 text-sm font-medium">or click to browse</p>
 					<p class="text-gray-500 text-sm mt-2 font-medium">
@@ -149,18 +171,32 @@
 					</p>
 				</div>
 
+				<!-- Show preview if available -->
 				<div v-else class="flex items-center justify-center">
 					<div class="relative w-24 h-24 mr-4">
-						<img
-							:src="previewUrl"
-							alt="Profile preview"
-							class="w-full h-full object-cover rounded-full"
-						/>
+						<template v-if="isBlobPreview">
+							<img
+								:src="previewUrl"
+								class="w-full h-full object-cover rounded-full"
+								alt=""
+							/>
+						</template>
+						<template v-else>
+							<SupabaseImage
+								:bucket="props.storageBucket"
+								:name="previewUrl"
+								class="w-full h-full object-cover rounded-full"
+							/>
+						</template>
 					</div>
 					<div class="text-left font-medium">
-						<p class="text-gray-800 font-medium">{{ selectedFile.name }}</p>
+						<p class="text-gray-800 font-medium">
+							{{ selectedFile ? truncatedFileName : "Current photo" }}
+						</p>
 						<p class="text-gray-500 text-sm">
-							{{ Math.round(selectedFile.size / 1024) }} kb
+							{{
+								selectedFile ? Math.round(selectedFile.size / 1024) + " kb" : ""
+							}}
 						</p>
 						<p class="text-blue-500 text-sm mt-1 cursor-pointer">
 							change photo

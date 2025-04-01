@@ -9,7 +9,6 @@
 
 	const emit = defineEmits<{
 		(e: "enter", inputEl: HTMLInputElement | null): void;
-		(e: "validation-change", isValid: boolean): void;
 	}>();
 
 	const onboardingStore = useOnboardingStore();
@@ -31,24 +30,9 @@
 
 	const inputEl = ref<HTMLInputElement | null>(null);
 
-	const value = computed({
-		get: () => {
-			// Initialize the question's answer object if it doesn't exist
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			// Return the current value or empty string
-			return onboardingStore.answers[questionKey.value][props.field.key] || "";
-		},
-		set: (newValue) => {
-			// Initialize the question's answer object if it doesn't exist
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			// Update answer
-			onboardingStore.setAnswer(props.field.key, newValue);
-		},
-	});
+	const value = ref(
+		onboardingStore.answers[questionKey.value]?.[props.field.key] || "",
+	);
 
 	// Function to validate the text field and update the error message
 	function validateField() {
@@ -58,7 +42,6 @@
 		);
 		fieldError.value = !valid && errorMessage ? errorMessage : "";
 		isValid.value = valid;
-		emit("validation-change", valid);
 	}
 
 	// Mark field as touched and run validation
@@ -72,17 +55,40 @@
 		emit("enter", inputEl.value);
 	}
 
-	// Filter to only accept digits on numeric fields
-	// const filterInput = (event: Event) => {
-	// 	if (!props.field.numeric) return;
-	// 	const target = event.target as HTMLInputElement;
-	// 	value.value = target.value.replace(/[^0-9+\-() ]/g, "");
-	// };
+	// Restrict input and show error when max is reached
+	function handleKeyDown(e: KeyboardEvent) {
+		const max = props.field.maxLength;
+		// Allow control keys
+		const allowedKeys = [
+			"Backspace",
+			"Delete",
+			"ArrowLeft",
+			"ArrowRight",
+			"Tab",
+		];
+		if (
+			max &&
+			(value.value as string).length >= max &&
+			!allowedKeys.includes(e.key)
+		) {
+			e.preventDefault();
+			fieldError.value = `max length of ${max} reached`;
+		} else {
+			fieldError.value = "";
+		}
+	}
 
 	// Watch for changes in the field value and revalidate if the field has been touched
 	watch(value, () => {
 		if (isTouched.value) {
 			validateField();
+		}
+	});
+
+	// Watch for value changes
+	watch(value, (newValue) => {
+		if (newValue === "" || isValid.value || !isTouched.value) {
+			onboardingStore.setAnswer(props.field.key, newValue);
 		}
 	});
 
@@ -99,8 +105,6 @@
 		focus: () => {
 			inputEl.value?.focus();
 		},
-		validate: validateField,
-		isValid: computed(() => isValid.value),
 	});
 </script>
 
@@ -124,6 +128,7 @@
 				:placeholder="field.placeholder || ''"
 				@blur="markAsTouched"
 				@keydown.enter.prevent="handleEnter"
+				@keydown="handleKeyDown"
 			/>
 			<div
 				v-if="hasIcon"

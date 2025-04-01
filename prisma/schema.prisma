@@ -8,26 +8,26 @@ datasource db {
 }
 
 model users {
-  id                String              @id(map: "creators_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  handle            String?             @db.VarChar
-  based_in          String?             @db.VarChar
-  project_types     String[]
-  date_of_birth     String?             @db.VarChar
-  additional_info   String?
-  first_name        String?             @db.VarChar
-  last_name         String?
-  work_types        String[]
-  email             String
-  status            account_status      @default(NEW)
-  profile_picture   String?
-  phone_number      String?
-  website           String?
-  instagram_account instagram_account[]
-  job_applications  job_applications[]
-  roles             user_roles[]
-  work_items        work_items[]
-  job_postings      job_postings[]
-  job_postings_as_creative_lead job_postings[] @relation("JobPostingCreativeLead")
+  id                            String              @id(map: "creators_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  handle                        String?             @db.VarChar
+  based_in                      String?             @db.VarChar
+  project_types                 String[]
+  date_of_birth                 String?             @db.VarChar
+  additional_info               String?
+  first_name                    String?             @db.VarChar
+  last_name                     String?
+  work_types                    String[]
+  email                         String
+  status                        account_status      @default(NEW)
+  profile_picture               String?
+  phone_number                  String?
+  website                       String?
+  instagram_account             instagram_account[]
+  job_applications              job_applications[]
+  roles                         user_roles[]
+  work_items                    work_items[]
+  job_postings                  job_postings[]
+  job_postings_as_creative_lead job_postings[]      @relation("JobPostingCreativeLead")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -48,9 +48,9 @@ model job_postings {
   price            Int
   active           Boolean
   client_id        Int
-  client           clients           @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_client_fkey")
-  users            users             @relation(fields: [posted_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_posted_by_fkey")
-  creative_lead    users             @relation("JobPostingCreativeLead", fields: [creative_lead_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_postings_creative_lead_id_fkey")
+  client           clients            @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_client_fkey")
+  users            users              @relation(fields: [posted_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_posted_by_fkey")
+  creative_lead    users              @relation("JobPostingCreativeLead", fields: [creative_lead_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_postings_creative_lead_id_fkey")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -69,7 +69,7 @@ model job_applications {
 }
 
 model clients {
-  id           Int     @id @default(autoincrement())
+  id           Int            @id @default(autoincrement())
   name         String
   headquarters String
   employees    String
@@ -144,6 +144,14 @@ model work_items {
   user_id   String @db.Uuid
   job_applications job_applications_work_items[]
   users     users  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model field_options {
+  id        String   @id @default(uuid())
+  field_key String   @unique
+  options   String[]
+
+  @@index([field_key])
 }
 
 model job_applications_work_items {

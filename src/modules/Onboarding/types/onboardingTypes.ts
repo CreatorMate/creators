@@ -39,12 +39,10 @@ export interface DateFieldType extends BaseFieldType<"date"> {
 }
 
 /**
- * Multiple choice answer field. Requires `options` attribute holding possible options that the user can select. May
+ * Multiple choice answer field. May
  * also have a `maxChoices` attribute representing the maximum number of options user can select.
  */
 export interface MultiChoiceFieldType extends BaseFieldType<"multi-choice"> {
-	// Options user can choose
-	options: string[];
 	// Minimum number of choices user can make
 	minChoices?: number;
 	// Maximum number of choices user can make
@@ -76,6 +74,15 @@ export interface LocationFieldType extends BaseFieldType<"location"> {}
 
 export interface PictureField extends BaseFieldType<"picture"> {}
 
+export interface PhoneNumberFieldType extends BaseFieldType<"phone-number"> {
+	// Optional default country code
+	defaultCountryCode?: string;
+	// Optional list of allowed country codes
+	allowedCountryCodes?: string[];
+	// Optional field placeholder
+	placeholder?: string;
+}
+
 /**
  * Answer field type. May be `TextField`, `DateField`, `MultiChoiceField`, `TextAreaField`, or `SocialMediaField`.
  */
@@ -86,7 +93,8 @@ export type FieldType =
 	| TextAreaFieldType
 	| SocialMediaFieldType
 	| LocationFieldType
-	| PictureField;
+	| PictureField
+	| PhoneNumberFieldType;
 
 /**
  * Question type. Requires (unique) `key`, `label`, and `fields` attributes. May have `description` and `required`

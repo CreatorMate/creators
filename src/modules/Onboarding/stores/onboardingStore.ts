@@ -3,7 +3,7 @@ import { computed, ref, watch } from "vue";
 import type { Answers, AnswerType, Question } from "../types/onboardingTypes";
 import { onboardingQuestions } from "~/src/modules/Onboarding/constants/questions";
 import { validateQuestion } from "~/src/modules/Onboarding/utils/onboardingValidators";
-import { STORAGE_KEY } from "@supabase/auth-js/src/lib/constants";
+import { ONBOARDING_STORAGE_KEY } from "~/src/modules/Onboarding/utils/onboardingStorage";
 import type { StoredState } from "~/src/modules/Onboarding/utils/onboardingStorage";
 import {
 	loadOnboardingState,
@@ -35,6 +35,9 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 
 	// Flag storing if user came from review page.
 	const cameFromReview = ref(false);
+
+	// Flag storing if all questions are valid
+	const allQuestionsValid = ref(false);
 
 	// Computed property that determines the total number of steps (questions + application review page).
 	const totalSteps = computed(() => questions.value.length + 1);
@@ -122,6 +125,26 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		setFieldTouched(questionKey, fieldKey);
 	}
 
+	// Retrieve an answer for a specific field within a question
+	function getAnswer(
+		fieldKey: string,
+		questionKey?: string,
+	): AnswerType | null {
+		// If no questionKey is provided, use the current question's key
+		if (!questionKey && currentQuestion.value) {
+			questionKey = currentQuestion.value.key;
+		}
+
+		// If still no questionKey, return null
+		if (!questionKey) {
+			console.error("No question key available");
+			return null;
+		}
+
+		// Return the specific field's answer, or null if not found
+		return answers.value[questionKey]?.[fieldKey] ?? null;
+	}
+
 	// Increments the current step in the quiz, if the user can proceed further. Also resets any error messages.
 	function next(): void {
 		// If user came from review, jump back to review step and reset flag
@@ -170,7 +193,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		isInitialized.value = false;
 		currentStep.value = 1;
 		answers.value = {};
-		localStorage.removeItem(STORAGE_KEY);
+		localStorage.removeItem(ONBOARDING_STORAGE_KEY);
 		isInitialized.value = true;
 	}
 
@@ -185,6 +208,7 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		if (savedState) {
 			currentStep.value = savedState.currentStep;
 			answers.value = savedState.answers;
+			cameFromReview.value = savedState.cameFromReview ?? false;
 		} else {
 			// Initialize empty answer objects for all questions
 			questions.value.forEach((question) => {
@@ -201,20 +225,38 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		error.value = "";
 	}
 
-	// Persist state on every change using a watcher.
-	watch(
-		[answers, currentStep],
-		() => {
-			if (isInitialized.value) {
-				const state: StoredState = {
-					currentStep: currentStep.value,
-					answers: answers.value,
-				};
-				saveOnboardingState(state);
+	// Validate all Questions
+	function validateAllQuestions() {
+		allQuestionsValid.value = questions.value.every((question) => {
+			const { valid, errorMessage } = validateQuestion(question, answers.value);
+
+			if (!valid) {
+				error.value = errorMessage!;
+				return false;
 			}
-		},
-		{ deep: true },
-	);
+
+			return true;
+		});
+	}
+
+	// Persist state on every change using a watcher.
+	function initializeWatcher() {
+		watch(
+			[answers, currentStep],
+			() => {
+				// Only save if there are actual answers (i.e., it's not an empty object)
+				if (Object.keys(answers.value).length > 0) {
+					const state: StoredState = {
+						currentStep: currentStep.value,
+						answers: answers.value,
+						cameFromReview: cameFromReview.value,
+					};
+					saveOnboardingState(state);
+				}
+			},
+			{ deep: true },
+		);
+	}
 
 	return {
 		questions,
@@ -229,14 +271,18 @@ export const useOnboardingStore = defineStore("onboarding", () => {
 		canGoBack,
 		error,
 		isTOSAccepted,
+		allQuestionsValid,
 		hydrate,
 		jumpToQuestion,
 		setAnswer,
+		getAnswer,
 		next,
 		back,
 		reset,
 		getQuestionStepByKey,
 		isFieldTouched,
 		setFieldTouched,
+		validateAllQuestions,
+		initializeWatcher,
 	};
 });

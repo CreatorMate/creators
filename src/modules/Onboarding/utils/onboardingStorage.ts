@@ -1,13 +1,14 @@
 // src/modules/Onboarding/utils/onboardingStorage.ts
 import type { Answers } from "../types/onboardingTypes";
 
-// Key for local storage of answers.
-export const STORAGE_KEY = "onboarding-state";
+// Key for session storage of answers.
+export const ONBOARDING_STORAGE_KEY = "onboarding-state";
 
 // Type of state that will get saved to local storage, containing the currentStep and the answers object.
 export type StoredState = {
 	currentStep: number;
 	answers: Answers;
+	cameFromReview?: boolean;
 };
 
 /**
@@ -17,7 +18,7 @@ export type StoredState = {
  */
 export function loadOnboardingState(): StoredState | null {
 	try {
-		const saved = localStorage.getItem(STORAGE_KEY);
+		const saved = localStorage.getItem(ONBOARDING_STORAGE_KEY);
 		return saved ? JSON.parse(saved) : null;
 	} catch (error) {
 		console.error("Error loading onboarding state:", error);
@@ -33,7 +34,7 @@ export function loadOnboardingState(): StoredState | null {
  */
 export function saveOnboardingState(state: StoredState): void {
 	try {
-		localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+		localStorage.setItem(ONBOARDING_STORAGE_KEY, JSON.stringify(state));
 	} catch (error) {
 		console.error("Failed to save onboarding state:", error);
 	}

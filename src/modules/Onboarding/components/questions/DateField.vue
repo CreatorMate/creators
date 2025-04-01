@@ -24,24 +24,9 @@
 
 	const inputEl = ref<HTMLInputElement | null>(null);
 
-	const value = computed({
-		get: () => {
-			// Initialize the question's answer object if it doesn't exist
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			// Return the current value or empty string
-			return onboardingStore.answers[questionKey.value][props.field.key] || "";
-		},
-		set: (newValue) => {
-			// Initialize the question's answer object if it doesn't exist
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			// Update answer
-			onboardingStore.setAnswer(props.field.key, newValue);
-		},
-	});
+	const value = ref(
+		onboardingStore.answers[questionKey.value]?.[props.field.key] || "",
+	);
 
 	// Function to validate the date field and update the error message
 	function validateField() {
@@ -63,11 +48,9 @@
 		emit("enter", inputEl.value);
 	}
 
-	// Expose a focus method so the parent can programmatically focus this field.
-	defineExpose({
-		focus: () => {
-			inputEl.value?.focus();
-		},
+	// Watch for value changes
+	watch(value, (newValue) => {
+		onboardingStore.setAnswer(props.field.key, newValue);
 	});
 
 	// Watch for changes in the field value and revalidate if the field has been touched
@@ -75,6 +58,13 @@
 		if (isTouched.value) {
 			validateField();
 		}
+	});
+
+	// Expose a focus method so the parent can programmatically focus this field.
+	defineExpose({
+		focus: () => {
+			inputEl.value?.focus();
+		},
 	});
 </script>
 
