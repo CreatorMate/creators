@@ -16,11 +16,11 @@
 
 	//initial page load middleware, the actual middleware runs after page load, problem with that the user can see a flash of the wrong page.
 	onBeforeMount(async () => {
-		if (checkUnguarded(route.path)) {
-			ready.value = true;
+        appSettings.baseUrl = runtimeConfig.public.BASE_URL;
+        if (checkUnguarded(route.path)) {
+            ready.value = true;
 			return;
 		}
-		appSettings.baseUrl = runtimeConfig.public.BASE_URL;
 
 		const accountStore = useAccountState();
 		if (!accountStore.user) {

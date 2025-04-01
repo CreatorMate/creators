@@ -1,8 +1,21 @@
 <script setup lang="ts">
     import { useAccountState } from "~/src/utils/Auth/AccountState";
     import Sidebar from "~/src/components/Sidebar/Sidebar.vue";
+    import {API} from "~/src/utils/API/API";
 
     const accountState = useAccountState();
+    const route = useRoute();
+    const router = useRouter();
+
+    onMounted(async () => {
+        if(route.fullPath.includes('callback')) {
+            const success = await API.ask('/users/me');
+            if(!success.success) {
+                await router.replace('/login')
+            }
+        }
+    })
+
 </script>
 
 <template>
@@ -19,6 +32,9 @@
             </div>
         </div>
     </main>
+    <div v-else>
+
+    </div>
 </template>
 
 <!--<template>-->
