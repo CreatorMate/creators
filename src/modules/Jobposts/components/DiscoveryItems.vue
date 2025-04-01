@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-    import type {JobPost} from "~/src/utils/SupabaseTypes";
+    import {type JobPost, PaymentType} from "~/src/utils/SupabaseTypes";
     import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
     import {Icon} from "@iconify/vue";
 
@@ -19,6 +19,23 @@
         const hours = Math.floor(remaining / (1000 * 60 * 60));
 
         return `${daysRemaining}`
+    }
+
+    function getPriceLabel(jobPost: JobPost): string {
+        const price = jobPost.price > 1000 ? jobPost.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : jobPost.price;
+        let label = '';
+        switch (jobPost.payment_type) {
+            case PaymentType.HOURLY: {
+                label = '/hour'
+                break;
+            }
+            case PaymentType.DAILY: {
+                label = '/day'
+                break;
+            }
+        }
+
+        return `${price}${label}`
     }
 </script>
 
@@ -46,9 +63,7 @@
             </div>
             <div class="flex items-center gap-1 py-2 px-3">
                 <Icon width="16" icon="material-symbols:payments-outline"/>
-                <p class="text-size-XS">€{{
-                        jobPost.price > 1000 ? jobPost.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : jobPost.price
-                    }}</p>
+                <p class="text-size-XS">€{{getPriceLabel(jobPost) }}</p>
             </div>
         </div>
     </NuxtLink>

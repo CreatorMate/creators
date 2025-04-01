@@ -2,7 +2,7 @@
 
     import {Icon} from "@iconify/vue";
     import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
-    import type {JobPost} from "~/src/utils/SupabaseTypes";
+    import {type JobPost, PaymentType} from "~/src/utils/SupabaseTypes";
     import {API} from "~/src/utils/API/API";
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
     import Label from "~/src/components/Core/Label.vue";
@@ -54,6 +54,27 @@
 
         return `${daysRemaining}`
     }
+
+    function getPriceLabel(): string {
+        if(!jobPost.value) return ''
+        const price = jobPost.value.price > 1000 ? jobPost.value.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : jobPost.value.price;
+        let label = '';
+        switch (jobPost.value.payment_type) {
+            case PaymentType.HOURLY: {
+                label = '/hour'
+                break;
+            }
+            case PaymentType.DAILY: {
+                label = '/day'
+                break;
+            }
+        }
+
+        return `${price}${label}`
+
+
+    }
+
 </script>
 
 <template>
@@ -144,9 +165,7 @@
     <MobileNavigation v-if="jobPost && !applied">
         <div class="w-full h-full flex p-1 justify-between">
             <div class="h-full rounded-full text-left flex flex-col justify-center pl-6">
-                <p class="text-size-S">€{{
-                        jobPost.price > 1000 ? jobPost.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : jobPost.price
-                    }}/day</p>
+                <p class="text-size-S">€{{getPriceLabel()}}</p>
                 <p class="text-size-XS text-[#3C3C3C]">gig</p>
             </div>
             <NuxtLink v-if="available > 0" :to="`/discovery/${jobPost.id}/apply`" class="h-full py-2 px-12 rounded-full bg-black text-white">apply</NuxtLink>
@@ -156,9 +175,7 @@
     <MobileNavigation v-if="jobPost && applied">
         <div class="w-full h-full flex p-1 justify-between">
             <div class="h-full rounded-full text-left flex flex-col justify-center pl-6">
-                <p class="text-size-S">€{{
-                        jobPost.price > 1000 ? jobPost.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".") : jobPost.price
-                    }}/day</p>
+                <p class="text-size-S">€{{getPriceLabel()}}</p>
                 <p class="text-size-XS text-[#3C3C3C]">gig</p>
             </div>
             <button class="h-full py-2 px-6 rounded-full bg-[#D2ACB0] text-white">cancel application</button>

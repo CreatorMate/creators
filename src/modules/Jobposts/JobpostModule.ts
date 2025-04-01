@@ -5,7 +5,7 @@ export class JobpostModule extends BaseModule {
     protected moduleRoutes: NuxtPage[] = [
         {
             name: 'home',
-            file: '@/src/modules/Jobposts/pages/JobPostsView.vue',
+            file: '@/src/modules/Jobposts/pages/Discovery.vue',
             path: '/'
         },
         {

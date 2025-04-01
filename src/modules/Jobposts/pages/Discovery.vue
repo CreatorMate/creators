@@ -5,8 +5,9 @@
     import MobileNavigation from "~/src/components/Navigation/MobileNavigation.vue";
     import MobileBaseNavigationItems from "~/src/components/Navigation/MobileBaseNavigationItems.vue";
     import Header from "~/src/components/Core/Header.vue";
-    import type {JobPost} from "~/src/utils/SupabaseTypes";
+    import {type JobPost, PaymentType} from "~/src/utils/SupabaseTypes";
     import DiscoveryItems from "~/src/modules/Jobposts/components/DiscoveryItems.vue";
+    import {Icon} from "@iconify/vue";
     enum DiscoveryFilters {
         FOR_YOU = "for you",
         ALL_JOBS = "all jobs",
@@ -77,7 +78,11 @@
         await loadJobPosts();
     }
 
-    onClickOutside(filterBox, event => showFilters.value = false)
+    onClickOutside(filterBox, (event) => {
+        if (showFilters.value && !(event.target as HTMLElement).closest(".filter-button")) {
+            showFilters.value = false;
+        }
+    });
 </script>
 
 <template>
@@ -85,21 +90,22 @@
         <NuxtImg src="/logo-light.svg"/>
     </div>
     <section class="flex flex-col px-4 gap-3">
-        <div class="flex-col flex pt-6 pb-3 gap-1">
+        <div class="flex pt-6 pb-3 justify-between items-center">
             <Header text="discovery"/>
+            <Icon icon="material-symbols:search-rounded"/>
         </div>
         <div class="w-full flex gap-1 text-size-XS">
-            <div @click="switchTab(DiscoveryFilters.FOR_YOU)" class=" text-center border rounded-full py-3 px-5"
+            <div @click="switchTab(DiscoveryFilters.FOR_YOU)" class=" text-center border rounded-full py-3 px-5 w-full"
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.FOR_YOU}">for you
             </div>
-            <div @click="switchTab(DiscoveryFilters.ALL_JOBS)" class=" text-center border rounded-full py-3 px-5"
+            <div @click="switchTab(DiscoveryFilters.ALL_JOBS)" class=" text-center border rounded-full py-3 px-5 w-full"
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.ALL_JOBS}">all jobs
             </div>
-            <div @click="switchTab(DiscoveryFilters.ARCHIVED)" class=" text-center border rounded-full py-3 px-5"
+            <div @click="switchTab(DiscoveryFilters.ARCHIVED)" class=" text-center border rounded-full py-3 px-5 w-full"
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.ARCHIVED}">archived
             </div>
-            <div @click="showFilters = !showFilters" class=" text-center border rounded-full py-3 px-5"
-                 :class="{'border-none bg-black text-white': active == DiscoveryFilters.FILTER, 'bg-[#F8F8F8]': showFilters}">filter
+            <div @click="showFilters = !showFilters" class=" text-center rounded-full py-3 px-5 w-full bg-[#F8F8F8] filter-button"
+                 :class="{'border border-[#B6B6B6]': showFilters}">filter
                 {{ activeFilters.length > 0 ? `(${activeFilters.length})` : '' }}
             </div>
         </div>
