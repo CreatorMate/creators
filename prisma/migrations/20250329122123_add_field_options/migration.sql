@@ -2,8 +2,7 @@
 CREATE TABLE "field_options" (
     "id" TEXT NOT NULL,
     "field_key" TEXT NOT NULL,
-    "option_text" TEXT[],
-
+    "options" TEXT[],
     CONSTRAINT "field_options_pkey" PRIMARY KEY ("id")
 );
 
