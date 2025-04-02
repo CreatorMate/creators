@@ -10,7 +10,6 @@ export const useAccountState = defineStore("account", () => {
     const router = useRouter();
     const rights = ref<string[]>([]);
     const roles = ref<string[]>([]);
-
     async function initialize() {
         try {
             const result: APIResponse<User> = await API.ask(`/users/me`);

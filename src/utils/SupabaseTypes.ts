@@ -50,7 +50,8 @@ export type JobPost = {
     videos: string[],
     client: Client,
     job_applications: JobApplication[],
-    payment_type: PaymentType
+    payment_type: PaymentType,
+    tally: string
 }
 
 export enum PaymentType {

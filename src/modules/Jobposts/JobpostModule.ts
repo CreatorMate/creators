@@ -27,6 +27,22 @@ export class JobpostModule extends BaseModule {
             name: 'apply to job',
             file: '@/src/modules/Jobposts/pages/ApplyJobPostView.vue',
             path: '/discovery/:id/apply'
-        }
+        },
+        {
+            name: 'discover public',
+            file: '@/src/modules/Jobposts/pages/DiscoveryPublic.vue',
+            path: '/public/discovery',
+            meta: {
+                layout: 'public',
+            }
+        },
+        {
+            name: 'discover public item',
+            file: '@/src/modules/Jobposts/pages/DiscoveryItem.vue',
+            path: '/public/discovery/:id',
+            meta: {
+                layout: 'public',
+            }
+        },
     ]
 }

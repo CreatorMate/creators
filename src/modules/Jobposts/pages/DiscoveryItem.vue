@@ -79,7 +79,7 @@
 
 <template>
     <div class="flex xs:hidden w-full justify-center py-6 relative">
-        <NuxtLink to="/">
+        <NuxtLink to="/public/discovery">
             <Icon icon="material-symbols:arrow-back-ios" class="absolute left-6 top-1/2 -translate-y-1/2"></Icon>
         </NuxtLink>
         <NuxtImg src="/logo-light.svg"/>
@@ -168,7 +168,8 @@
                 <p class="text-size-S">€{{getPriceLabel()}}</p>
                 <p class="text-size-XS text-[#3C3C3C]">gig</p>
             </div>
-            <NuxtLink v-if="available > 0" :to="`/discovery/${jobPost.id}/apply`" class="h-full py-2 px-12 rounded-full bg-black text-white">apply</NuxtLink>
+            <a v-if="jobPost.tally" target="_blank" :href="jobPost.tally" class="h-full py-2 px-12 rounded-full bg-black text-white text-center">apply</a>
+            <NuxtLink v-else-if="available > 0" :to="`/discovery/${jobPost.id}/apply`" class="h-full py-2 px-12 rounded-full bg-black text-white text-center">apply</NuxtLink>
             <button v-else class="h-full py-2 px-12 rounded-full bg-black bg-opacity-80 text-white">job already full</button>
         </div>
     </MobileNavigation>
