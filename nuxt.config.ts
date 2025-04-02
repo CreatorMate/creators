@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/callback',
-      exclude: ['/callback', '/API/webhook']
+      exclude: ['/callback', '/API/webhook', '/public/discovery', '/public/discovery/*']
     },
     redirect: true
   },
@@ -69,6 +69,7 @@ export default defineNuxtConfig({
     pages: [],
     public: {
       BASE_URL: process.env.BASE_URL,
+      SUPABASE_URL: process.env.SUPABASE_URL
     },
   },
   image: {

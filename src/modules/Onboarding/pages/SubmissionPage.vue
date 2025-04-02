@@ -4,21 +4,26 @@
 	import { AccountStatus } from "~/src/utils/SupabaseTypes";
 	import SubmissionNotStarted from "~/src/modules/Onboarding/components/submission/SubmissionNotStarted.vue";
 	import SubmissionSubmitted from "~/src/modules/Onboarding/components/submission/SubmissionSubmitted.vue";
-
-	const accountState = useAccountState();
-
-	const router = useRouter();
-
-	async function apply() {
-		await router.push("/apply");
-	}
+	import SubmissionInProgress from "~/src/modules/Onboarding/components/submission/SubmissionInProgress.vue";
+	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
 
 	useHead({
 		title: "status - creatormate",
 	});
+
 	definePageMeta({
 		layout: "empty",
 	});
+
+	const accountState = useAccountState();
+	const router = useRouter();
+
+	const onboardingStore = useOnboardingStore();
+
+	async function handleLogout() {
+		onboardingStore.reset();
+		await accountState.logout();
+	}
 
 	onMounted(async () => {
 		// If user's application is accepted, route to home page
@@ -52,7 +57,7 @@
 				<div class="absolute right-[15%] hidden lg:block">
 					<button
 						class="flex items-center p-2 transition-all duration-150"
-						@click="accountState.logout()"
+						@click="handleLogout"
 					>
 						<img src="/icons/logout.svg" alt="Logout" class="w-4 h-4" />
 					</button>
@@ -61,7 +66,7 @@
 				<div class="absolute right-4 block lg:hidden">
 					<button
 						class="flex items-center bg-gray-100 p-2 rounded-lg transition-all duration-150"
-						@click="accountState.logout()"
+						@click="handleLogout"
 					>
 						<img src="/icons/logout.svg" alt="Logout" class="w-4 h-4" />
 					</button>
@@ -75,6 +80,9 @@
 					/>
 					<SubmissionSubmitted
 						v-if="accountState.user?.status == AccountStatus.IN_REVIEW"
+					/>
+					<SubmissionInProgress
+						v-if="accountState.user?.status == AccountStatus.IN_PROCESS"
 					/>
 				</div>
 			</div>

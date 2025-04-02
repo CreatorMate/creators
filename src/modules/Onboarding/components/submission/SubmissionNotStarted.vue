@@ -1,11 +1,20 @@
 <script setup lang="ts">
-	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
+	import ProgressIndicator from "~/src/components/Loading/ProgressIndicator.vue";
+    import {API} from "~/src/utils/API/API";
+    import {AccountStatus} from "~/src/utils/SupabaseTypes";
 
 	const router = useRouter();
 
-	async function clickStart() {
-		await router.push("/apply");
-	}
+	// async function clickStart() {
+	// 	await router.push("/apply");
+	// }
+
+    async function clickStart() {
+        await API.ask('/users/me', "PUT", {
+            status: AccountStatus.IN_REVIEW
+        });
+        location.href = 'https://tally.so/r/wA9jVl';
+    }
 </script>
 
 <template>

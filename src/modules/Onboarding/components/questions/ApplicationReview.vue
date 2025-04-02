@@ -4,36 +4,36 @@
 
 	const onboardingStore = useOnboardingStore();
 
-	const accepted = ref(false);
 	const questions = onboardingStore.questions;
 	const answers = onboardingStore.answers;
 
 	const flattenedAnswers = computed(() => {
-		return questions.reduce(
-			(acc, question) => {
-				const originalKey = question.key;
-				const displayKey = formatDisplayKey(originalKey);
-				// Map through each field, get the corresponding answer, filter out empty strings, and join them with a comma.
-				const answerText = question.fields
-					.map((field) => {
-						let answer = answers[originalKey]?.[field.key] ?? "";
-						if (Array.isArray(answer)) {
-							answer = answer.join(", ");
-						}
-						return answer;
-					})
-					.filter((text) => text !== "")
-					.join(", ");
+		return questions.map((question) => {
+			const originalKey = question.key;
+			const displayKey = formatDisplayKey(originalKey);
 
-				// Store both the original key and the answer text.
-				acc[displayKey] = {
-					originalKey,
-					answer: answerText,
+			// Map each field individually
+			const fields = question.fields.map((field) => {
+				let answer = answers[originalKey]?.[field.key] ?? "";
+				if (Array.isArray(answer)) {
+					answer = answer.join(", ");
+				}
+				return {
+					fieldKey: field.key,
+					displayField: formatDisplayKey(field.key),
+					answer,
 				};
-				return acc;
-			},
-			{} as Record<string, { originalKey: string; answer: string }>,
-		);
+			});
+			return {
+				originalKey,
+				displayKey,
+				fields,
+			};
+		});
+	});
+
+	onMounted(() => {
+		onboardingStore.isTOSAccepted = false;
 	});
 </script>
 
@@ -44,29 +44,35 @@
 
 		<!-- answer fields -->
 		<div
-			v-for="(value, displayKey) in flattenedAnswers"
-			:key="value.originalKey"
-			class="mb-2"
+			v-for="question in flattenedAnswers"
+			:key="question.originalKey"
+			class="mb-4"
 		>
-			<span class="font-medium">{{ displayKey }}</span>
-			<div
-				class="w-full h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
-			>
-				<span>{{ value.answer }}</span>
-				<button
-					@click="
-						() => {
-							onboardingStore.cameFromReview = true;
-							// Use the original key for navigation
-							onboardingStore.jumpToQuestion(
-								onboardingStore.getQuestionStepByKey(value.originalKey),
-							);
-						}
-					"
-					class="underline"
+			<p class="font-medium text-lg">{{ question.displayKey }}</p>
+			<div v-for="(field, index) in question.fields" :key="index" class="mb-2">
+				<div
+					class="w-full min-h-[72px] bg-gray-100 text-gray-700 px-5 py-5 rounded-md flex justify-between items-center"
 				>
-					edit
-				</button>
+					<div class="max-w-[90%] break-words flex-grow pr-4">
+						<!-- Optionally, show the field label -->
+						<span class="font-semibold">{{ field.displayField }}: </span>
+						<span>{{ field.answer }}</span>
+					</div>
+					<button
+						@click="
+							() => {
+								onboardingStore.cameFromReview = true;
+								// Navigate using the original key (you could enhance this to jump to a specific field if needed)
+								onboardingStore.jumpToQuestion(
+									onboardingStore.getQuestionStepByKey(question.originalKey),
+								);
+							}
+						"
+						class="underline"
+					>
+						Edit
+					</button>
+				</div>
 			</div>
 		</div>
 

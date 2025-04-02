@@ -18,24 +18,9 @@
 	const questionKey = computed(() => onboardingStore.currentQuestion!.key);
 	let timeoutId: NodeJS.Timeout | null = null;
 
-	// Create a computed property to manage the selected city.
-	// This field is designed to allow only a single selection.
-	const value = computed<string>({
-		get: () => {
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			const currentValue =
-				onboardingStore.answers[questionKey.value][props.field.key];
-			return typeof currentValue === "string" ? currentValue : ""; // typescript compiler wants to simplify this, but it breaks if you try to do it
-		},
-		set: (newValue: string) => {
-			if (!onboardingStore.answers[questionKey.value]) {
-				onboardingStore.answers[questionKey.value] = {};
-			}
-			onboardingStore.setAnswer(props.field.key, newValue);
-		},
-	});
+	const value = ref(
+		onboardingStore.answers[questionKey.value]?.[props.field.key] || "",
+	);
 
 	// Filter the results to exclude the currently selected city.
 	const filteredResults = computed(() => {
@@ -109,6 +94,14 @@
 	function clearSearch() {
 		searchQuery.value = "";
 	}
+
+	// Sync value to the store when updated.
+	watch(value, (newValue) => {
+		if (!onboardingStore.answers[questionKey.value]) {
+			onboardingStore.answers[questionKey.value] = {};
+		}
+		onboardingStore.setAnswer(props.field.key, newValue);
+	});
 </script>
 
 <template>
@@ -163,7 +156,7 @@
 			<p class="mb-2 font-medium">selected city</p>
 			<button
 				v-if="value"
-				@click="removeCity(value)"
+				@click="removeCity(value as string)"
 				class="px-3 py-1 bg-black text-white rounded-lg transition"
 			>
 				{{ value }}

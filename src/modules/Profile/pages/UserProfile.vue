@@ -20,7 +20,7 @@
         if(!userRequest.success) return;
 
         user.value = userRequest.data;
-    })
+    });
 
 </script>
 

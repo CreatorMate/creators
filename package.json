@@ -18,7 +18,7 @@
     "@nuxtjs/supabase": "^1.5.0",
     "@nuxtjs/tailwindcss": "^6.12.2",
     "@pinia/nuxt": "^0.7.0",
-    "@prisma/client": "^5.22.0",
+    "@prisma/client": "^6.5.0",
     "@vueuse/core": "^12.0.0",
     "@vueuse/nuxt": "^12.0.0",
     "ai": "^4.1.54",
@@ -27,11 +27,11 @@
     "esbuild": "^0.25.1",
     "hono": "^4.6.13",
     "hotkeys-js": "^3.13.9",
+    "libphonenumber-js": "^1.12.6",
     "lodash-es": "^4.17.21",
     "npm": "^11.0.0",
     "nuxt": "^3.14.1592",
     "pinia": "^2.2.7",
-    "prisma": "^5.22.0",
     "ts-morph": "^24.0.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
@@ -42,6 +42,7 @@
     "vue": "latest"
   },
   "devDependencies": {
-    "prettier": "3.5.2"
+    "prettier": "3.5.2",
+    "prisma": "^6.5.0"
   }
 }

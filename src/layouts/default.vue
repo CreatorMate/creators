@@ -1,8 +1,21 @@
 <script setup lang="ts">
     import { useAccountState } from "~/src/utils/Auth/AccountState";
     import Sidebar from "~/src/components/Sidebar/Sidebar.vue";
+    import {API} from "~/src/utils/API/API";
 
     const accountState = useAccountState();
+    const route = useRoute();
+    const router = useRouter();
+
+    onMounted(async () => {
+        if(route.fullPath.includes('callback')) {
+            const success = await API.ask('/users/me');
+            if(!success.success) {
+                await router.replace('/login')
+            }
+        }
+    })
+
 </script>
 
 <template>
@@ -11,17 +24,17 @@
         class="flex flex-col xs:flex-row text-background-text screen-size max-screen-size overflow-x-hidden overflow-y-scroll relative"
     >
         <Sidebar class="hidden xs:flex" />
-        <div class="flex xs:hidden w-full justify-center py-6">
-            <NuxtImg src="/logo-light.svg"/>
-        </div>
-        <div class="flex flex-grow justify-center mt-3 lowercase">
+        <div class="flex flex-grow justify-center lowercase">
             <div class="max-w-[500px] max-h-full w-full  overflow-x-hidden">
-                <div class="max-w-[500px] max-h-full w-full h-full overflow-x-hidden px-4 pt-3 pb-20">
+                <div class="max-w-[500px] max-h-full w-full h-full overflow-x-hidden pb-20">
                     <slot></slot>
                 </div>
             </div>
         </div>
     </main>
+    <div v-else>
+
+    </div>
 </template>
 
 <!--<template>-->

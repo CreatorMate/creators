@@ -8,48 +8,88 @@ datasource db {
 }
 
 model users {
-  id                String              @id(map: "creators_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  handle            String?             @db.VarChar
-  based_in          String?             @db.VarChar
-  project_types     String[]
-  date_of_birth     String?             @db.VarChar
-  additional_info   String?
-  first_name        String?             @db.VarChar
-  last_name         String?
-  work_types        String[]
-  email             String
-  status            account_status      @default(NEW)
-  profile_picture   String?
-  phone_number      String?
-  website           String?
-  instagram_account instagram_account[]
-  job_applications  job_applications[]
-  job_postings      job_postings[]
-  roles             user_roles[]
+  id                            String              @id(map: "creators_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  handle                        String?             @unique @db.VarChar
+  based_in                      String?             @db.VarChar
+  project_types                 String[]
+  date_of_birth                 String?             @db.VarChar
+  additional_info               String?
+  first_name                    String?             @db.VarChar
+  last_name                     String?
+  work_types                    String[]
+  email                         String
+  status                        account_status      @default(NEW)
+  profile_picture               String?
+  phone_number                  String?
+  website                       String?
+  instagram_account             instagram_account[]
+  job_applications              job_applications[]
+  roles                         user_roles[]
+  work_items                    work_items[]
+  job_postings                  job_postings[]
+  gear                          String[]            @default([])
+  languages                     String[]            @default([])
+  job_postings_as_creative_lead job_postings[]      @relation("JobPostingCreativeLead")
+  visibility                    Boolean             @default(false)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model job_postings {
   id               Int                @id(map: "job_post_pkey") @default(autoincrement())
   posted_by        String             @db.Uuid
+  creative_lead_id String             @db.Uuid
   title            String?
   looking_for      String?
   date             String?
   description      String?
   place            String?
   job_applications job_applications[]
+  requirements     String[]
+  labels           String[]
+  available_slots  Int
+  closes_on        DateTime
+  price            Int
+  active           Boolean
+  payment_type     payment_type       @default(BUDGET)
+  videos           String[]           @default([])
+  created_at       DateTime           @default(now())
+  tally            String             @default("")
+  client_id        Int
+  client           clients            @relation(fields: [client_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_client_fkey")
   users            users              @relation(fields: [posted_by], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_post_posted_by_fkey")
+  creative_lead    users              @relation("JobPostingCreativeLead", fields: [creative_lead_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "job_postings_creative_lead_id_fkey")
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model job_applications {
-  id           Int           @id @default(autoincrement())
+  id           Int                @id @default(autoincrement())
   job_post     Int?
-  user_id      String?       @db.Uuid
+  user_id      String?            @db.Uuid
   application  String?
-  portfolio    String?
-  job_postings job_postings? @relation(fields: [job_post], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  users        users?        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  favorite     Boolean            @default(false)
+  status       application_status @default(PENDING)
+  job_postings job_postings?      @relation(fields: [job_post], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users        users?             @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  work_items job_applications_work_items[]
+
+  @@unique([job_post, user_id])
+}
+
+model clients {
+  id           Int            @id @default(autoincrement())
+  name         String
+  headquarters String
+  employees    String
+  industry     String?
+  linkedin     String?
+  wikipedia    String?
+  x            String?
+  image        String
+  website      String?
+  instagram    String?
+  youtube      String?
+  job_postings job_postings[]
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
@@ -60,7 +100,7 @@ model instagram_account {
   follower_count    Int?
   verified          Boolean? @default(false)
   sender_id         String?
-  handle            String
+  handle            String   @unique
   users             users?   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
@@ -103,9 +143,51 @@ model cities {
   @@unique([city_name, country_name])
 }
 
+model work_items {
+  id               Int                           @id @default(autoincrement())
+  title            String
+  job_title        String
+  link_to          String
+  image            String
+  user_id          String                        @db.Uuid
+  job_applications job_applications_work_items[]
+  users            users                         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model field_options {
+  id        String   @id @default(uuid())
+  field_key String   @unique
+  options   String[]
+
+  @@index([field_key])
+}
+
+model job_applications_work_items {
+  job_applications_id Int
+  work_items_id       Int
+
+  work_items       work_items       @relation(fields: [work_items_id], references: [id])
+  job_applications job_applications @relation(fields: [job_applications_id], references: [id])
+
+  @@id([job_applications_id, work_items_id])
+}
+
+enum payment_type {
+  BUDGET
+  HOURLY
+  DAILY
+}
+
 enum account_status {
   NEW
   IN_REVIEW
   IN_PROCESS
   ACCEPTED
+}
+
+enum application_status {
+  PENDING
+  DENIED
+  CANCELLED
+  HIRED
 }

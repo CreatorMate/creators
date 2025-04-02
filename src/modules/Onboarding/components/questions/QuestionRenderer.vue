@@ -7,7 +7,8 @@
 	import SocialField from "~/src/modules/Onboarding/components/questions/SocialField.vue";
 	import LocationField from "~/src/modules/Onboarding/components/questions/LocationField.vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import PictureField from "~/src/modules/Onboarding/components/questions/PictureField.vue";
+	import ProfilePictureField from "~/src/modules/Onboarding/components/questions/ProfilePictureField.vue";
+	import PhoneNumberField from "~/src/modules/Onboarding/components/questions/modals/PhoneNumberField.vue";
 
 	const onboardingStore = useOnboardingStore();
 
@@ -30,7 +31,8 @@
 		"multi-choice": MultiChoiceField,
 		social: SocialField,
 		location: LocationField,
-		picture: PictureField,
+		picture: ProfilePictureField,
+		"phone-number": PhoneNumberField,
 	};
 
 	const handleFieldEnter = (

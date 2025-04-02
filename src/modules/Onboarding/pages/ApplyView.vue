@@ -1,24 +1,13 @@
 <script setup lang="ts">
-	import { useAccountState } from "~/src/utils/Auth/AccountState";
-	import { onMounted } from "vue";
-	import { AccountStatus } from "~/src/utils/SupabaseTypes";
 	import QuestionRenderer from "~/src/modules/Onboarding/components/questions/QuestionRenderer.vue";
 	import { useOnboardingStore } from "~/src/modules/Onboarding/stores/onboardingStore";
-	import LoadingSpinner from "~/src/components/Core/LoadingSpinner.vue";
-	import ProgressIndicator from "~/src/components/Core/ProgressIndicator.vue";
+	import LoadingSpinner from "~/src/components/Loading/LoadingSpinner.vue";
+	import ProgressIndicator from "~/src/components/Loading/ProgressIndicator.vue";
 	import ApplicationReview from "~/src/modules/Onboarding/components/questions/ApplicationReview.vue";
-	import { extractAnswers } from "~/src/modules/Onboarding/utils/onboardingUtils";
-	import { API } from "~/src/utils/API/API";
 	import NavigationBar from "~/src/modules/Onboarding/components/misc/NavigationBar.vue";
 	import NavigationButton from "~/src/modules/Onboarding/components/buttons/NavigationButton.vue";
-
-	const accountState = useAccountState();
-	const onboardingStore = useOnboardingStore();
-	const router = useRouter();
-
-	const isLoading = ref(true);
-
-	const apiError = ref("");
+	import { useOnboardingActions } from "~/src/modules/Onboarding/composables/useOnboardingActions";
+	import { useOnboardingInit } from "~/src/modules/Onboarding/composables/useOnboardingInit";
 
 	useHead({
 		title: "apply - creatormate",
@@ -28,111 +17,22 @@
 		layout: "empty",
 	});
 
-	/**
-	 * Function which submits application answers to database.
-	 */
-	async function submitApplication() {
-		if (!accountState.user) {
-			apiError.value =
-				"error updating creator: account state is missing a user.";
-			return;
-		}
-
-		const { answers } = onboardingStore;
-		const extractedAnswers = extractAnswers(answers);
-
-		try {
-			const response = await API.ask("/users/me", "PUT", {
-				...extractedAnswers,
-				status: AccountStatus.IN_REVIEW,
-			});
-
-			if (response.success) {
-				accountState.user.status = AccountStatus.IN_REVIEW;
-				await router.push("/");
-			} else {
-				apiError.value =
-					response.message || "An error occurred while updating creator.";
-			}
-		} catch (error) {
-			apiError.value =
-				error instanceof Error ? error.message : "an unknown error occurred.";
-			console.error("error updating creator:", error);
-		}
-	}
-
-	/**
-	 * Handles the back button click action.
-	 * Navigates to the previous step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions.
-	 */
-	function handleBack() {
-		resetApiError();
-		onboardingStore.back();
-		// Use nextTick to ensure the DOM has updated
-		nextTick(() => {
-			document.activeElement instanceof HTMLElement &&
-				document.activeElement.blur();
-		});
-	}
-
-	/**
-	 * Handles the next button click action
-	 * Advances to the next step in the onboarding process and removes focus from the active element to prevent unintended Enter key interactions
-	 */
-	function handleNext() {
-		resetApiError();
-		onboardingStore.next();
-		nextTick(() => {
-			document.activeElement instanceof HTMLElement &&
-				document.activeElement.blur();
-		});
-	}
-
-	/**
-	 * Handles the submit application button click action
-	 * Submits the completed application and removes focus from the active element to prevent unintended Enter key interactions
-	 */
-	function handleSubmit() {
-		resetApiError();
-		submitApplication();
-		nextTick(() => {
-			document.activeElement instanceof HTMLElement &&
-				document.activeElement.blur();
-		});
-	}
-
-	function resetApiError() {
-		apiError.value = "";
-	}
-
-	onMounted(() => {
-		// If creator has been accepted, route to home page
-		if (accountState.user?.status == AccountStatus.ACCEPTED) {
-			onboardingStore.reset();
-			router.push("/");
-		}
-
-		// retrieve past answers from local storage
-		onboardingStore.hydrate();
-
-		// Set loading state to false
-		isLoading.value = false;
-
-		// Reset API error message
-		resetApiError();
-
-		// onboardingStore.reset();
-	});
+	const router = useRouter();
+	const {
+		errorMessage,
+		handleBack,
+		handleNext,
+		handleSubmit,
+		handleSaveAndExit,
+	} = useOnboardingActions(router);
+	const { isLoading } = useOnboardingInit(router);
+	const onboardingStore = useOnboardingStore();
 </script>
 
 <template>
 	<section class="flex screen-size flex-col pb-10 overflow-x-hidden">
 		<!-- Navigation Bar -->
-		<NavigationBar
-			:canGoBack="onboardingStore.canGoBack"
-			:cameFromReview="onboardingStore.cameFromReview"
-			@back="handleBack"
-		/>
+		<NavigationBar @back="handleBack" @save-and-exit="handleSaveAndExit" />
 
 		<!-- Progress Indicator -->
 		<div class="flex justify-center w-full mt-3 lg:mt-[-5px]">
@@ -154,8 +54,8 @@
 		<div v-else>
 			<div class="relative flex flex-grow justify-center px-6">
 				<div class="w-[636px] max-w-full mt-20 gap-5">
-					<p class="text-red-500" v-if="apiError">
-						{{ apiError }}
+					<p class="text-red-500" v-if="errorMessage">
+						{{ errorMessage }}
 					</p>
 					<!-- Content Components -->
 					<ApplicationReview

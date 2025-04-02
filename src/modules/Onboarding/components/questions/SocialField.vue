@@ -5,7 +5,6 @@
 	import type { APIResponse } from "~/src/api/utils/HonoResponses";
 	import type { InstagramVerification } from "~/src/api/modules/onboarding/OnboardingTypes";
 	import { API } from "~/src/utils/API/API";
-	import { awaitExpression } from "@babel/types";
 
 	const props = defineProps<{
 		field: SocialMediaFieldType;
@@ -31,15 +30,17 @@
 	});
 
 	async function getVerificationProgress() {
-		const igProfile: APIResponse<InstagramVerification> = await API.ask(`/onboarding/verification`);
+		const igProfile: APIResponse<InstagramVerification> = await API.ask(
+			`/onboarding/verification`,
+		);
 		if (igProfile.success) {
 			verified.value = igProfile.data;
 			value.value = igProfile.data.handle;
-			console.log(verified.value)
+			// console.log(verified.value);
 			if (verified.value.verified) {
-				onboardingStore.setAnswer("handle", igProfile.data.handle);
+				onboardingStore.setAnswer(props.field.key, igProfile.data.handle);
 			} else {
-				onboardingStore.setAnswer("handle", "");
+				onboardingStore.setAnswer(props.field.key, "");
 			}
 			return;
 		}
@@ -48,7 +49,7 @@
 
 	function reset() {
 		verified.value = null;
-		onboardingStore.setAnswer("handle", "");
+		onboardingStore.setAnswer(props.field.key, "");
 		value.value = "";
 	}
 
@@ -56,7 +57,8 @@
 	const modalInstagramValue = ref("");
 
 	async function onModalConfirm(newValue: string) {
-		onboardingStore.setAnswer("handle", newValue);
+		console.log(newValue);
+		onboardingStore.setAnswer(props.field.key, newValue);
 		modalInstagramValue.value = newValue;
 		value.value = newValue;
 		open.value = false;
@@ -74,7 +76,7 @@
 		<div class="flex w-full items-center justify-between">
 			<div class="flex flex-col">
 				<div class="flex w-full sm:w-[351.5px] items-center gap-3">
-					<img
+					<NuxtImg
 						:src="field.socialMediaIcon"
 						alt=""
 						class="w-6 h-6 flex-shrink-0 aspect-square"
@@ -108,7 +110,12 @@
 		</div>
 	</div>
 	<ModalPopup @close="closeModal" :model-active="open">
-		<LinkSocialPopup :field="field" :initialValue="value" @close="closeModal" @confirm="onModalConfirm"
-										 @delete="reset" />
+		<LinkSocialPopup
+			:field="field"
+			:initialValue="value"
+			@close="closeModal"
+			@confirm="onModalConfirm"
+			@delete="reset"
+		/>
 	</ModalPopup>
 </template>

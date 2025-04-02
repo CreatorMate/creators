@@ -10,7 +10,7 @@
 
     useHead({
         title: 'logging you in... - creatormate'
-    })
+    });
 
     onMounted(async () => {
         if(!user.value) {
@@ -18,6 +18,9 @@
             return;
         }
         await accountState.initialize();
+        if(!accountState.user) {
+            await router.push('/login');
+        }
         await router.push('/');
     });
 </script>

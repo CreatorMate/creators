@@ -8,7 +8,9 @@ import type {
 	TextAreaFieldType,
 	LocationFieldType,
 	ValidationAnswer,
+	PhoneNumberFieldType,
 } from "../types/onboardingTypes";
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 
 /**
  * Validates answers of a question.
@@ -45,6 +47,9 @@ export function validateQuestion(
 				break;
 			case "location":
 				validation = validateLocationField(field, answer as string);
+				break;
+			case "phone-number":
+				validation = validatePhoneNumberField(field, answer as string);
 				break;
 			default:
 				continue;
@@ -219,6 +224,37 @@ export function validateLocationField(
 			errorMessage: `${field.label} field cannot be empty`,
 		};
 	}
+	return { valid: true };
+}
+
+/**
+ * Validates a phone number field based on its properties and the provided answer.
+ *
+ * @param {PhoneNumberFieldType} field - The phone number field definition containing validation rules.
+ * @param {string} answer - The user's input to be validated.
+ * @returns {ValidationAnswer} An object indicating whether the input is valid and an error message if applicable.
+ */
+export function validatePhoneNumberField(
+	field: PhoneNumberFieldType,
+	answer: string,
+): { valid: boolean; errorMessage?: string } {
+	if (!field.required) return { valid: true };
+
+	if (!answer || answer === "") {
+		return {
+			valid: false,
+			errorMessage: `${field.label} field cannot be empty`,
+		};
+	}
+
+	const phoneNumber = parsePhoneNumberFromString(answer);
+	if (!phoneNumber || !phoneNumber.isValid()) {
+		return {
+			valid: false,
+			errorMessage: `${field.label} is not a valid phone number`,
+		};
+	}
+
 	return { valid: true };
 }
 
