@@ -111,9 +111,13 @@
             <div @click="switchTab(DiscoveryFilters.ARCHIVED)" class=" text-center border rounded-full py-3 px-5 cursor-pointer"
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.ARCHIVED}">archived
             </div>
-            <div @click="showFilters = !showFilters" class=" text-center rounded-full py-3 px-5 filter-button cursor-pointer border bg-[#F8F8F8] "
-                 :class="{'border-[#B6B6B6]': showFilters, 'border-[#F8F8F8]': !showFilters}">filter
-                {{ activeFilters.length > 0 ? `(${activeFilters.length})` : '' }}
+            <div @click="showFilters = !showFilters" class=" text-center rounded-full py-3 px-5 filter-button cursor-pointer border bg-[#F8F8F8] flex gap-2.5 items-center"
+                 :class="{'border-[#B6B6B6]': showFilters, 'border-[#F8F8F8]': !showFilters}">
+                <Icon height="16px" icon="material-symbols:tune"/>
+                <p>
+                    filter
+                    {{ activeFilters.length > 0 ? `(${activeFilters.length})` : '' }}
+                </p>
             </div>
         </div>
         <div class="relative w-full">
