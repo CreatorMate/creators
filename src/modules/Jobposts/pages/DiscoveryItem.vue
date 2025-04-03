@@ -82,7 +82,7 @@
         <NuxtLink to="/public/discovery">
             <Icon icon="material-symbols:arrow-back-ios" class="absolute left-6 top-1/2 -translate-y-1/2"></Icon>
         </NuxtLink>
-        <NuxtImg src="/logo-light.svg"/>
+        <NuxtImg class="w-10" src="/logo-light.svg"/>
     </div>
     <NuxtImg class="w-full h-[244px] min-h-[244px] object-cover" src="/icons/jobpost.png"/>
     <section v-if="jobPost" class=" flex flex-col px-4 py-3">

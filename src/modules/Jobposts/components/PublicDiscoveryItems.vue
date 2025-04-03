@@ -51,7 +51,7 @@
                     <p class="text-size-S font-medium">{{jobPost.creative_lead.first_name}} {{jobPost.creative_lead.last_name}}</p>
                 </div>
             </div>
-            <Icon width="32" icon="material-symbols:arrow-insert" class="rotate-90"/>
+            <Icon width="32" icon="material-symbols-light:arrow-insert" class="rotate-90"/>
         </div>
         <p class="text-[#151515] text-size-XS mb-1">posted {{ getTimeAgo(jobPost.created_at) }}</p>
         <h1 class="text-size-M font-semibold">{{ jobPost.looking_for + ' ' }}<span

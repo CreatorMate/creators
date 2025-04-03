@@ -98,41 +98,43 @@
 
 <template>
     <div class="flex w-full justify-center py-6">
-        <NuxtImg class="w-8" src="/logo-light.svg"/>
+        <NuxtImg class="w-10" src="/logo-light.svg"/>
     </div>
     <section class="flex flex-col px-4 gap-3">
         <div class="flex pt-6 pb-3 justify-between items-center">
             <Header text="discovery"/>
         </div>
         <div class="w-full flex gap-1 text-size-XS">
-            <div @click="switchTab(DiscoveryFilters.FOR_YOU)" class=" text-center border rounded-full py-3 px-5 "
+            <div @click="switchTab(DiscoveryFilters.FOR_YOU)" class=" text-center border rounded-full py-3 px-5 cursor-pointer"
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.FOR_YOU}">for you
             </div>
-            <div @click="switchTab(DiscoveryFilters.ARCHIVED)" class=" text-center border rounded-full py-3 px-5"
+            <div @click="switchTab(DiscoveryFilters.ARCHIVED)" class=" text-center border rounded-full py-3 px-5 cursor-pointer"
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.ARCHIVED}">archived
             </div>
-            <div @click="showFilters = !showFilters" class=" text-center rounded-full py-3 px-5 bg-[#F8F8F8] filter-button cursor-pointer"
-                 :class="{'border border-[#B6B6B6]': showFilters}">filter
+            <div @click="showFilters = !showFilters" class=" text-center rounded-full py-3 px-5 filter-button cursor-pointer border bg-[#F8F8F8] "
+                 :class="{'border-[#B6B6B6]': showFilters, 'border-[#F8F8F8]': !showFilters}">filter
                 {{ activeFilters.length > 0 ? `(${activeFilters.length})` : '' }}
             </div>
         </div>
-        <div
-            v-if="showFilters"
-            ref="filterBox"
-            style="box-shadow: 0px 0px 32px 0px rgba(183, 183, 183, 0.25);"
-            class="text-size-XS text-[#111111] bg-white py-3 px-5 rounded-xl flex flex-col gap-2">
-            <p class="">roles</p>
-            <div v-for="role of roleItems.keys()" class="flex items-center gap-2.5">
-                <input :checked="activeFilters.includes(role)" @change="check(role)" class="rounded-none" type="checkbox">
-                <p>{{role}} ({{roleItems.get(role) ?? 0}})</p>
+        <div class="relative w-full">
+            <div
+                v-if="showFilters"
+                ref="filterBox"
+                style="box-shadow: 0px 0px 32px 0px rgba(183, 183, 183, 0.25);"
+                class="text-size-XS text-[#111111] bg-white py-3 px-5 rounded-xl flex flex-col gap-2 w-full absolute top-0 z-50 ">
+                <p class="">roles</p>
+                <div v-for="role of roleItems.keys()" class="flex items-center gap-2.5">
+                    <input :checked="activeFilters.includes(role)" @change="check(role)" class="rounded-none" type="checkbox">
+                    <p>{{role}} ({{roleItems.get(role) ?? 0}})</p>
+                </div>
+                <p class="">budget</p>
+                <div class="flex items-center gap-1">
+                    <p class="bg-[#F8F8F8] px-3 py-2 rounded-full">daily rate</p>
+                    <p class="bg-[#F8F8F8] px-3 py-2 rounded-full">hourly</p>
+                    <p class="bg-[#F8F8F8] px-3 py-2 rounded-full">budget</p>
+                </div>
             </div>
-            <p class="">budget</p>
-            <div class="flex items-center gap-1">
-                <p class="bg-[#F8F8F8] px-3 py-2 rounded-full">daily rate</p>
-                <p class="bg-[#F8F8F8] px-3 py-2 rounded-full">hourly</p>
-                <p class="bg-[#F8F8F8] px-3 py-2 rounded-full">budget</p>
-            </div>
+            <PublicDiscoveryItems :jobPosts/>
         </div>
-        <PublicDiscoveryItems :jobPosts/>
     </section>
 </template>
