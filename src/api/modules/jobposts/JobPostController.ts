@@ -9,14 +9,24 @@ import {usePrisma} from "~/src/api/src/lib/prisma";
 export class JobPostController extends BaseController {
     async endpoints() {
         this.app.get('/jobposts', async (context: Context): Promise<any> => {
-            const {role} = context.req.query();
+            const {role, archived} = context.req.query();
 
-            const filters: { looking_for?: { in: string[] } } = {};
+            const filters: {
+                looking_for?: { in: string[] },
+                closes_on?: any;
+            } = {};
 
             if(role) {
                 const roles = (role as string).split(',');
                 filters.looking_for = { in: roles };
             }
+
+            if (archived === 'true') {
+                filters.closes_on = { lt: new Date() }; // Prisma operator for less than current date
+            } else {
+                filters.closes_on = { gte: new Date() };
+            }
+
             const jobPosts = await usePrisma().job_postings.findMany({
                 include: {
                     creative_lead: true
@@ -37,6 +47,7 @@ export class JobPostController extends BaseController {
             const jobPost = await usePrisma().job_postings.findFirst({
                 where: {id: Number(id)},
                 include: {
+                    users: true,
                     creative_lead: true,
                     client: true,
                     job_applications: {

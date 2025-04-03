@@ -51,7 +51,8 @@ export type JobPost = {
     client: Client,
     job_applications: JobApplication[],
     payment_type: PaymentType,
-    tally: string
+    tally: string,
+    created_at: string
 }
 
 export enum PaymentType {

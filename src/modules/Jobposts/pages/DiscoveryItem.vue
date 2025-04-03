@@ -78,7 +78,7 @@
 </script>
 
 <template>
-    <div class="flex xs:hidden w-full justify-center py-6 relative">
+    <div class="flex w-full justify-center py-6 relative">
         <NuxtLink to="/public/discovery">
             <Icon icon="material-symbols:arrow-back-ios" class="absolute left-6 top-1/2 -translate-y-1/2"></Icon>
         </NuxtLink>
@@ -89,10 +89,10 @@
         <div class="w-full flex items-center justify-between mb-3">
             <div class="flex items-center gap-3">
                 <SupabaseImage class="rounded-full w-9 h-9" bucket="user-pictures"
-                               :name="jobPost.creative_lead.profile_picture"/>
+                               :name="jobPost.users.profile_picture"/>
                 <div class="flex flex-col">
                     <p class="text-size-XS text-[#3C3C3C]">director</p>
-                    <p class="text-size-S font-medium">{{jobPost.creative_lead.first_name}} {{jobPost.creative_lead.last_name}}</p>
+                    <p class="text-size-S font-medium">{{jobPost.users.first_name}} {{jobPost.users.last_name}}</p>
                 </div>
             </div>
             <Icon icon="material-symbols:share-outline"/>
@@ -150,7 +150,7 @@
             </div>
         </div>
         <Label text="about the creative lead" class="mt-9 mb-3"/>
-        <div class="w-full flex items-center justify-between mb-3">
+        <div v-if="accountState.user" class="w-full flex items-center justify-between mb-3">
             <div class="flex items-center gap-3">
                 <SupabaseImage class="rounded-full w-9 h-9" bucket="user-pictures"
                                :name="jobPost.creative_lead.profile_picture"/>
@@ -159,8 +159,18 @@
                     <p class="text-size-S font-medium">{{jobPost.creative_lead.first_name}} {{jobPost.creative_lead.last_name}}</p>
                 </div>
             </div>
-            <NuxtLink :to="`/profile/${jobPost.creative_lead.id}`" class="py-2 px-4 rounded-full bg-[#F8F8F8]">view profile</NuxtLink>
+            <NuxtLink  :to="`/profile/${jobPost.creative_lead.id}`" class="py-2 px-4 rounded-full bg-[#F8F8F8]">view profile</NuxtLink>
         </div>
+        <NuxtLink v-else :to="`https://instagram.com/${jobPost.creative_lead.handle}`" class="w-full flex items-center justify-between mb-3">
+            <div class="flex items-center gap-3">
+                <SupabaseImage class="rounded-full w-9 h-9" bucket="user-pictures"
+                               :name="jobPost.creative_lead.profile_picture"/>
+                <div class="flex flex-col">
+                    <p class="text-size-XS text-[#3C3C3C]">creative lead</p>
+                    <p class="text-size-S font-medium">{{jobPost.creative_lead.first_name}} {{jobPost.creative_lead.last_name}}</p>
+                </div>
+            </div>
+        </NuxtLink>
     </section>
     <MobileNavigation v-if="jobPost && !applied">
         <div class="w-full h-full flex p-1 justify-between">

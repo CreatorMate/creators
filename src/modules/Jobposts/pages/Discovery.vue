@@ -37,11 +37,19 @@
         jobPosts.value = [];
 
         let query = '';
+        let roleQuery = ''
+        let archived = ''
         if(activeFilters.value.length > 0) {
-            query = `?role=${activeFilters.value.join(',')}`;
+            roleQuery = activeFilters.value.join(',');
         } else if(active.value === DiscoveryFilters.FOR_YOU) {
-            query = `?role=${accountState.user.project_types.join(',')}`;
+            roleQuery = accountState.user.project_types.join(',');
         }
+
+        if(active.value === DiscoveryFilters.ARCHIVED) {
+            archived = 'true';
+        }
+
+        query = `?role=${roleQuery}&archived=${archived}`;
 
         const jobPostsRequest: APIResponse<JobPost[]> = await API.ask(`/jobposts${query}`);
         if (!jobPostsRequest.success) return;

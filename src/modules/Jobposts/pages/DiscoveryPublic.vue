@@ -12,6 +12,7 @@
     enum DiscoveryFilters {
         FOR_YOU = "for you",
         ALL_JOBS = "all jobs",
+        ARCHIVED = "ARCHIVED",
         FILTER = "filter"
     }
 
@@ -40,9 +41,18 @@
         jobPosts.value = [];
 
         let query = '';
+        let roleQuery = ''
+        let archived = ''
+
         if(activeFilters.value.length > 0) {
-            query = `?role=${activeFilters.value.join(',')}`;
+            roleQuery = activeFilters.value.join(',');
         }
+
+        if(active.value === DiscoveryFilters.ARCHIVED) {
+            archived = 'true';
+        }
+
+        query = `?role=${roleQuery}&archived=${archived}`;
 
         const jobPostsRequest: APIResponse<JobPost[]> = await API.ask(`/jobposts${query}`);
         if (!jobPostsRequest.success) return;
@@ -97,6 +107,9 @@
         <div class="w-full flex gap-1 text-size-XS">
             <div @click="switchTab(DiscoveryFilters.FOR_YOU)" class=" text-center border rounded-full py-3 px-5 "
                  :class="{'border-none bg-black text-white': active == DiscoveryFilters.FOR_YOU}">for you
+            </div>
+            <div @click="switchTab(DiscoveryFilters.ARCHIVED)" class=" text-center border rounded-full py-3 px-5"
+                 :class="{'border-none bg-black text-white': active == DiscoveryFilters.ARCHIVED}">archived
             </div>
             <div @click="showFilters = !showFilters" class=" text-center rounded-full py-3 px-5 bg-[#F8F8F8] filter-button cursor-pointer"
                  :class="{'border border-[#B6B6B6]': showFilters}">filter

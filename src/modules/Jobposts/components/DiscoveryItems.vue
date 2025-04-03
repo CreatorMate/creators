@@ -2,6 +2,7 @@
     import {type JobPost, PaymentType} from "~/src/utils/SupabaseTypes";
     import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
     import {Icon} from "@iconify/vue";
+    import {getTimeAgo} from "../../../utils/utils";
 
     const props = defineProps<{
         jobPosts: JobPost[]
@@ -52,7 +53,7 @@
             </div>
             <Icon width="32" icon="material-symbols:arrow-insert" class="rotate-90"/>
         </div>
-        <p class="text-[#151515] text-size-XS mb-1">open for {{ getTimeRemaining(jobPost.closes_on) }} days</p>
+        <p class="text-[#151515] text-size-XS mb-1">posted {{ getTimeAgo(jobPost.created_at) }}</p>
         <h1 class="text-size-M font-semibold">{{ jobPost.looking_for + ' ' }}<span
             class="text-[#8D8D8D]">needed in </span>{{ jobPost.place }}<span class="text-[#8D8D8D]"> on </span></h1>
         <h1 class="text-size-M font-semibold mb-6">{{ jobPost.date }}</h1>
