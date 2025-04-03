@@ -107,10 +107,10 @@ export class JobPostController extends BaseController {
             return successResponse(context, apply);
         });
 
-        this.app.get('/profiles/:id', async (context: Context): Promise<any> => {
-            const id = context.req.param('id') as string;
+        this.app.get('/profiles/:handle', async (context: Context): Promise<any> => {
+            const handle = context.req.param('handle') as string;
             const user = await usePrisma().users.findUnique({
-                where: {id: id}
+                where: {handle: handle}
             });
 
             if(!user) return errorResponse(context, 'something_went_wrong');

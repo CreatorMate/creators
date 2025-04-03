@@ -17,7 +17,7 @@ export default defineNuxtConfig({
     redirectOptions: {
       login: '/login',
       callback: '/callback',
-      exclude: ['/callback', '/API/webhook', '/public/discovery', '/public/discovery/*']
+      exclude: ['/callback', '/API/webhook', '/public/discovery', '/public/discovery/*', '/profile/*']
     },
     redirect: true
   },
@@ -68,7 +68,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     pages: [],
     public: {
-      BASE_URL: process.env.BASE_URL,
+      BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
       SUPABASE_URL: process.env.SUPABASE_URL
     },
   },

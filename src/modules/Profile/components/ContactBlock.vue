@@ -4,8 +4,9 @@
     import {Icon} from "@iconify/vue";
     import ContactItem from "~/src/modules/Profile/components/ContactItem.vue";
 
-    const {user} = defineProps<{
-        user: User
+    const {user, editable} = defineProps<{
+        user: User,
+        editable: boolean
     }>();
 </script>
 

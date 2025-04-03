@@ -7,8 +7,9 @@
     import type {APIResponse} from "~/src/api/utils/HonoResponses";
     import SupabaseImage from "~/src/components/Core/SupabaseImage.vue";
 
-    const {user} = defineProps<{
-        user: User
+    const {user, editable} = defineProps<{
+        user: User,
+        editable: boolean
     }>();
 
     const workItems: Ref<WorkItem[]> = ref([]);
@@ -37,12 +38,12 @@
             <SupabaseImage class="w-full h-[120px] object-cover rounded-lg" bucket="work-images" :name="workItem.image"/>
             <p class="text-size-S">{{workItem.title}}</p>
             <p class="text-size-XS text-[#616161]">{{workItem.job_title}}</p>
-            <div class="absolute w-6 h-6 bg-white rounded-full text-black flex justify-center items-center top-1 right-1 z-10">
+            <div v-if="editable" class="absolute w-6 h-6 bg-white rounded-full text-black flex justify-center items-center top-1 right-1 z-10">
                 <Icon @click="deleteItem(workItem)" icon="material-symbols:close"></Icon>
             </div>
         </div>
     </div>
-    <div v-else class="mt-24 w-full flex items-center flex flex-col">
+    <div v-else-if="editable" class="mt-24 w-full flex items-center flex flex-col">
         <Label class="font-semibold" text="no media was uploaded..."/>
         <div class="flex items-center text-size-XS text-[#151515] gap-1">
             <p>upload work using the</p>
@@ -52,8 +53,11 @@
             <p>icon</p>
         </div>
     </div>
+    <div v-else class="mt-24 w-full flex items-center flex flex-col">
+        <Label class="font-semibold" text="this user has no public work"/>
+    </div>
 
-    <RouterLink to="/work/add" class="fixed z-50 bg-black rounded-full flex items-center justify-center text-white w-10 h-10 bottom-20 right-4">
+    <RouterLink v-if="editable" to="/work/add" class="fixed z-50 bg-black rounded-full flex items-center justify-center text-white w-10 h-10 bottom-20 right-4">
         <Icon icon="material-symbols:add-2"/>
     </RouterLink>
 </template>

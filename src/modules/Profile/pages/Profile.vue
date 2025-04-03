@@ -21,9 +21,10 @@
     const accountState = useAccountState();
     const isOn = ref(false);
     const user = ref<User|null>(null)
+    const ableToEdit = ref(false);
 
     const active = ref('about');
-    const user_id = route.params.id;
+    const user_handle = route.params.handle;
     const activeRoute = route.query.tab;
     function goBack() {
         router.back();
@@ -33,11 +34,13 @@
         if(activeRoute == 'about' || activeRoute == 'contact' || activeRoute == 'work') {
             active.value = activeRoute;
         }
-        if(!user_id) {
+        if(!user_handle) {
             user.value = accountState.user;
+            ableToEdit.value = true;
             return;
         }
-        const userRequest: APIResponse<User> = await API.ask(`/profiles/${user_id}`);
+
+        const userRequest: APIResponse<User> = await API.ask(`/profiles/${user_handle}`);
         if(!userRequest.success) return;
 
         user.value = userRequest.data;
@@ -50,7 +53,7 @@
 </script>
 
 <template>
-    <div class="flex xs:hidden w-full justify-center py-6 relative">
+    <div class="flex w-full justify-center py-6 relative">
         <Icon @click="goBack" icon="material-symbols:arrow-back-ios" class="absolute left-6 top-1/2 -translate-y-1/2">
             back
         </Icon>
@@ -77,9 +80,9 @@
             <p @click="switchTab('contact')" class="border-[#D6D6D6] py-2 px-6 text-size-XS" :class="{'border-b': active === 'contact'}">contact</p>
         </div>
         <div>
-            <ContactBlock v-if="active === 'contact'" :user/>
-            <AboutBlock v-if="active === 'about'" :user/>
-            <WorkBlock v-if="active === 'work'" :user/>
+            <ContactBlock v-if="active === 'contact'" :editable="ableToEdit" :user/>
+            <AboutBlock v-if="active === 'about'" :editable="ableToEdit" :user/>
+            <WorkBlock v-if="active === 'work'" :editable="ableToEdit" :user/>
         </div>
     </section>
     <MobileNavigation>

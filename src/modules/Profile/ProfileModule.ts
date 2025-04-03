@@ -9,9 +9,12 @@ export class ProfileModule extends BaseModule {
             path: '/profile'
         },
         {
-            name: 'profile/:id',
+            name: 'profile/:handle',
             file: '@/src/modules/Profile/pages/Profile.vue',
-            path: '/profile/:id'
+            path: '/profile/:handle',
+            meta: {
+                layout: 'public',
+            }
         },
         {
             name: 'work/add',

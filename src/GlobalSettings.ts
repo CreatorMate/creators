@@ -5,6 +5,7 @@ export const appSettings = {
         '/login',
         '/public/discovery',
         /^\/public\/discovery\/[^/]+$/,
+        /^\/profile\/[^/]+$/,
         /^\/invitation\/[^/]+\/[^/]+$/,
     ],
     defaultLimit: 10,

@@ -12,7 +12,10 @@ initializeHonoRouter(app);
 const publicRoutes = [
     { method: 'GET', path: '/jobposts' },
     { method: 'GET', path: '/jobposts/:id' },
+    { method: 'GET', path: '/profiles/:handle' },
+    { method: 'GET', path: '/work/:id'}
 ];
+
 export default defineEventHandler(async (event) => {
     try {
         event.node.req.originalUrl = '';
@@ -20,7 +23,6 @@ export default defineEventHandler(async (event) => {
         if (event.path.startsWith('/webhook')) {
             return app.fetch(webReq);
         }
-
         const isUnprotected = publicRoutes.some(route => {
             const methodMatch = event.method === route.method;
             // Allow for query parameters after the :id part
