@@ -25,7 +25,7 @@
 
 <template>
     <section ref="sectionRef" class="deliverables-section relative overflow-hidden bg-white">
-        <Label text="Deliverables" class="mt-9 mb-3"/>
+        <Label text="Deliverables" class=" mb-3 mt-6 pt-3 border-t"/>
         <div class="scroll-container flex gap-1">
             <VideoItem
                 v-for="video in videoList"

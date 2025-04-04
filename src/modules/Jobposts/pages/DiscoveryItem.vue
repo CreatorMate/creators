@@ -120,7 +120,8 @@
         <ul class="list-disc pl-4 text-[#616161] flex-col flex justify-center text-size-S">
             <li v-for="requirement of jobPost.requirements">{{requirement}}</li>
         </ul>
-        <Label class="mt-6 mb-6" text="about the client"/>
+        <MobileVideoSection :videoList="jobPost.videos"/>
+        <Label class="mt-6 mb-6 pt-3 border-t" text="about the client"/>
         <div class="flex items-center gap-3 pb-3 border-b">
             <SupabaseImage class="rounded-full w-9 h-9" bucket="client-icons"
                            :name="jobPost.client.image"/>
@@ -138,7 +139,6 @@
             <p class="text-size-S font-medium">{{jobPost.client.industry}}</p>
         </div>
         <div class="flex flex-col py-3 border-b">
-            <MobileVideoSection :videoList="jobPost.videos"/>
             <p class="text-size-XS text-[#616161]">links</p>
             <div class="text-size-XS text-[#242424] flex items-center">
                 <div class="flex gap-1 items-center py-2 px-3">
