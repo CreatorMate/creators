@@ -9,6 +9,10 @@
     import MobileNavigation from "~/src/components/Navigation/MobileNavigation.vue";
     import {boolean} from "zod";
     import {useAccountState} from "~/src/utils/Auth/AccountState";
+    import { useSwipe } from "@vueuse/core";
+    import VideoItem from "~/src/modules/Jobposts/components/VideoItem.vue";
+    import MobileVideoSection from "~/src/modules/Jobposts/components/MobileVideoSection.vue";
+
     const router = useRouter();
     const route = useRoute();
     const jobPostId = route.params.id;
@@ -16,6 +20,8 @@
     const applied = ref(false);
     const accountState = useAccountState();
     const available = ref(0);
+
+    const sectionRef = ref<HTMLElement | null>(null);
 
     onMounted(async () => {
         if(!jobPostId) return;
@@ -71,8 +77,6 @@
         }
 
         return `${price}${label}`
-
-
     }
 
 </script>
@@ -98,8 +102,9 @@
             <Icon icon="material-symbols:share-outline"/>
         </div>
         <div>
-            <h1 class="text-size-XL font-semibold">{{ jobPost.looking_for + ' ' }}<span
-                class="text-[#8D8D8D]">needed in </span></h1>
+            <h1 class="text-size-XL font-semibold">
+                {{ jobPost.looking_for + ' ' }}
+                <span class="text-[#8D8D8D]">needed in </span></h1>
             <h1 class="text-size-XL font-semibold mb-1">{{ jobPost.place }}<span class="text-[#8D8D8D]"> on </span>{{ jobPost.date }}</h1>
             <div class="flex gap-3 pb-6 border-b">
                 <div class="p-3">closes in {{getTimeRemaining(jobPost.closes_on)}} days</div>
@@ -133,6 +138,7 @@
             <p class="text-size-S font-medium">{{jobPost.client.industry}}</p>
         </div>
         <div class="flex flex-col py-3 border-b">
+            <MobileVideoSection :videoList="jobPost.videos"/>
             <p class="text-size-XS text-[#616161]">links</p>
             <div class="text-size-XS text-[#242424] flex items-center">
                 <div class="flex gap-1 items-center py-2 px-3">

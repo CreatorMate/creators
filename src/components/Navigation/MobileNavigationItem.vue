@@ -22,11 +22,10 @@
 
 <template>
     <NuxtLink :to="linkTo" @mouseenter="isHoveringParent = true" @mouseleave="isHoveringParent = false" :class="{
-        'bg-[#F8F8F8]' : isActive(linkTo)
-    }" @click="show = !show" class="flex text-black items-center cursor-pointer py-2 px-6 hover:bg-[#E9E9E9] rounded-full">
+        'text-[#3C3C3C]' : isActive(linkTo), 'text-[#D6D6D6]': !isActive(linkTo)
+    }" @click="show = !show" class="flex items-center cursor-pointer py-2 px-6 rounded-full ">
         <div class="flex items-center gap-3 transition duration-100 font-medium">
-            <Icon class="text-[#3C3C3C]" width="24" :icon="iconName"/>
-            <p v-if="isActive(linkTo)" class="text-sm">{{name}}</p>
+            <Icon class="" width="24" :icon="iconName"/>
         </div>
     </NuxtLink>
 </template>

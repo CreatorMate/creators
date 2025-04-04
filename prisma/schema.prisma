@@ -31,6 +31,7 @@ model users {
   languages                     String[]            @default([])
   job_postings_as_creative_lead job_postings[]      @relation("JobPostingCreativeLead")
   visibility                    Boolean             @default(false)
+  notifications                 Boolean             @default(true)
 }
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.

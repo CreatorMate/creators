@@ -17,7 +17,8 @@ export type User = {
     gear: string[]
     roles: any;
     rights: any;
-    visibility: boolean
+    visibility: boolean,
+    notifications: boolean
 };
 
 export type WorkItem = {
